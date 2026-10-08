@@ -1,0 +1,65 @@
+name: Test Execution
+
+on:
+  workflow_call:
+    inputs:
+      client:
+        description: Client folder under clients/
+        type: string
+        default: example
+      env:
+        description: Target environment (TEST_ENV)
+        type: string
+        default: dev
+      project:
+        description: Playwright project to run (ui, api), empty for all
+        type: string
+        default: ''
+    secrets:
+      APP_USERNAME:
+        required: false
+      APP_PASSWORD:
+        required: false
+      APP_LOCKED_USERNAME:
+        required: false
+
+jobs:
+  test:
+    name: ${{ inputs.client }} / ${{ inputs.env }} / ${{ inputs.project || 'all' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: true
+      CLIENT: ${{ inputs.client }}
+      TEST_ENV: ${{ inputs.env }}
+      APP_USERNAME: ${{ secrets.APP_USERNAME }}
+      APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+      APP_LOCKED_USERNAME: ${{ secrets.APP_LOCKED_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npx playwright test ${{ inputs.project && format('--project={0}', inputs.project) || '' }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ inputs.client }}-${{ inputs.env }}-${{ inputs.project || 'all' }}
+          path: playwright-report
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ inputs.client }}-${{ inputs.env }}-${{ inputs.project || 'all' }}
+          path: test-results
+          retention-days: 14

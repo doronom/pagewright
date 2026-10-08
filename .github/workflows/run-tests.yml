@@ -1,0 +1,33 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      client:
+        description: Client folder under clients/
+        type: string
+        default: example
+      env:
+        description: Target environment (TEST_ENV)
+        type: string
+        default: dev
+      project:
+        description: Playwright project
+        type: choice
+        options: ['', ui, api]
+        default: ''
+
+jobs:
+  test:
+    uses: ./.github/workflows/test-execution.yml
+    with:
+      client: ${{ inputs.client || 'example' }}
+      env: ${{ inputs.env || 'dev' }}
+      project: ${{ inputs.project || '' }}
+    secrets:
+      APP_USERNAME: standard_user
+      APP_PASSWORD: secret_sauce
+      APP_LOCKED_USERNAME: locked_out_user
