@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleList from '../../components/ArticleList.astro';
+import { slugify } from '../../lib/format';
+import { getArticles, getTags } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const articles = await getArticles();
+  return (await getTags()).map((tag) => ({
+    params: { tag: tag.slug },
+    props: {
+      name: tag.name,
+      articles: articles.filter((a) => a.data.tags.some((t) => slugify(t) === tag.slug)),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { name, articles } = Astro.props;
+const { tag } = Astro.params;
+---
+
+<BaseLayout title={`#${name}`} description={`Articles tagged ${name}.`}>
+  <ArticleList
+    title={`#${name}`}
+    description={`${articles.length} ${articles.length === 1 ? 'article' : 'articles'} tagged ${name}.`}
+    articles={articles}
+    activeTag={tag}
+    emptyText="No published articles have this tag yet."
+  />
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+interface Props {
+  published: number;
+  planned: number;
+  label?: string;
+}
+
+const { published, planned, label } = Astro.props;
+const percent = planned ? Math.round((published / planned) * 100) : 0;
+---
+
+<div class="flex flex-col gap-1.5" data-test="series-progress">
+  <div class="flex items-center justify-between gap-2 font-mono text-label-sm">
+    <span class="text-text">{label ?? `${published} of ${planned} parts published`}</span>
+    <span class="font-semibold text-primary">{percent}%</span>
+  </div>
+  <div
+    class="h-1.5 w-full overflow-hidden rounded-pill border border-border bg-surface"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax={planned}
+    aria-valuenow={published}
+    aria-label="Series progress"
+  >
+    <div class="h-full rounded-pill bg-primary" style={`width: ${percent}%;`}></div>
+  </div>
+</div>

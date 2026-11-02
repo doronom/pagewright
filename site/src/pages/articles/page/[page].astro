@@ -1,0 +1,36 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleList from '../../../components/ArticleList.astro';
+import { site } from '../../../config/site';
+import { getArticles } from '../../../lib/content';
+import { articlePageUrl } from '../../../lib/paths';
+
+// Page 1 lives at /articles/; this route generates /articles/page/2/ onwards.
+export const getStaticPaths = (async () => {
+  const articles = await getArticles();
+  const total = Math.ceil(articles.length / site.articlesPerPage);
+  return Array.from({ length: Math.max(0, total - 1) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: {
+        page,
+        total,
+        articles: articles.slice((page - 1) * site.articlesPerPage, page * site.articlesPerPage),
+      },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { page, total, articles } = Astro.props;
+---
+
+<BaseLayout title={`Articles, page ${page}`} description="All articles, newest first.">
+  <ArticleList
+    title="Articles"
+    description={`All articles, newest first. Page ${page} of ${total}.`}
+    articles={articles}
+    page={{ current: page, total, urlFor: articlePageUrl }}
+  />
+</BaseLayout>

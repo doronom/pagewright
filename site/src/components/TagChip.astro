@@ -1,0 +1,26 @@
+---
+import { href } from '../lib/url';
+import { slugify } from '../lib/format';
+
+interface Props {
+  tag: string;
+  count?: number;
+  active?: boolean;
+}
+
+const { tag, count, active = false } = Astro.props;
+const slug = slugify(tag);
+---
+
+<a
+  href={href(`/tags/${slug}/`)}
+  class:list={[
+    'chip transition-colors hover:border-border-strong hover:text-primary',
+    active ? 'text-primary border-primary' : 'text-faint',
+  ]}
+  data-test="tag-chip"
+  data-test-id={slug}
+  aria-current={active ? 'page' : undefined}
+>
+  #{tag}{count !== undefined && <span class="text-faint">{count}</span>}
+</a>

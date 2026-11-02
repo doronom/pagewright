@@ -1,0 +1,26 @@
+---
+import { icons, type IconName } from './icons';
+
+interface Props {
+  name: IconName;
+  class?: string;
+  size?: number;
+  label?: string;
+}
+
+const { name, class: className, size = 20, label } = Astro.props;
+const icon = icons[name];
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={icon.viewBox}
+  width={size}
+  height={size}
+  fill="currentColor"
+  class:list={['shrink-0', className]}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"><path d={icon.d}></path></svg
+>

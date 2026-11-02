@@ -11,6 +11,7 @@ export default tseslint.config(
       'allure-results',
       'allure-report',
       '.auth',
+      'site',
     ],
   },
   js.configs.recommended,

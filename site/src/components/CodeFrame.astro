@@ -1,0 +1,58 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Label in the header, usually the file path. */
+  file?: string;
+  lang?: string;
+  icon?: 'description' | 'terminal';
+  /** Text copied by the copy button; when omitted the rendered code text is copied. */
+  copy?: string;
+  repoUrl?: string;
+}
+
+const { file, lang, icon = 'description', copy, repoUrl } = Astro.props;
+const label = file ?? lang ?? 'code';
+const testFile = file ? file.split('/').pop() : (lang ?? 'code');
+---
+
+<figure class="code-frame not-prose" data-test="code-block" data-test-file={testFile}>
+  <figcaption
+    class="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2 font-mono text-label-sm text-muted"
+  >
+    <span class="flex min-w-0 items-center gap-1.5">
+      <Icon name={icon} size={14} />
+      <span class="truncate" data-test="code-file">{label}</span>
+    </span>
+    <span class="flex shrink-0 items-center gap-3">
+      {
+        repoUrl && (
+          <a
+            href={repoUrl}
+            class="flex items-center gap-1 transition-colors hover:text-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-test="view-in-repo"
+          >
+            <span>View in repo</span>
+            <Icon name="open_in_new" size={14} />
+          </a>
+        )
+      }
+      <button
+        type="button"
+        class="flex items-center gap-1 transition-colors hover:text-primary"
+        data-test="copy-code"
+        data-test-action="copy-code"
+        data-copy-button
+        data-copy={copy}
+        aria-label="Copy code"
+      >
+        <Icon name="content_copy" size={14} class="copy-icon" />
+        <Icon name="check" size={14} class="copied-icon hidden" />
+        <span class="copy-label">copy</span>
+      </button>
+    </span>
+  </figcaption>
+  <slot />
+</figure>

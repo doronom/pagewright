@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from '../components/EmptyState.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects } from '../lib/content';
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Projects" description="Open-source projects.">
+  <header class="flex flex-col gap-2">
+    <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">Projects</h1>
+    <p class="max-w-[75ch] text-body-lg text-muted">Open-source projects the articles are built on.</p>
+  </header>
+  {
+    projects.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6" data-test="project-list">
+        {projects.map((project) => (
+          <ProjectCard project={project} variant="expanded" />
+        ))}
+      </div>
+    ) : (
+      <EmptyState title="No projects yet">Projects will appear here.</EmptyState>
+    )
+  }
+</BaseLayout>

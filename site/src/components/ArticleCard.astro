@@ -1,0 +1,45 @@
+---
+import { getEntry } from 'astro:content';
+import TagChip from './TagChip.astro';
+import TypeBadge from './TypeBadge.astro';
+import { href } from '../lib/url';
+import { formatDate, isoDate } from '../lib/format';
+import { minutesFor, type Article } from '../lib/content';
+
+interface Props {
+  article: Article;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { article, headingLevel: Heading = 'h3' } = Astro.props;
+const { data } = article;
+const series = data.series ? await getEntry(data.series) : undefined;
+const url = href(`/articles/${article.id}/`);
+---
+
+<article
+  class="group relative flex flex-col justify-between rounded-card border border-border bg-surface-low p-6 transition-colors hover:border-border-strong"
+  data-test="article-card"
+  data-test-id={article.id}
+>
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between gap-2 font-mono text-label-sm text-muted">
+      <span class="flex items-center gap-2">
+        {series && <span class="text-primary">Series: Part {data.seriesPart} of {series.data.plannedParts}</span>}
+        <TypeBadge type={data.type} />
+        {data.draft && <span class="chip text-error uppercase" data-test="draft-badge">Draft</span>}
+      </span>
+      <span>{minutesFor(article)} min read</span>
+    </div>
+    <Heading class="text-headline-md text-text transition-colors group-hover:text-primary">
+      <a href={url} class="after:absolute after:inset-0" data-test="article-card-link">{data.title}</a>
+    </Heading>
+    <p class="text-body-sm text-muted">{data.description}</p>
+  </div>
+  <div class="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-6">
+    <div class="relative z-10 flex flex-wrap items-center gap-1.5">
+      {data.tags.slice(0, 3).map((tag) => <TagChip tag={tag} />)}
+    </div>
+    <time class="font-mono text-label-sm text-muted" datetime={isoDate(data.date)}>{formatDate(data.date)}</time>
+  </div>
+</article>

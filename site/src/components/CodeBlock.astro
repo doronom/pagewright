@@ -1,0 +1,28 @@
+---
+import { Code } from 'astro:components';
+import CodeFrame from './CodeFrame.astro';
+import { codeTransformers, parseLineList } from '../lib/shiki';
+
+interface Props {
+  code: string;
+  lang?: string;
+  file?: string;
+  startLine?: number;
+  /** Lines to highlight, as shown in the gutter: "3,5-7" or an array. */
+  highlight?: string | number[];
+  repoUrl?: string;
+}
+
+const { code, lang = 'text', file, startLine = 1, highlight, repoUrl } = Astro.props;
+const highlightLines =
+  typeof highlight === 'string' ? parseLineList(highlight, `CodeBlock ${file ?? ''}`) : (highlight ?? []);
+---
+
+<CodeFrame file={file} lang={lang} copy={code} repoUrl={repoUrl}>
+  <Code
+    code={code}
+    lang={lang as never}
+    theme="css-variables"
+    transformers={codeTransformers({ startLine, highlight: highlightLines })}
+  />
+</CodeFrame>

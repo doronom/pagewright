@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-drafts/
+.astro/
+test-results/
+playwright-report/
+src/data/test-summary.json

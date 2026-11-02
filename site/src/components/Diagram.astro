@@ -1,0 +1,30 @@
+---
+import { slugify } from '../lib/format';
+
+interface Props {
+  caption: string;
+  /** Short id used for data-test-caption, e.g. "figure-1". Defaults to a slug of the caption. */
+  id?: string;
+  /** Minimum width before the figure scrolls horizontally. */
+  minWidth?: number;
+}
+
+const { caption, id, minWidth = 640 } = Astro.props;
+const testId = id ?? slugify(caption);
+---
+
+<figure
+  class="not-prose overflow-hidden rounded-card border border-border bg-surface-low"
+  data-test="diagram-frame"
+  data-test-caption={testId}
+  id={id}
+>
+  <div class="overflow-x-auto p-6" data-test="diagram-scroll">
+    <div class="mx-auto text-muted [&_svg]:h-auto [&_svg]:w-full" style={`min-width: ${minWidth}px;`}>
+      <slot />
+    </div>
+  </div>
+  <figcaption class="border-t border-border bg-surface px-4 py-2 font-mono text-label-sm text-muted">
+    {caption}
+  </figcaption>
+</figure>

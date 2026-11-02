@@ -1,0 +1,25 @@
+# PLACEHOLDER summaries. Replace with real copy; part titles are the planned series outline.
+title: Config-driven Playwright framework
+summary: 'PLACEHOLDER: one or two sentences describing the series.'
+plannedParts: 6
+featured: true
+project: qa-template
+parts:
+  - part: 1
+    title: Why a config-driven framework
+    summary: 'PLACEHOLDER: part 1 summary.'
+  - part: 2
+    title: DynamicPage and the actions layer
+    summary: 'PLACEHOLDER: part 2 summary.'
+  - part: 3
+    title: Authentication and fixtures
+    summary: 'PLACEHOLDER: part 3 summary.'
+  - part: 4
+    title: The API layer and test data
+    summary: 'PLACEHOLDER: part 4 summary.'
+  - part: 5
+    title: CI/CD and observability
+    summary: 'PLACEHOLDER: part 5 summary.'
+  - part: 6
+    title: From a company framework to a reusable template
+    summary: 'PLACEHOLDER: part 6 summary.'

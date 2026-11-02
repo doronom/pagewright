@@ -1,0 +1,23 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleList from '../../components/ArticleList.astro';
+import { getArticles, getTypes } from '../../lib/content';
+
+const LABELS = { article: 'Articles', note: 'Notes', talk: 'Talks' } as const;
+
+// Generated only for types that have published entries.
+export const getStaticPaths = (async () => {
+  const articles = await getArticles();
+  return (await getTypes()).map(({ type }) => ({
+    params: { type },
+    props: { type, articles: articles.filter((a) => a.data.type === type) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { type, articles } = Astro.props;
+---
+
+<BaseLayout title={LABELS[type]} description={`All ${LABELS[type].toLowerCase()}, newest first.`}>
+  <ArticleList title={LABELS[type]} description={`All ${LABELS[type].toLowerCase()}, newest first.`} articles={articles} activeType={type} />
+</BaseLayout>

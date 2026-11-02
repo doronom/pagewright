@@ -1,0 +1,22 @@
+---
+import StatusBadge from './StatusBadge.astro';
+import { href } from '../lib/url';
+import { formatDuration, loadTestSummary } from '../lib/testSummary';
+
+// Renders only when the site's own test run produced a summary.
+const summary = loadTestSummary();
+const failed = summary ? summary.failed > 0 : false;
+---
+
+{
+  summary && (
+    <a href={href('/testing/')} class="hidden sm:inline-flex" data-test="test-status-link" title="Latest site test run">
+      <StatusBadge
+        status={failed ? 'failed' : 'passed'}
+        pulse={!failed}
+        uppercase={false}
+        label={failed ? `${summary.failed} failed · ${summary.passed} passed` : `${summary.passed} passed · ${formatDuration(summary.durationMs)}`}
+      />
+    </a>
+  )
+}

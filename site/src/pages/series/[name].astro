@@ -1,0 +1,70 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Diagram from '../../components/Diagram.astro';
+import Icon from '../../components/Icon.astro';
+import SeriesPartRow from '../../components/SeriesPartRow.astro';
+import SeriesProgress from '../../components/SeriesProgress.astro';
+import { href } from '../../lib/url';
+import { getSeriesStatus } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const all = await getCollection('series');
+  return all.map((series) => ({ params: { name: series.id }, props: { series } }));
+}) satisfies GetStaticPaths;
+
+const { series } = Astro.props;
+const status = await getSeriesStatus(series);
+const project = series.data.project ? await getEntry(series.data.project) : undefined;
+const intro = (series.data.intro ?? series.data.summary).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+---
+
+<BaseLayout title={series.data.title} description={series.data.summary}>
+  <header class="flex flex-col gap-4 rounded-card border border-border bg-surface-lowest p-6 sm:p-10" data-test="series-header">
+    <p class="flex flex-wrap items-center gap-2 font-mono text-label-sm text-muted">
+      <a href={href('/series/')} class="chip text-tertiary hover:border-border-strong">SERIES</a>
+      <span>{status.published} of {series.data.plannedParts} published</span>
+    </p>
+    <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">{series.data.title}</h1>
+    <div class="flex max-w-[75ch] flex-col gap-3 text-body-lg text-muted" data-test="series-intro">
+      {intro.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+    <div class="max-w-xl">
+      <SeriesProgress published={status.published} planned={series.data.plannedParts} />
+    </div>
+    {
+      project && (
+        <a
+          href={href(`/projects/#${project.id}`)}
+          class="inline-flex items-center gap-1 font-mono text-label-md text-primary hover:text-primary-hover"
+          data-test="series-project"
+        >
+          <Icon name="inventory_2" size={16} />
+          <span>Project: {project.data.title}</span>
+        </a>
+      )
+    }
+  </header>
+
+  {
+    series.data.diagram && (
+      <Diagram caption={series.data.diagramCaption ?? `${series.data.title}: overview`} id="series-overview">
+        <img src={series.data.diagram.src} width={series.data.diagram.width} height={series.data.diagram.height} alt={series.data.diagramCaption ?? `${series.data.title} overview`} />
+      </Diagram>
+    )
+  }
+
+  <section class="flex flex-col gap-4" data-test="series-parts">
+    <h2 class="border-b border-border pb-2 text-headline-lg text-text">Parts</h2>
+    <ol class="flex flex-col gap-4">
+      {
+        status.parts.map((part) => (
+          <li>
+            <SeriesPartRow part={part} />
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</BaseLayout>

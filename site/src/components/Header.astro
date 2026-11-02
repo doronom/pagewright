@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import TestStatusBadge from './TestStatusBadge.astro';
+import { site } from '../config/site';
+import { href, stripBase } from '../lib/url';
+
+const nav = [
+  { label: 'Articles', path: '/articles/', match: ['/articles', '/tags', '/types'] },
+  { label: 'Series', path: '/series/', match: ['/series'] },
+  { label: 'Projects', path: '/projects/', match: ['/projects'] },
+  { label: 'About', path: '/about/', match: ['/about'] },
+  { label: 'Testing', path: '/testing/', match: ['/testing'] },
+];
+const current = stripBase(Astro.url.pathname);
+const isActive = (match: string[]) => match.some((m) => current === m || current.startsWith(`${m}/`));
+---
+
+<header class="sticky top-0 z-50 border-b border-border bg-surface-lowest" data-test="header">
+  <div class="mx-auto flex h-14 w-full max-w-[var(--container)] items-center justify-between gap-4 px-5 sm:px-6">
+    <a href={href('/')} class="group flex items-center gap-1 text-headline-sm font-bold text-text" data-test="brand-home">
+      <span class="mr-1 font-mono text-label-md font-semibold text-primary" aria-hidden="true">&gt;_</span>
+      <span>{site.name}</span>
+    </a>
+
+    <nav class="hidden items-center gap-6 md:flex" aria-label="Main" data-test="nav-desktop">
+      {
+        nav.map((item) => (
+          <a
+            href={href(item.path)}
+            class:list={[
+              'border-b-2 pb-1 font-mono text-label-md transition-colors',
+              isActive(item.match) ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-text',
+            ]}
+            aria-current={isActive(item.match) ? 'page' : undefined}
+            data-test={`nav-${item.label.toLowerCase()}`}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <TestStatusBadge />
+      <a
+        href={href('/rss.xml')}
+        class="hidden items-center gap-1 font-mono text-label-md text-muted transition-colors hover:text-primary sm:inline-flex"
+        data-test="link-rss"
+      >
+        <Icon name="rss_feed" size={16} />
+        <span>RSS</span>
+      </a>
+      <div class="hidden md:block"><ThemeToggle /></div>
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-chip border border-border p-1.5 text-muted hover:text-primary md:hidden"
+        popovertarget="mobile-menu"
+        aria-label="Open menu"
+        data-test="menu-toggle"
+      >
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    popover
+    class="mobile-menu m-0 ml-auto h-dvh w-72 max-w-[85vw] border-l border-border bg-surface-lowest p-5 text-text"
+    data-test="mobile-menu"
+  >
+    <div class="flex items-center justify-between border-b border-border pb-4">
+      <span class="font-mono text-label-sm uppercase text-faint">Menu</span>
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-chip border border-border p-1.5 text-muted hover:text-primary"
+        popovertarget="mobile-menu"
+        popovertargetaction="hide"
+        aria-label="Close menu"
+        data-test="menu-close"
+      >
+        <Icon name="close" />
+      </button>
+    </div>
+    <nav class="flex flex-col gap-1 py-4" aria-label="Main mobile" data-test="nav-mobile">
+      {
+        nav.map((item) => (
+          <a
+            href={href(item.path)}
+            class:list={[
+              'rounded-chip px-3 py-2 font-mono text-label-md',
+              isActive(item.match) ? 'bg-surface text-primary' : 'text-muted hover:bg-surface hover:text-text',
+            ]}
+            aria-current={isActive(item.match) ? 'page' : undefined}
+            data-test={`nav-mobile-${item.label.toLowerCase()}`}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a href={href('/rss.xml')} class="flex items-center gap-1 rounded-chip px-3 py-2 font-mono text-label-md text-muted hover:bg-surface">
+        <Icon name="rss_feed" size={16} />
+        <span>RSS</span>
+      </a>
+    </nav>
+    <div class="flex items-center justify-between border-t border-border pt-4">
+      <span class="font-mono text-label-sm uppercase text-faint">Theme</span>
+      <ThemeToggle test="theme-toggle-mobile" />
+    </div>
+  </div>
+</header>
+
+<style>
+  .mobile-menu:popover-open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0 0 0 auto;
+  }
+  .mobile-menu::backdrop {
+    background-color: rgb(6 14 32 / 0.6);
+    backdrop-filter: blur(8px);
+  }
+</style>

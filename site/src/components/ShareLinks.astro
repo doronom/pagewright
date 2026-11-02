@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const linkedin = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+const itemClass =
+  'inline-flex items-center gap-1.5 rounded-chip border border-border px-3 py-1.5 font-mono text-label-sm text-muted transition-colors hover:border-border-strong hover:text-primary';
+---
+
+<div class="flex flex-wrap items-center gap-2" data-test="share">
+  <span class="font-mono text-label-sm uppercase text-faint">Share</span>
+  <a href={linkedin} class={itemClass} target="_blank" rel="noopener noreferrer" data-test="share-linkedin" aria-label={`Share "${title}" on LinkedIn`}>
+    <Icon name="linkedin" size={14} />
+    <span>LinkedIn</span>
+  </a>
+  <button type="button" class={itemClass} data-test="share-copy-link" data-copy-button data-copy={url}>
+    <Icon name="link" size={14} class="copy-icon" />
+    <Icon name="check" size={14} class="copied-icon hidden" />
+    <span class="copy-label">copy link</span>
+  </button>
+</div>

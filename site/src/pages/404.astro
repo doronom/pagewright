@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Button from '../components/Button.astro';
+import { href } from '../lib/url';
+import { getArticles } from '../lib/content';
+
+const latest = (await getArticles()).slice(0, 3);
+---
+
+<BaseLayout title="Page not found" description="This page does not exist." noindex>
+  <section class="flex flex-col items-start gap-4 rounded-card border border-border bg-surface-lowest p-6 sm:p-10" data-test="not-found">
+    <p class="chip uppercase text-error">404</p>
+    <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">Page not found</h1>
+    <p class="max-w-[60ch] text-body-lg text-muted">The page you are looking for does not exist or has moved.</p>
+    <div class="flex flex-wrap gap-4 pt-2">
+      <Button href={href('/')} icon="arrow_back" test="not-found-home">Back to home</Button>
+      <Button href={href('/articles/')} variant="secondary" test="not-found-articles">Latest articles</Button>
+    </div>
+  </section>
+  {
+    latest.length > 0 && (
+      <section class="flex flex-col gap-6" data-test="not-found-latest">
+        <h2 class="text-headline-lg text-text">Latest articles</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {latest.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+export type Status = 'passed' | 'failed' | 'flaky' | 'running' | 'published' | 'coming-soon';
+
+interface Props {
+  status: Status;
+  label?: string;
+  pulse?: boolean;
+  uppercase?: boolean;
+}
+
+const { status, label, pulse = false, uppercase = true } = Astro.props;
+const tone = {
+  passed: 'text-primary',
+  published: 'text-primary',
+  failed: 'text-error',
+  flaky: 'text-tertiary',
+  'coming-soon': 'text-tertiary',
+  running: 'text-secondary',
+}[status];
+const defaultLabel = { 'coming-soon': 'Coming soon' }[status as 'coming-soon'] ?? status;
+---
+
+<span
+  class:list={['chip whitespace-nowrap bg-surface-low', uppercase && 'uppercase', tone]}
+  data-test="status-badge"
+  data-test-status={status}
+>
+  <span class="relative inline-flex size-2" aria-hidden="true">
+    {pulse && <span class="absolute inline-flex size-full animate-ping rounded-pill bg-current opacity-60" />}
+    <span class="relative inline-flex size-2 rounded-pill bg-current"></span>
+  </span>
+  <span>{label ?? defaultLabel}</span>
+</span>

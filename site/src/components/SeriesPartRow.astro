@@ -1,0 +1,45 @@
+---
+import StatusBadge from './StatusBadge.astro';
+import { href } from '../lib/url';
+import { formatDate, isoDate, pad2 } from '../lib/format';
+import type { PartStatus } from '../lib/content';
+
+interface Props {
+  part: PartStatus;
+  compact?: boolean;
+}
+
+const { part, compact = false } = Astro.props;
+const article = part.article;
+const Tag = article ? 'a' : 'div';
+---
+
+<Tag
+  href={article ? href(`/articles/${article.id}/`) : undefined}
+  class:list={[
+    'group flex flex-col gap-1 rounded-chip border border-border bg-surface p-4',
+    article ? 'transition-colors hover:border-border-strong' : 'opacity-90',
+  ]}
+  data-test="series-part-row"
+  data-test-status={article ? 'published' : 'coming-soon'}
+  data-test-part={part.part}
+>
+  <div class="flex items-center justify-between gap-2 font-mono text-label-sm">
+    <span class="text-primary">Part {pad2(part.part)}</span>
+    {
+      article ? (
+        <time class="text-muted" datetime={isoDate(article.data.date)}>
+          {formatDate(article.data.date)}
+        </time>
+      ) : (
+        <StatusBadge status="coming-soon" />
+      )
+    }
+  </div>
+  <h3 class:list={['text-headline-sm text-text', article && 'transition-colors group-hover:text-primary']}>
+    {article ? article.data.title : part.title}
+  </h3>
+  <p class:list={['text-body-sm text-muted', compact && 'line-clamp-1']}>
+    {article ? article.data.description : part.summary}
+  </p>
+</Tag>

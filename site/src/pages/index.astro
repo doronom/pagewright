@@ -1,0 +1,134 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Button from '../components/Button.astro';
+import EmptyState from '../components/EmptyState.astro';
+import FeaturedCard from '../components/FeaturedCard.astro';
+import Icon from '../components/Icon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import TelemetryStrip from '../components/TelemetryStrip.astro';
+import { href } from '../lib/url';
+import { getAllSeriesStatus, getArticles, getPage, getProjects } from '../lib/content';
+
+const home = await getPage('home');
+const about = await getPage('about');
+const articles = await getArticles();
+const latest = articles.slice(0, 3);
+
+// Spotlight: the newest featured series; otherwise the newest featured article; otherwise hidden.
+const featuredSeries = (await getAllSeriesStatus()).find((s) => s.series.data.featured);
+const featuredArticle = featuredSeries ? undefined : articles.find((a) => a.data.featured);
+const featuredProject = (await getProjects()).find((p) => p.data.featured);
+const allSeries = await getCollection('series');
+
+const seriesHref = featuredSeries
+  ? href(`/series/${featuredSeries.series.id}/`)
+  : allSeries.length
+    ? href('/series/')
+    : undefined;
+const codeHref = featuredProject ? href(`/projects/#${featuredProject.id}`) : undefined;
+---
+
+<BaseLayout description={home.data.description}>
+  <section
+    class="relative overflow-hidden rounded-card border border-border bg-surface-lowest p-6 sm:p-10"
+    data-test="hero-section"
+  >
+    <div class="flex max-w-[75ch] flex-col items-start gap-4">
+      {
+        home.data.eyebrow && (
+          <p class="chip gap-2 px-2 py-1 uppercase text-muted">
+            <span class="size-1.5 rounded-pill bg-primary" aria-hidden="true" />
+            {home.data.eyebrow}
+          </p>
+        )
+      }
+      <div class="flex flex-col gap-1">
+        <h1 class="text-headline-xl text-text sm:text-display" data-test="page-title">{home.data.title}</h1>
+        {home.data.tagline && <p class="text-headline-lg text-primary sm:text-headline-xl" data-test="hero-tagline">{home.data.tagline}</p>}
+      </div>
+      {home.data.lead && <p class="text-body-lg text-muted">{home.data.lead}</p>}
+      <div class="flex flex-wrap items-center gap-4 pt-2">
+        {
+          seriesHref && home.data.primaryCta && (
+            <Button href={seriesHref} iconAfter="arrow_forward" test="cta-read-series">
+              {home.data.primaryCta}
+            </Button>
+          )
+        }
+        {
+          codeHref && home.data.secondaryCta && (
+            <Button href={codeHref} variant="secondary" icon="code" test="cta-view-code">
+              {home.data.secondaryCta}
+            </Button>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  {featuredSeries && <FeaturedCard kind="series" status={featuredSeries} />}
+  {featuredArticle && <FeaturedCard kind="article" article={featuredArticle} />}
+
+  <section class="flex flex-col gap-6" data-test="latest-articles-section">
+    <SectionHeader title="Latest articles" linkHref={latest.length ? href('/articles/') : undefined} linkLabel="View all articles" />
+    {
+      latest.length > 0 ? (
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {latest.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="No articles yet">The first articles are on their way.</EmptyState>
+      )
+    }
+  </section>
+
+  <section class="grid grid-cols-1 gap-6 lg:grid-cols-12" data-test="featured-project-and-about">
+    {
+      featuredProject && (
+        <div class:list={['flex', about ? 'lg:col-span-7' : 'lg:col-span-12']}>
+          <ProjectCard project={featuredProject} />
+        </div>
+      )
+    }
+    <div
+      class:list={[
+        'flex flex-col justify-between rounded-card border border-border bg-surface-low p-6',
+        featuredProject ? 'lg:col-span-5' : 'lg:col-span-12',
+      ]}
+      data-test="about-card"
+    >
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-2">
+          <Icon name="person" class="text-primary" />
+          <h2 class="text-headline-md font-bold text-text">{about.data.homeTitle ?? about.data.title}</h2>
+        </div>
+        {about.data.homeSummary && <p class="text-body-md text-muted">{about.data.homeSummary}</p>}
+        {
+          about.data.focusAreas.length > 0 && (
+            <div class="flex flex-col gap-2 pt-1">
+              {about.data.focusTitle && <span class="font-mono text-label-sm uppercase text-faint">{about.data.focusTitle}</span>}
+              <ul class="flex flex-wrap gap-1.5">
+                {about.data.focusAreas.map((area) => (
+                  <li class="chip px-2 py-1 text-text">{area}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+      <div class="mt-6 border-t border-border pt-6">
+        <a href={href('/about/')} class="flex items-center gap-1 font-mono text-label-md text-primary transition-colors hover:text-primary-hover" data-test="about-more">
+          <span>Read more</span>
+          <Icon name="arrow_forward" size={16} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <TelemetryStrip />
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleList from '../../components/ArticleList.astro';
+import { site } from '../../config/site';
+import { getArticles } from '../../lib/content';
+import { articlePageUrl } from '../../lib/paths';
+
+const articles = await getArticles();
+const total = Math.max(1, Math.ceil(articles.length / site.articlesPerPage));
+---
+
+<BaseLayout title="Articles" description="All articles, newest first.">
+  <ArticleList
+    title="Articles"
+    description="All articles, newest first."
+    articles={articles.slice(0, site.articlesPerPage)}
+    page={{ current: 1, total, urlFor: articlePageUrl }}
+  />
+</BaseLayout>

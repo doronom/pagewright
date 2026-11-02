@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  current: number;
+  total: number;
+  /** Builds the URL for a page number. */
+  urlFor: (page: number) => string;
+}
+
+const { current, total, urlFor } = Astro.props;
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+const linkClass =
+  'inline-flex min-w-9 items-center justify-center gap-1 rounded-chip border border-border px-3 py-1.5 font-mono text-label-md transition-colors hover:border-border-strong hover:text-primary';
+---
+
+{
+  total > 1 && (
+    <nav class="flex flex-wrap items-center justify-center gap-2" aria-label="Pagination" data-test="pagination">
+      {current > 1 && (
+        <a href={urlFor(current - 1)} class={linkClass} rel="prev" data-test="pagination-prev">
+          <Icon name="arrow_back" size={16} />
+          <span>Newer</span>
+        </a>
+      )}
+      {pages.map((page) =>
+        page === current ? (
+          <span class:list={[linkClass, 'border-primary text-primary']} aria-current="page">
+            {page}
+          </span>
+        ) : (
+          <a href={urlFor(page)} class:list={[linkClass, 'text-muted']} data-test="pagination-page">
+            {page}
+          </a>
+        ),
+      )}
+      {current < total && (
+        <a href={urlFor(current + 1)} class={linkClass} rel="next" data-test="pagination-next">
+          <span>Older</span>
+          <Icon name="arrow_forward" size={16} />
+        </a>
+      )}
+    </nav>
+  )
+}

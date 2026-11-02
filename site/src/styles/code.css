@@ -1,0 +1,49 @@
+/* Code blocks produced by Shiki (css-variables theme) with the site-code transformer. */
+.code-frame {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-chip);
+  background: var(--surface-lowest);
+  overflow: hidden;
+}
+.code-frame pre.astro-code {
+  margin: 0;
+  padding: 1rem 0;
+  background: var(--surface-lowest) !important;
+  color: var(--astro-code-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-x: auto;
+  tab-size: 2;
+}
+.code-frame pre.astro-code code {
+  display: grid;
+  min-width: max-content;
+}
+.code-frame .line {
+  display: block;
+  padding-inline: 1rem 1.25rem;
+  border-left: 2px solid transparent;
+  min-height: 1lh;
+}
+.code-frame .code-lines .line::before {
+  content: attr(data-line);
+  display: inline-block;
+  width: 3ch;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--text-faint);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.code-frame .line.highlighted {
+  background: var(--line-highlight);
+  border-left-color: var(--primary);
+}
+@media (max-width: 639px) {
+  .prose .code-frame {
+    margin-inline: -1.25rem;
+    border-radius: 0;
+    border-inline: 0;
+  }
+}

@@ -1,0 +1,19 @@
+---
+title: How this site is tested
+description: The Playwright tests that run against this site before every deploy.
+---
+
+This site is tested with Playwright before every deploy. The tests run against the production build, served locally the same way GitHub Pages serves it. If any test fails, the site is not deployed.
+
+## What the tests cover
+
+- **Routes:** every page in the sitemap returns 200 and renders exactly one main heading; the RSS feed and the sitemap are served.
+- **Links:** every internal link on every page resolves; there are no broken links.
+- **Theme:** the theme toggle switches between light and dark, and the choice persists across page loads.
+- **Copy buttons:** the copy button on code blocks puts the exact code on the clipboard.
+- **Small screens:** at 360 px wide, no page scrolls horizontally, and the mobile menu opens and navigates.
+- **Not found:** an unknown URL shows the 404 page with links home and to the articles.
+- **Article layout:** a separate build that includes draft articles checks the table of contents, code blocks quoted from the repository, callouts, diagrams and series navigation. That build is never deployed.
+- **Contrast:** text colors meet WCAG AA contrast against their backgrounds in both themes.
+
+Tests select elements by their `data-test` attributes, never by CSS classes, so styling changes do not break them.

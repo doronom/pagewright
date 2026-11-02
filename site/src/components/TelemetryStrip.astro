@@ -1,0 +1,44 @@
+---
+import Icon from './Icon.astro';
+import { href } from '../lib/url';
+import { formatDate } from '../lib/format';
+import { formatDuration, loadTestSummary } from '../lib/testSummary';
+
+// Renders only when the site's own test run produced a summary. Every number comes from that file.
+const summary = loadTestSummary();
+---
+
+{
+  summary && (
+    <section
+      class="flex flex-wrap items-center justify-between gap-4 rounded-card border border-border bg-surface-lowest p-4"
+      data-test="suite-telemetry"
+    >
+      <div class="flex flex-wrap items-center gap-4 font-mono text-label-sm text-muted">
+        <span class="flex items-center gap-1" data-test="telemetry-passed">
+          <Icon name="done_all" size={14} class="text-primary" />
+          {summary.passed} passed
+        </span>
+        <span class="text-border" aria-hidden="true">•</span>
+        <span class:list={['flex items-center gap-1', summary.failed > 0 && 'text-error']} data-test="telemetry-failed">
+          <Icon name={summary.failed > 0 ? 'error' : 'check_circle'} size={14} class={summary.failed > 0 ? '' : 'text-primary'} />
+          {summary.failed} failed
+        </span>
+        <span class="text-border" aria-hidden="true">•</span>
+        <span class="flex items-center gap-1" data-test="telemetry-duration">
+          <Icon name="timer" size={14} class="text-primary" />
+          {formatDuration(summary.durationMs)}
+        </span>
+        <span class="text-border" aria-hidden="true">•</span>
+        <span class="flex items-center gap-1" data-test="telemetry-date">
+          <Icon name="schedule" size={14} class="text-primary" />
+          {formatDate(new Date(summary.date))}
+        </span>
+      </div>
+      <a href={href('/testing/')} class="flex items-center gap-1 font-mono text-label-sm text-faint transition-colors hover:text-primary">
+        <span>How this site is tested</span>
+        <Icon name="arrow_forward" size={14} />
+      </a>
+    </section>
+  )
+}

@@ -1,0 +1,55 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { href } from '../lib/url';
+import { formatDate } from '../lib/format';
+import { loadTestSummary } from '../lib/testSummary';
+
+const summary = loadTestSummary();
+const year = new Date().getFullYear();
+const links = [
+  { label: 'GitHub', url: site.links.github, icon: 'github' as const, external: true },
+  { label: 'LinkedIn', url: site.links.linkedin, icon: 'linkedin' as const, external: true },
+  { label: 'RSS', url: href('/rss.xml'), icon: 'rss_feed' as const, external: false },
+  { label: 'Email', url: `mailto:${site.links.email}`, icon: 'mail' as const, external: false },
+];
+---
+
+<footer class="mt-auto border-t border-border bg-surface-lowest" data-test="footer">
+  <div
+    class="mx-auto flex w-full max-w-[var(--container)] flex-col items-center justify-between gap-4 px-5 py-10 sm:px-6 md:flex-row"
+  >
+    <div class="flex flex-col items-center gap-1 text-center md:items-start md:text-left">
+      <p class="text-body-sm text-muted" data-test="footer-copyright">
+        <span class="font-mono text-label-md font-semibold text-text">{site.name}</span>
+        <span class="mx-2 text-border" aria-hidden="true">|</span>
+        &copy; {year} {site.name}
+      </p>
+      {
+        summary && (
+          <p class="font-mono text-label-sm text-faint" data-test="footer-test-line">
+            <a href={href('/testing/')} class="hover:text-primary">
+              Site tests: {summary.passed} passed, {summary.failed} failed · run {formatDate(new Date(summary.date))}
+            </a>
+          </p>
+        )
+      }
+    </div>
+    <nav class="flex flex-wrap items-center justify-center gap-4 font-mono text-label-sm" aria-label="Footer" data-test="footer-links">
+      {
+        links.map((link) => (
+          <a
+            href={link.url}
+            class="inline-flex items-center gap-1.5 text-muted transition-colors hover:text-primary"
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+            data-test={`footer-${link.label.toLowerCase()}`}
+          >
+            <Icon name={link.icon} size={14} />
+            <span>{link.label}</span>
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</footer>

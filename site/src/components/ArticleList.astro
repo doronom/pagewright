@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+import EmptyState from './EmptyState.astro';
+import Pagination from './Pagination.astro';
+import TagChip from './TagChip.astro';
+import { href } from '../lib/url';
+import { getArticles, getTags, getTypes, type Article } from '../lib/content';
+
+interface Props {
+  title: string;
+  description?: string;
+  articles: Article[];
+  page?: { current: number; total: number; urlFor: (page: number) => string };
+  activeTag?: string;
+  activeType?: string;
+  emptyText?: string;
+}
+
+const { title, description, articles, page, activeTag, activeType, emptyText } = Astro.props;
+const published = await getArticles();
+const hasAny = published.length > 0;
+const tags = await getTags();
+const types = await getTypes();
+const seriesIds = new Set(published.flatMap((a) => (a.data.series ? [a.data.series.id] : [])));
+const seriesWithArticles = (await getCollection('series')).filter((s) => seriesIds.has(s.id));
+const typeLabels = { article: 'Articles', note: 'Notes', talk: 'Talks' } as const;
+const filterLink = 'chip transition-colors hover:border-border-strong hover:text-primary';
+---
+
+<header class="flex flex-col gap-2">
+  <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">{title}</h1>
+  {description && <p class="max-w-[75ch] text-body-lg text-muted">{description}</p>}
+</header>
+
+{
+  hasAny && (
+    <div class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-4" data-test="article-filters">
+      {tags.length > 0 && (
+        <div class="flex flex-wrap items-center gap-2" data-test="filter-tags">
+          <span class="w-16 font-mono text-label-sm uppercase text-faint">Tags</span>
+          {tags.map((tag) => (
+            <TagChip tag={tag.name} count={tag.count} active={tag.slug === activeTag} />
+          ))}
+        </div>
+      )}
+      {seriesWithArticles.length > 0 && (
+        <div class="flex flex-wrap items-center gap-2" data-test="filter-series">
+          <span class="w-16 font-mono text-label-sm uppercase text-faint">Series</span>
+          {seriesWithArticles.map((s) => (
+            <a href={href(`/series/${s.id}/`)} class:list={[filterLink, 'text-faint']} data-test="filter-series-link">
+              {s.data.title}
+            </a>
+          ))}
+        </div>
+      )}
+      {types.length > 1 && (
+        <div class="flex flex-wrap items-center gap-2" data-test="filter-types">
+          <span class="w-16 font-mono text-label-sm uppercase text-faint">Type</span>
+          {types.map(({ type, count }) => (
+            <a
+              href={href(`/types/${type}/`)}
+              class:list={[filterLink, type === activeType ? 'border-primary text-primary' : 'text-faint']}
+              aria-current={type === activeType ? 'page' : undefined}
+              data-test="filter-type-link"
+            >
+              {typeLabels[type]} <span class="text-faint">{count}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+{
+  articles.length > 0 ? (
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" data-test="article-list">
+      {articles.map((article) => (
+        <ArticleCard article={article} headingLevel="h2" />
+      ))}
+    </div>
+  ) : (
+    <EmptyState title="No articles yet">{emptyText ?? 'Articles will appear here once they are published.'}</EmptyState>
+  )
+}
+
+{page && <Pagination current={page.current} total={page.total} urlFor={page.urlFor} />}

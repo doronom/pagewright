@@ -1,0 +1,108 @@
+---
+import type { MarkdownHeading } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const items = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length > 0 && (
+    <nav aria-label="Table of contents" data-test="toc" data-toc>
+      <details class="toc-details group rounded-card border border-border bg-surface-low lg:border-0 lg:bg-transparent" open>
+        <summary
+          class="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-mono text-label-sm uppercase text-faint lg:cursor-default lg:px-0 lg:pt-0"
+          data-test="toc-toggle"
+        >
+          <span>On this page</span>
+          <Icon name="expand_more" size={18} class="transition-transform group-open:rotate-180 lg:hidden" />
+        </summary>
+        <ol class="flex flex-col gap-1 border-l border-border px-4 pb-4 lg:px-0 lg:pb-0">
+          {items.map((h) => (
+            <li>
+              <a
+                href={`#${h.slug}`}
+                class:list={[
+                  'toc-link -ml-px block border-l-2 border-transparent py-1 text-body-sm text-muted transition-colors hover:text-text',
+                  h.depth === 3 ? 'pl-7' : 'pl-4',
+                ]}
+                data-test="toc-link"
+                data-slug={h.slug}
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </nav>
+  )
+}
+
+<style>
+  .toc-link[aria-current='true'] {
+    color: var(--primary);
+    border-left-color: var(--primary);
+  }
+  .toc-details summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script>
+  // Highlights the heading currently in view and keeps the list open on desktop.
+  function setupToc() {
+    const toc = document.querySelector<HTMLElement>('[data-toc]');
+    if (!toc) return;
+    const details = toc.querySelector('details');
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    // Open on desktop, collapsed by default on mobile.
+    const syncOpen = () => {
+      if (details) details.open = desktop.matches;
+    };
+    syncOpen();
+    desktop.addEventListener('change', syncOpen);
+    details?.querySelector('summary')?.addEventListener('click', (event) => {
+      if (desktop.matches) event.preventDefault();
+    });
+
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[data-slug]')];
+    const headings = links
+      .map((link) => document.getElementById(link.dataset.slug ?? ''))
+      .filter((el): el is HTMLElement => el !== null);
+    const setActive = (id: string) => {
+      for (const link of links) {
+        link.setAttribute('aria-current', String(link.dataset.slug === id));
+      }
+    };
+    const update = () => {
+      let current = headings[0]?.id;
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= 120) current = heading.id;
+      }
+      // At the end of the page the last headings can never reach the top; activate the last one.
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom && headings.length) current = headings[headings.length - 1].id;
+      if (current) setActive(current);
+    };
+    for (const link of links) {
+      link.addEventListener('click', () => {
+        if (link.dataset.slug) requestAnimationFrame(() => setActive(link.dataset.slug!));
+      });
+    }
+    let frame = 0;
+    window.addEventListener(
+      'scroll',
+      () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+    update();
+  }
+  setupToc();
+</script>

@@ -1,0 +1,94 @@
+/*
+ * Design tokens: the single place for colors, radii and layout sizes.
+ * Dark values: code.html / DESIGN.md frontmatter (they match screen.png).
+ * Light values: DESIGN.md "Light Mode Adaptation"; values marked "derived" are not specified there
+ * and come from the same slate/teal scale. tests/contrast.spec.ts checks WCAG AA for text tokens.
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1326;
+  --surface-lowest: #060e20;
+  --surface-low: #131b2e;
+  --surface: #171f33;
+  --surface-high: #222a3d;
+  --border: #3d4947;
+  --border-strong: #879391;
+  --text: #dae2fd;
+  --text-muted: #bcc9c6;
+  --text-faint: #879391;
+  --primary: #6bd8cb;
+  --primary-hover: #89f5e7;
+  --on-primary: #003732;
+  --primary-container: #29a195;
+  --on-primary-container: #00302b;
+  --secondary: #c0c1ff;
+  --tertiary: #ffb95f;
+  --error: #ffb4ab;
+  --selection-bg: #29a195;
+  --selection-text: #00302b;
+  --line-highlight: rgb(107 216 203 / 0.12);
+
+  --astro-code-foreground: #dae2fd;
+  --astro-code-background: transparent;
+  --astro-code-token-keyword: #c0c1ff;
+  --astro-code-token-function: #6bd8cb;
+  --astro-code-token-string: #ffb95f;
+  --astro-code-token-string-expression: #ffb95f;
+  --astro-code-token-constant: #ffddb8;
+  --astro-code-token-parameter: #dae2fd;
+  --astro-code-token-comment: #879391;
+  --astro-code-token-punctuation: #bcc9c6;
+  --astro-code-token-link: #6bd8cb;
+  --astro-code-token-inserted: #6bd8cb;
+  --astro-code-token-deleted: #ffb4ab;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --surface-lowest: #ffffff;
+  --surface-low: #ffffff;
+  --surface: #f1f5f9; /* derived */
+  --surface-high: #e2e8f0; /* derived */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1; /* derived */
+  --text: #0f172a;
+  --text-muted: #475569; /* derived */
+  --text-faint: #5f6f86; /* derived; #64748b failed AA on --surface (4.34:1) */
+  --primary: #0f766e;
+  --primary-hover: #115e59; /* derived */
+  --on-primary: #ffffff; /* derived */
+  --primary-container: #99f6e4; /* derived */
+  --on-primary-container: #0f172a; /* derived */
+  --secondary: #4f46e5;
+  --tertiary: #b45309;
+  --error: #be123c; /* derived */
+  --selection-bg: #99f6e4; /* derived */
+  --selection-text: #0f172a;
+  --line-highlight: rgb(15 118 110 / 0.1);
+
+  --astro-code-foreground: #0f172a;
+  --astro-code-background: transparent;
+  --astro-code-token-keyword: #4f46e5;
+  --astro-code-token-function: #0f766e;
+  --astro-code-token-string: #b45309;
+  --astro-code-token-string-expression: #b45309;
+  --astro-code-token-constant: #9a3412;
+  --astro-code-token-parameter: #0f172a;
+  --astro-code-token-comment: #5f6f86;
+  --astro-code-token-punctuation: #475569;
+  --astro-code-token-link: #0f766e;
+  --astro-code-token-inserted: #0f766e;
+  --astro-code-token-deleted: #be123c;
+}
+
+:root {
+  /* Radii matched to screen.png: chips, buttons, inner cards and code frames 4px; sections and cards 8px. */
+  --radius-chip: 4px;
+  --radius-card: 8px;
+  --radius-pill: 9999px;
+  --container: 1320px;
+  --measure: 75ch;
+}

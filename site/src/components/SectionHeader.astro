@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  linkHref?: string;
+  linkLabel?: string;
+  as?: 'h1' | 'h2';
+  test?: string;
+}
+
+const { title, linkHref, linkLabel, as: Tag = 'h2', test } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+  <Tag class="text-headline-lg text-text" data-test={test}>{title}</Tag>
+  {
+    linkHref && linkLabel && (
+      <a
+        href={linkHref}
+        class="inline-flex items-center gap-1 font-mono text-label-md text-primary transition-colors hover:text-primary-hover"
+      >
+        <span>{linkLabel}</span>
+        <Icon name="arrow_forward" size={16} />
+      </a>
+    )
+  }
+</div>

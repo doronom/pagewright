@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  icon?: IconName;
+  iconAfter?: IconName;
+  external?: boolean;
+  test?: string;
+}
+
+const { href, variant = 'primary', icon, iconAfter, external = false, test } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    'inline-flex items-center gap-1.5 rounded-chip border px-5 py-2.5 font-mono text-label-md transition-colors',
+    variant === 'primary'
+      ? 'border-transparent bg-primary text-on-primary hover:bg-primary-hover'
+      : 'border-border bg-transparent text-text hover:border-border-strong hover:bg-surface-low',
+  ]}
+  data-test={test ?? `btn-${variant}`}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+>
+  {icon && <Icon name={icon} size={16} />}
+  <span><slot /></span>
+  {iconAfter && <Icon name={iconAfter} size={16} />}
+</a>

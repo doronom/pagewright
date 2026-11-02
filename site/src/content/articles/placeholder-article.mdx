@@ -1,0 +1,66 @@
+---
+title: Placeholder article
+description: 'PLACEHOLDER: a draft that exercises every article component. It never ships.'
+date: 2026-11-02
+type: article
+series: config-driven-framework
+seriesPart: 1
+tags: [placeholder, layout]
+draft: true
+---
+
+PLACEHOLDER: this draft exists only to test the article layout in dev and in the drafts-included test build. It is never part of the production build.
+
+## Code quoted from the repository
+
+<RepoCode file="core/page/DynamicPage.ts" lines="58-75" highlight="59-62" />
+
+## A plain code block
+
+```ts title="example.ts" {2}
+const greeting = 'placeholder';
+console.log(greeting);
+```
+
+## Callouts
+
+<Callout type="note">PLACEHOLDER: a note callout.</Callout>
+
+<Callout type="tip" title="Best practice">PLACEHOLDER: a tip callout with a custom label.</Callout>
+
+<Callout type="warning">PLACEHOLDER: a warning callout.</Callout>
+
+## A table
+
+| Column | Description |
+| --- | --- |
+| `alpha` | PLACEHOLDER: first row. |
+| `beta` | PLACEHOLDER: second row. |
+
+## A diagram
+
+<Diagram caption="Figure 1: PLACEHOLDER diagram" id="figure-1">
+  <svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three placeholder boxes connected by arrows">
+    <g fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="20" y="50" width="160" height="60" rx="4" />
+      <rect x="240" y="50" width="160" height="60" rx="4" />
+      <rect x="460" y="50" width="160" height="60" rx="4" />
+      <path d="M180 80h60M400 80h60" />
+    </g>
+    <g fill="currentColor" font-family="JetBrains Mono, monospace" font-size="14" text-anchor="middle">
+      <text x="100" y="85">step one</text>
+      <text x="320" y="85">step two</text>
+      <text x="540" y="85">step three</text>
+    </g>
+  </svg>
+</Diagram>
+
+## Headings for the table of contents
+
+### A third-level heading
+
+PLACEHOLDER: text under a third-level heading.
+
+### Another third-level heading
+
+PLACEHOLDER: more text so the table of contents has something to highlight while scrolling.

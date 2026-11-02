@@ -1,0 +1,93 @@
+---
+import { getEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import SeriesPartRow from './SeriesPartRow.astro';
+import SeriesProgress from './SeriesProgress.astro';
+import ProjectCard from './ProjectCard.astro';
+import { href } from '../lib/url';
+import { formatDate, isoDate } from '../lib/format';
+import { minutesFor, type Article, type Project, type SeriesStatus } from '../lib/content';
+
+type Props =
+  | { kind: 'series'; status: SeriesStatus }
+  | { kind: 'article'; article: Article }
+  | { kind: 'project'; project: Project };
+
+const props = Astro.props;
+
+function spotlightParts(status: SeriesStatus) {
+  const published = status.parts.filter((p) => p.article).slice(-2);
+  const upcoming = status.parts.filter((p) => !p.article).slice(0, 2 - published.length);
+  return [...published, ...upcoming].sort((a, b) => a.part - b.part);
+}
+
+function seriesState(status: SeriesStatus): string {
+  if (status.published === 0) return 'Not started';
+  return status.published === status.series.data.plannedParts ? 'Complete' : 'In progress';
+}
+
+const articleSeries = props.kind === 'article' && props.article.data.series ? await getEntry(props.article.data.series) : undefined;
+---
+
+{
+  props.kind === 'series' && (
+    <section class="rounded-card border border-border bg-surface-low p-6 sm:p-10" data-test="featured-card" data-test-kind="series">
+      <div class="flex flex-col justify-between gap-2 border-b border-border pb-6 md:flex-row md:items-center">
+        <div class="flex flex-wrap items-center gap-2 font-mono text-label-sm text-muted">
+          <span class="chip text-tertiary">SERIES SPOTLIGHT</span>
+          <span data-test="featured-series-count">
+            {props.status.published} of {props.status.series.data.plannedParts} published · {seriesState(props.status)}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 items-center gap-6 pt-6 lg:grid-cols-12">
+        <div class="flex flex-col gap-4 lg:col-span-7">
+          <h2 class="text-headline-lg text-text">
+            <a href={href(`/series/${props.status.series.id}/`)} class="transition-colors hover:text-primary" data-test="featured-title">
+              {props.status.series.data.title}
+            </a>
+          </h2>
+          <p class="text-body-md text-muted">{props.status.series.data.summary}</p>
+          <SeriesProgress published={props.status.published} planned={props.status.series.data.plannedParts} />
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
+          {spotlightParts(props.status).map((part) => (
+            <SeriesPartRow part={part} compact />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+{
+  props.kind === 'article' && (
+    <section class="rounded-card border border-border bg-surface-low p-6 sm:p-10" data-test="featured-card" data-test-kind="article">
+      <div class="flex flex-wrap items-center gap-2 border-b border-border pb-6 font-mono text-label-sm text-muted">
+        <span class="chip text-tertiary">FEATURED</span>
+        {articleSeries && (
+          <span class="text-primary">
+            Series: Part {props.article.data.seriesPart} of {articleSeries.data.plannedParts}
+          </span>
+        )}
+        <span>{minutesFor(props.article)} min read</span>
+        <time datetime={isoDate(props.article.data.date)}>{formatDate(props.article.data.date)}</time>
+      </div>
+      <div class="flex max-w-[75ch] flex-col gap-4 pt-6">
+        <h2 class="text-headline-lg text-text">
+          <a href={href(`/articles/${props.article.id}/`)} class="transition-colors hover:text-primary" data-test="featured-title">
+            {props.article.data.title}
+          </a>
+        </h2>
+        <p class="text-body-md text-muted">{props.article.data.description}</p>
+        <a
+          href={href(`/articles/${props.article.id}/`)}
+          class="inline-flex items-center gap-1 font-mono text-label-md text-primary hover:text-primary-hover"
+        >
+          <span>Read the article</span>
+          <Icon name="arrow_forward" size={16} />
+        </a>
+      </div>
+    </section>
+  )
+}
+{props.kind === 'project' && <ProjectCard project={props.project} variant="expanded" />}

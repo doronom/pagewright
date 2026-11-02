@@ -1,0 +1,57 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+import { getPage } from '../lib/content';
+import { mdxComponents } from '../lib/mdxComponents';
+
+const about = await getPage('about');
+const { Content } = await render(about);
+const contacts = [
+  { label: 'GitHub', url: site.links.github, icon: 'github' as const },
+  { label: 'LinkedIn', url: site.links.linkedin, icon: 'linkedin' as const },
+  { label: 'Email', url: `mailto:${site.links.email}`, icon: 'mail' as const },
+];
+---
+
+<BaseLayout title={about.data.title} description={about.data.description}>
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-12">
+    <div class="flex flex-col gap-6 lg:col-span-8">
+      <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">{about.data.title}</h1>
+      <div class="prose" data-test="about-body"><Content components={mdxComponents} /></div>
+    </div>
+    <aside class="flex flex-col gap-6 lg:col-span-4">
+      {
+        about.data.focusAreas.length > 0 && (
+          <section class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-6" data-test="focus-areas">
+            <h2 class="font-mono text-label-sm uppercase text-faint">{about.data.focusTitle ?? 'Focus areas'}</h2>
+            <ul class="flex flex-wrap gap-1.5">
+              {about.data.focusAreas.map((area) => (
+                <li class="chip px-2 py-1 text-text">{area}</li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      <section class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-6" data-test="contact-links">
+        <h2 class="font-mono text-label-sm uppercase text-faint">Contact</h2>
+        <ul class="flex flex-col gap-2">
+          {contacts.map((c) => (
+            <li>
+              <a
+                href={c.url}
+                class="inline-flex items-center gap-2 text-body-md text-muted transition-colors hover:text-primary"
+                target={c.url.startsWith('mailto:') ? undefined : '_blank'}
+                rel={c.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+              >
+                <Icon name={c.icon} size={18} />
+                <span>{c.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </aside>
+  </div>
+</BaseLayout>

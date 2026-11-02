@@ -1,0 +1,100 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import SeriesNav from '../components/SeriesNav.astro';
+import ShareLinks from '../components/ShareLinks.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import TagChip from '../components/TagChip.astro';
+import TypeBadge from '../components/TypeBadge.astro';
+import { href } from '../lib/url';
+import { formatDate, isoDate } from '../lib/format';
+import { getRelated, getSeriesStatus, minutesFor, type Article } from '../lib/content';
+
+interface Props {
+  article: Article;
+  headings: MarkdownHeading[];
+}
+
+const { article, headings } = Astro.props;
+const { data } = article;
+const series = data.series ? await getEntry(data.series) : undefined;
+const seriesStatus = series ? await getSeriesStatus(series) : undefined;
+const related = await getRelated(article);
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<BaseLayout title={data.title} description={data.description} image={data.cover?.src} type="article" noindex={data.draft}>
+  <article class="grid grid-cols-1 gap-10 lg:grid-cols-12" data-test="article">
+    <header class="flex flex-col gap-4 lg:col-span-12" data-test="article-header">
+      <div class="flex flex-wrap items-center gap-2">
+        {
+          series && (
+            <a
+              href={href(`/series/${series.id}/`)}
+              class="chip text-primary hover:border-border-strong"
+              data-test="series-badge"
+            >
+              Part {data.seriesPart} of {series.data.plannedParts}
+            </a>
+          )
+        }
+        <TypeBadge type={data.type} />
+        {data.draft && <span class="chip uppercase text-error" data-test="draft-badge">Draft</span>}
+      </div>
+      <h1 class="max-w-[30ch] text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">{data.title}</h1>
+      <p class="max-w-[75ch] text-body-lg text-muted" data-test="article-description">{data.description}</p>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-label-sm text-muted" data-test="article-meta">
+        <time datetime={isoDate(data.date)} data-test="article-date">{formatDate(data.date)}</time>
+        {
+          data.updated && (
+            <span data-test="article-updated">
+              Updated <time datetime={isoDate(data.updated)}>{formatDate(data.updated)}</time>
+            </span>
+          )
+        }
+        <span data-test="reading-time">{minutesFor(article)} min read</span>
+      </div>
+      {
+        data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5" data-test="article-tags">
+            {data.tags.map((tag) => (
+              <TagChip tag={tag} />
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <aside class="lg:order-2 lg:col-span-3">
+      <div class="lg:sticky lg:top-20">
+        <TableOfContents headings={headings} />
+      </div>
+    </aside>
+
+    <div class="flex min-w-0 flex-col gap-10 lg:order-1 lg:col-span-9">
+      <div class="prose" data-test="article-body">
+        <slot />
+      </div>
+
+      {seriesStatus && <SeriesNav status={seriesStatus} current={article} />}
+
+      <footer class="flex flex-col gap-6 border-t border-border pt-6" data-test="article-footer">
+        <ShareLinks url={canonical} title={data.title} />
+        {
+          related.length > 0 && (
+            <section class="flex flex-col gap-4" data-test="related-articles">
+              <h2 class="text-headline-md text-text">Related articles</h2>
+              <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {related.map((a) => (
+                  <ArticleCard article={a} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </footer>
+    </div>
+  </article>
+</BaseLayout>

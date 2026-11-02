@@ -1,0 +1,93 @@
+name: Deploy site
+
+# Builds the site in site/, runs its Playwright tests against the built output, then rebuilds with
+# the test summary and deploys to GitHub Pages. If any step fails, nothing deploys.
+# core/ and clients/ are included because RepoCode quotes files from them at build time.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'core/**'
+      - 'clients/**'
+      - '.github/workflows/deploy-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Set site URL, base path and repository
+        run: |
+          echo "SITE_URL=${{ steps.pages.outputs.origin }}" >> "$GITHUB_ENV"
+          echo "SITE_BASE=${{ steps.pages.outputs.base_path }}" >> "$GITHUB_ENV"
+          echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> "$GITHUB_ENV"
+
+      - name: Typecheck and lint
+        run: npm run typecheck && npm run lint
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Build (production and drafts-included)
+        run: npm run build && npm run build:drafts
+
+      - name: Run site tests
+        run: npm test
+
+      # Runs only if the tests passed (a failed step stops the job). Picks up
+      # src/data/test-summary.json written by the test run; a failure here fails the workflow.
+      - name: Rebuild with test summary
+        run: |
+          test -f src/data/test-summary.json
+          npm run build
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-playwright-report
+          path: site/playwright-report/
+          retention-days: 14
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

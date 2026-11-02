@@ -1,0 +1,68 @@
+---
+import Icon from './Icon.astro';
+import { href } from '../lib/url';
+import { pad2 } from '../lib/format';
+import type { Article, SeriesStatus } from '../lib/content';
+
+interface Props {
+  status: SeriesStatus;
+  current: Article;
+}
+
+const { status, current } = Astro.props;
+const index = status.parts.findIndex((p) => p.part === current.data.seriesPart);
+const prev = status.parts[index - 1];
+const next = status.parts[index + 1];
+const neighbours = [
+  { part: prev, dir: 'prev' as const, label: 'Previous' },
+  { part: next, dir: 'next' as const, label: 'Next' },
+];
+---
+
+<nav class="flex flex-col gap-4 rounded-card border border-border bg-surface-low p-6" data-test="series-nav" aria-label="Series navigation">
+  <a
+    href={href(`/series/${status.series.id}/`)}
+    class="font-mono text-label-sm text-primary hover:text-primary-hover"
+    data-test="series-nav-index"
+  >
+    {status.series.data.title} · Part {current.data.seriesPart} of {status.series.data.plannedParts}
+  </a>
+  <div class="grid gap-4 sm:grid-cols-2">
+    {
+      neighbours.map(({ part, dir, label }) =>
+        part ? (
+          part.article ? (
+            <a
+              href={href(`/articles/${part.article.id}/`)}
+              class:list={[
+                'group flex flex-col gap-1 rounded-chip border border-border bg-surface p-4 transition-colors hover:border-border-strong',
+                dir === 'next' && 'sm:text-right',
+              ]}
+              data-test={`series-nav-${dir}`}
+            >
+              <span class:list={['flex items-center gap-1 font-mono text-label-sm text-muted', dir === 'next' && 'sm:justify-end']}>
+                {dir === 'prev' && <Icon name="arrow_back" size={14} />}
+                {label} · Part {pad2(part.part)}
+                {dir === 'next' && <Icon name="arrow_forward" size={14} />}
+              </span>
+              <span class="text-headline-sm text-text group-hover:text-primary">{part.article.data.title}</span>
+            </a>
+          ) : (
+            <div
+              class:list={['flex flex-col gap-1 rounded-chip border border-dashed border-border p-4', dir === 'next' && 'sm:text-right']}
+              data-test={`series-nav-${dir}`}
+              data-test-status="coming-soon"
+            >
+              <span class="font-mono text-label-sm text-muted">
+                {label} · Part {pad2(part.part)} · coming soon
+              </span>
+              <span class="text-headline-sm text-muted">{part.title}</span>
+            </div>
+          )
+        ) : (
+          <div class="hidden sm:block" />
+        ),
+      )
+    }
+  </div>
+</nav>

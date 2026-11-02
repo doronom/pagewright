@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import SeriesCard from '../../components/SeriesCard.astro';
+import { getAllSeriesStatus } from '../../lib/content';
+
+const statuses = await getAllSeriesStatus();
+---
+
+<BaseLayout title="Series" description="Multi-part article series.">
+  <header class="flex flex-col gap-2">
+    <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">Series</h1>
+    <p class="max-w-[75ch] text-body-lg text-muted">Multi-part article series, each planned up front.</p>
+  </header>
+  {
+    statuses.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2" data-test="series-list">
+        {statuses.map((status) => (
+          <SeriesCard status={status} />
+        ))}
+      </div>
+    ) : (
+      <EmptyState title="No series yet">Series will appear here once they are planned.</EmptyState>
+    )
+  }
+</BaseLayout>

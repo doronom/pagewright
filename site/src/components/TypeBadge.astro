@@ -1,0 +1,16 @@
+---
+interface Props {
+  type: 'article' | 'note' | 'talk';
+}
+
+const { type } = Astro.props;
+const label = { article: 'Article', note: 'Note', talk: 'Talk' }[type];
+---
+
+{
+  type !== 'article' && (
+    <span class="chip uppercase text-tertiary" data-test="type-badge" data-test-type={type}>
+      {label}
+    </span>
+  )
+}

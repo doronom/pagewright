@@ -1,0 +1,10 @@
+---
+// Wraps fenced Markdown code blocks (already highlighted by Shiki) in the code frame.
+import CodeFrame from './CodeFrame.astro';
+
+const { 'data-file': file, 'data-language': lang, ...rest } = Astro.props as Record<string, string>;
+---
+
+<CodeFrame file={file} lang={lang}>
+  <pre {...rest} data-language={lang}><slot /></pre>
+</CodeFrame>
