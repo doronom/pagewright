@@ -15,7 +15,7 @@ const client: ClientDefinition = {
     inventory: inventoryPage,
     cart: cartPage,
   },
-  auth: new ExampleAuth(),
+  auth: new ExampleAuth(() => client),
   createApiClient: (logger) => new ExampleApiClient(client, logger),
 };
 
