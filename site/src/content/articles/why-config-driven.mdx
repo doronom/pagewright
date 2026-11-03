@@ -29,7 +29,7 @@ The problem isn't page objects themselves. It's what they mix together. Every pa
 - **What** you do with it (fill, click, select): almost never changes.
 - **How** to do it reliably (waits, retries, logging): the same across the whole project.
 
-The framework separates the three. The *where* and the *what* are written as data in a page config. The common *how* is written once, in a generic engine; only genuinely app-specific behavior still needs code. The approach grew out of a large production automation project that covered several applications, and was later extracted into an open template, <a href={site.repoUrl}>qa-template</a>.
+The framework separates the three. The *where* and the *what* are written as data in a page config. The common *how* is written once, in a generic engine; only genuinely app-specific behavior still needs code. The approach grew out of a large production automation project that covered several applications, and was later extracted into an open template, <a href={site.repoUrl}>Pagewright</a>.
 
 All examples run against [Toolshop](https://practicesoftwaretesting.com), a public practice application with a UI and an API behind it. The original framework tested internal systems that can't be shown. Toolshop has the same shape: a web UI, an API with token-based login, and flows that combine the two. The architecture and the lessons come from the production framework.
 

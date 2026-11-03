@@ -1,4 +1,6 @@
-# qa-template
+# Pagewright
+
+Config-driven test automation for Playwright.
 
 A small, client-extendable Playwright + TypeScript automation template. One generic engine (`core/`) drives any
 number of applications under test (`clients/<name>/`). Pages are described as data (page configs), and specs drive

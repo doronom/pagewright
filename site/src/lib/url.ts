@@ -7,7 +7,7 @@ export function href(pathname: string): string {
   return `${base}${clean}`;
 }
 
-/** Strips the base path, so "/qa-template/articles/" becomes "/articles/". */
+/** Strips the base path, so "/pagewright/articles/" becomes "/articles/". */
 export function stripBase(pathname: string): string {
   return base && pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
 }

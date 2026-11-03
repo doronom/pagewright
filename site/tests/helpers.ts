@@ -26,7 +26,7 @@ export function sitemapPaths(dir: string): string[] {
   return urls.map((url) => toRelative(new URL(url).pathname)).sort();
 }
 
-/** Strips the base path and the leading slash: "/qa-template/articles/" becomes "articles/". */
+/** Strips the base path and the leading slash: "/pagewright/articles/" becomes "articles/". */
 export function toRelative(pathname: string): string {
   const withoutBase = base && pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
   return withoutBase.replace(/^\//, '');

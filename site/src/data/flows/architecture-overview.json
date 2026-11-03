@@ -1,7 +1,7 @@
 {
   "id": "architecture-overview",
   "title": "How a call travels through the layers",
-  "intro": "Three paths through qa-template, one step at a time. The dot is the call moving between components. Press Play, or step through manually (arrow keys work too).",
+  "intro": "Three paths through Pagewright, one step at a time. The dot is the call moving between components. Press Play, or step through manually (arrow keys work too).",
   "flows": [
     {
       "id": "ui",

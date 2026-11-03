@@ -18,10 +18,10 @@ export const site = {
   description: 'PLACEHOLDER: technical articles on test automation architecture.',
   /** Origin the site is deployed to, without the base path. PLACEHOLDER */
   url: env.SITE_URL || 'https://your-user.github.io',
-  /** Base path, e.g. "/qa-template" for a GitHub project page, "/" for a custom domain. */
-  base: normalizeBase(env.SITE_BASE || '/qa-template'),
+  /** Base path, e.g. "/pagewright" for a GitHub project page, "/" for a custom domain. */
+  base: normalizeBase(env.SITE_BASE || '/pagewright'),
   /** Repository used by RepoCode and the Testing page links. PLACEHOLDER */
-  repoUrl: (env.REPO_URL || 'https://github.com/your-user/qa-template').replace(/\/+$/, ''),
+  repoUrl: (env.REPO_URL || 'https://github.com/your-user/pagewright').replace(/\/+$/, ''),
   repoBranch: env.REPO_BRANCH || 'main',
   /** Footer and About links. PLACEHOLDER values. */
   links: {

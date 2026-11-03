@@ -2,7 +2,7 @@ title: Config-driven Playwright framework
 summary: 'A six-part walk through a config-driven Playwright and TypeScript framework: the architecture, the code behind it, and the lessons from running it in production.'
 plannedParts: 6
 featured: true
-project: qa-template
+project: pagewright
 parts:
   - part: 1
     title: Why a config-driven framework
