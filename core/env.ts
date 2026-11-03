@@ -9,7 +9,7 @@ if (fs.existsSync(envFile)) {
   dotenv.config({ path: envFile, quiet: true });
 }
 
-export const clientName = process.env.CLIENT ?? 'example';
+export const clientName = process.env.CLIENT ?? 'toolshop';
 
 export function requireEnv(key: string): string {
   const value = process.env[key];

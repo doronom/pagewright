@@ -6,7 +6,7 @@ on:
       client:
         description: Client folder under clients/
         type: string
-        default: example
+        default: toolshop
       env:
         description: Target environment (TEST_ENV)
         type: string
@@ -16,11 +16,9 @@ on:
         type: string
         default: ''
     secrets:
-      APP_USERNAME:
+      APP_EMAIL:
         required: false
       APP_PASSWORD:
-        required: false
-      APP_LOCKED_USERNAME:
         required: false
 
 jobs:
@@ -32,9 +30,8 @@ jobs:
       CI: true
       CLIENT: ${{ inputs.client }}
       TEST_ENV: ${{ inputs.env }}
-      APP_USERNAME: ${{ secrets.APP_USERNAME }}
+      APP_EMAIL: ${{ secrets.APP_EMAIL }}
       APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-      APP_LOCKED_USERNAME: ${{ secrets.APP_LOCKED_USERNAME }}
     steps:
       - uses: actions/checkout@v4
 

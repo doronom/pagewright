@@ -8,7 +8,7 @@ if (!name || !/^[a-z][a-z0-9-]*$/.test(name)) {
 }
 
 const clientsDir = path.resolve(__dirname, '..', 'clients');
-const source = path.join(clientsDir, 'example');
+const source = path.join(clientsDir, 'toolshop');
 const target = path.join(clientsDir, name);
 if (fs.existsSync(target)) {
   console.error(`Client "${name}" already exists at ${target}`);
@@ -34,6 +34,7 @@ fs.writeFileSync(
 
 test.fixme('replace with real ui tests', async ({ dynamicPage }) => {
   await dynamicPage.goto('login');
+  await dynamicPage.executeSection('form', { email: 'user@example.test', password: 'secret', submit: true });
 });
 `,
 );
@@ -42,7 +43,7 @@ fs.writeFileSync(
   `import { test } from '../../fixtures';
 
 test.fixme('replace with real api tests', async ({ api }) => {
-  await api.get('/');
+  await api.getProducts();
 });
 `,
 );
@@ -50,7 +51,7 @@ test.fixme('replace with real api tests', async ({ api }) => {
 function rename(dir: string): void {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const current = path.join(dir, entry.name);
-    const renamed = path.join(dir, entry.name.replace(/Example/g, pascalName));
+    const renamed = path.join(dir, entry.name.replace(/Toolshop/g, pascalName));
     if (renamed !== current) {
       fs.renameSync(current, renamed);
     }
@@ -58,7 +59,7 @@ function rename(dir: string): void {
       rename(renamed);
     } else {
       const content = fs.readFileSync(renamed, 'utf8');
-      fs.writeFileSync(renamed, content.replace(/Example/g, pascalName).replace(/'example'/g, `'${name}'`));
+      fs.writeFileSync(renamed, content.replace(/Toolshop/g, pascalName).replace(/'toolshop'/g, `'${name}'`));
     }
   }
 }

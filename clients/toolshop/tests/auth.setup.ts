@@ -6,7 +6,7 @@ setup('authenticate', async ({ page, client }) => {
   if (!auth) {
     return setup.skip(true, `Client "${client.name}" has no auth strategy`);
   }
-  await auth.login(page, { user: requireEnv('APP_USERNAME'), password: requireEnv('APP_PASSWORD') });
+  await auth.login(page, { user: requireEnv('APP_EMAIL'), password: requireEnv('APP_PASSWORD') });
   await expect.poll(() => auth.isLoggedIn(page)).toBe(true);
   await page.context().storageState({ path: storageStatePath(clientName) });
 });

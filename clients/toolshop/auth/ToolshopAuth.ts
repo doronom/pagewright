@@ -4,22 +4,19 @@ import { ClientDefinition } from '@core/client/ClientDefinition';
 import { Logger } from '@core/Logger';
 import { DynamicPage } from '@core/page/DynamicPage';
 import { SharedData } from '@core/SharedData';
-import { inventoryPage } from '../pages/InventoryPage.config';
+import { accountPage } from '../pages/AccountPage.config';
 
-export class ExampleAuth implements AuthStrategy {
+export class ToolshopAuth implements AuthStrategy {
   constructor(private readonly getClient: () => ClientDefinition) {}
 
   async login(page: Page, creds: { user: string; password: string }): Promise<void> {
+    const { user: email, password } = creds;
     const dynamicPage = new DynamicPage(page, this.getClient(), new Logger('auth'), new SharedData());
     await dynamicPage.goto('login');
-    await dynamicPage.executeSection('form', {
-      username: creds.user,
-      password: creds.password,
-      submit: true,
-    });
+    await dynamicPage.executeSection('form', { email, password, submit: true });
   }
 
   async isLoggedIn(page: Page): Promise<boolean> {
-    return inventoryPage(page).sections.header.fields.title.locator.isVisible();
+    return accountPage(page).sections.overview.fields.title.locator.isVisible();
   }
 }

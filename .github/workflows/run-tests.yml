@@ -9,7 +9,7 @@ on:
       client:
         description: Client folder under clients/
         type: string
-        default: example
+        default: toolshop
       env:
         description: Target environment (TEST_ENV)
         type: string
@@ -24,10 +24,9 @@ jobs:
   test:
     uses: ./.github/workflows/test-execution.yml
     with:
-      client: ${{ inputs.client || 'example' }}
+      client: ${{ inputs.client || 'toolshop' }}
       env: ${{ inputs.env || 'dev' }}
       project: ${{ inputs.project || '' }}
     secrets:
-      APP_USERNAME: standard_user
-      APP_PASSWORD: secret_sauce
-      APP_LOCKED_USERNAME: locked_out_user
+      APP_EMAIL: customer@practicesoftwaretesting.com
+      APP_PASSWORD: welcome01

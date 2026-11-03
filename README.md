@@ -18,15 +18,15 @@ core/                      Generic engine. Never edited per client.
   env.ts                   TEST_ENV / CLIENT resolution and env file loading
   Logger.ts, RetryHelper.ts, SharedData.ts
 clients/
-  example/                 Reference client (saucedemo.com UI, jsonplaceholder.typicode.com API)
+  toolshop/                Reference client (practicesoftwaretesting.com UI and its API)
     client.ts              Implements ClientDefinition; the only entry point core knows about
-    pages/                 Page configs; the only place locators live
+    pages/                 Page configs; the only place locators live (sections/ holds shared sections)
     auth/                  AuthStrategy implementation
     api/                   API client extending BaseApiClient
     data/factories/        Test data builders (faker)
     tests/                 auth.setup.ts, ui/**/*.spec.ts, api/**/*.spec.ts
 env/.env.example           Template for env/.env.<TEST_ENV>
-scripts/new-client.ts      Scaffolds a new client from clients/example
+scripts/new-client.ts      Scaffolds a new client from clients/toolshop
 ```
 
 ## Quick start
@@ -54,8 +54,8 @@ Note that `test:ui` runs the `ui` project; for Playwright UI mode use `npx playw
 
 ## Adding a new client
 
-1. `npm run new-client shop` copies `clients/example` to `clients/shop`, renames `Example*` identifiers to
-   `Shop*`, and replaces the example specs with one placeholder spec each for ui and api. It also copies
+1. `npm run new-client shop` copies `clients/toolshop` to `clients/shop`, renames `Toolshop*` identifiers to
+   `Shop*`, and replaces the Toolshop specs with one placeholder spec each for ui and api. It also copies
    `fixtures.ts` (see below).
 2. In `clients/shop/client.ts`, set `name`, `baseUrl`, `apiBaseUrl` and `defaultHeaders`.
 3. Replace the configs in `clients/shop/pages/` with your application's pages and register them in `pages`.
@@ -70,14 +70,21 @@ No changes to `core/` are needed.
 
 Each client has a `fixtures.ts` that extends the core `test` with client-typed fixtures, such as its own API
 client. Specs import `test` and `expect` from there rather than from `@core/fixtures`, so they get the core
-fixtures (`client`, `logger`, `sharedData`, `dynamicPage`) plus anything the client adds:
+fixtures (`client`, `logger`, `sharedData`, `dynamicPage`, `apiClient`) plus anything the client adds. The `api`
+fixture narrows the core `apiClient` (built by `createApiClient`) to the client's type instead of building a
+second one:
 
 ```ts
 import { test as base } from '@core/fixtures';
 import { ShopApiClient } from './api/ShopApiClient';
 
 export const test = base.extend<{ api: ShopApiClient }>({
-  api: async ({ client, logger }, use) => use(new ShopApiClient(client, logger)),
+  api: async ({ apiClient }, use) => {
+    if (!(apiClient instanceof ShopApiClient)) {
+      throw new Error('apiClient is not a ShopApiClient (check CLIENT env)');
+    }
+    await use(apiClient);
+  },
 });
 
 export { expect } from '@core/fixtures';
@@ -147,7 +154,7 @@ export class ShopAuth implements AuthStrategy {
 }
 ```
 
-The `setup` project runs `tests/auth.setup.ts`, which calls `login` with `APP_USERNAME` / `APP_PASSWORD`, waits for
+The `setup` project runs `tests/auth.setup.ts`, which calls `login` with `APP_EMAIL` / `APP_PASSWORD`, waits for
 `isLoggedIn`, and saves the session to `.auth/<client>.json`. The `ui` project reuses that session. A client without
 `auth` skips setup and runs ui tests without stored state. A spec that needs a clean session uses
 `test.use({ storageState: { cookies: [], origins: [] } })`.
@@ -166,15 +173,14 @@ error after a structured error log. Set `LOG_LEVEL=debug` to log every request a
 
 ## Environment variables
 
-| Variable                       | Default   | Purpose                                                     |
-| ------------------------------ | --------- | ----------------------------------------------------------- |
-| `CLIENT`                       | `example` | Folder under `clients/` to run                              |
-| `TEST_ENV`                     | `dev`     | Loads `env/.env.<TEST_ENV>` if present; passed to `baseUrl` |
-| `APP_USERNAME`, `APP_PASSWORD` |           | Credentials used by `auth.setup.ts`                         |
-| `APP_LOCKED_USERNAME`          |           | Example client only                                         |
-| `LOG_LEVEL`                    | `info`    | winston log level                                           |
-| `ALLURE`                       |           | `true` adds the allure-playwright reporter                  |
-| `CI`                           |           | Enables forbidOnly, 1 retry, longer API timeouts            |
+| Variable                    | Default    | Purpose                                                     |
+| --------------------------- | ---------- | ----------------------------------------------------------- |
+| `CLIENT`                    | `toolshop` | Folder under `clients/` to run                              |
+| `TEST_ENV`                  | `dev`      | Loads `env/.env.<TEST_ENV>` if present; passed to `baseUrl` |
+| `APP_EMAIL`, `APP_PASSWORD` |            | Credentials used by `auth.setup.ts` and the Toolshop specs  |
+| `LOG_LEVEL`                 | `info`     | winston log level                                           |
+| `ALLURE`                    |            | `true` adds the allure-playwright reporter                  |
+| `CI`                        |            | Enables forbidOnly, 1 retry, longer API timeouts            |
 
 Variables already set in the process take precedence over the env file. Env files other than `.env.example` are
 git-ignored.
@@ -187,7 +193,7 @@ as artifacts. Node is taken from `.nvmrc`. Secrets are exposed to the tests as e
 to the `secrets` list under `workflow_call` and to the job's `env` block.
 
 `.github/workflows/run-tests.yml` calls it on push to `main`, on pull requests, and on manual dispatch (with inputs),
-defaulting to `example` / `dev`. The example client's credentials are the public saucedemo demo accounts, so
+defaulting to `toolshop` / `dev`. The Toolshop client's credentials are the public customer demo account, so
 `run-tests.yml` passes them as literal values. A job that calls a reusable workflow cannot set `env`, so the values
 travel through the `secrets` map; nothing needs to be configured in the repository.
 
