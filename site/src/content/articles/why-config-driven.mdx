@@ -54,34 +54,13 @@ Two small details do a lot of work here. The type `ActionType | (string & {})` k
 
 This is Toolshop's login page:
 
-```ts title="clients/toolshop/pages/LoginPage.config.ts"
-export const loginPage = (page: Page): PageConfig => ({
-  url: '/auth/login',
-  sections: {
-    form: {
-      fields: {
-        email: { locator: page.locator('[data-test="email"]'), actions: [{ action: 'fill' }] },
-        password: { locator: page.locator('[data-test="password"]'), actions: [{ action: 'fill' }] },
-        submit: { locator: page.locator('[data-test="login-submit"]'), actions: [{ action: 'click' }] },
-        error: { locator: page.locator('[data-test="login-error"]'), actions: [] },
-      },
-    },
-  },
-});
-```
+<RepoCode file="clients/toolshop/pages/LoginPage.config.ts" lines="4-16" match="export const loginPage" />
 
 The config is a function that takes a `Page`, not a static object. Locators are created against the current test's page, so nothing is shared between tests running in parallel. A field with `actions: []`, like `error`, exists only so its locator can be used in an assertion.
 
 The test never sees a locator. It passes a section name and an object of data:
 
-```ts
-await dynamicPage.goto('login');
-await dynamicPage.executeSection('form', {
-  email: requireEnv('APP_EMAIL'),
-  password: requireEnv('APP_PASSWORD'),
-  submit: true,
-});
-```
+<RepoCode file="clients/toolshop/tests/ui/login.spec.ts" lines="9-14" match="executeSection('form'" />
 
 All the work happens in `executeSection`, which is shorter than you might expect:
 
@@ -113,24 +92,7 @@ This interface is the engine's list of extension points. Only three fields are r
 
 Toolshop fills in the interface in its `client.ts`:
 
-```ts title="clients/toolshop/client.ts"
-const client: ClientDefinition = {
-  name: 'toolshop',
-  baseUrl: () => 'https://practicesoftwaretesting.com',
-  apiBaseUrl: () => 'https://api.practicesoftwaretesting.com',
-  defaultHeaders: { Accept: 'application/json' },
-  pages: {
-    login: loginPage,
-    products: productsPage,
-    productDetail: productDetailPage,
-    cart: cartPage,
-  },
-  auth: new ToolshopAuth(() => client),
-  createApiClient: (logger) => new ToolshopApiClient(client, logger),
-};
-
-export default client;
-```
+<RepoCode file="clients/toolshop/client.ts" lines="10-26" match="auth: new ToolshopAuth(() => client)" />
 
 Notice `() => client`. The auth strategy receives a getter, not the object itself, because while it's being constructed the object doesn't exist yet. It's the same closure pattern `createApiClient` uses, and it means login always runs with the client it belongs to, not with whatever an environment variable points at.
 
@@ -148,16 +110,7 @@ Each fixture declares its dependencies in its signature, and Playwright builds t
 
 On the client side, `fixtures.ts` extends the core's test instead of replacing it. It doesn't build its own API client either: it takes the `apiClient` the core already built from `createApiClient` and narrows it to Toolshop's type with `instanceof`. There is one place that decides how the client is built, and if `CLIENT` points at a different application, the test fails with a clear message instead of a silent cast:
 
-```ts title="clients/toolshop/fixtures.ts"
-export const test = base.extend<{ api: ToolshopApiClient }>({
-  api: async ({ apiClient }, use) => {
-    if (!(apiClient instanceof ToolshopApiClient)) {
-      throw new Error('apiClient is not a ToolshopApiClient (check CLIENT env)');
-    }
-    await use(apiClient);
-  },
-});
-```
+<RepoCode file="clients/toolshop/fixtures.ts" lines="4-11" match="instanceof ToolshopApiClient" />
 
 Specs import only from this file. That way they get everything the core provides, plus whatever the specific application adds.
 

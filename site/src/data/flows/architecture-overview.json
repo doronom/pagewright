@@ -145,7 +145,7 @@
           "title": "client.ts hands over its definition",
           "where": "clients/toolshop/client.ts",
           "text": "The ClientDefinition tells the engine everything app-specific: base URLs per environment, the page registry, the auth strategy and how to build the API client.",
-          "code": "pages: { login: loginPage, products: productsPage, productDetail: productDetailPage, cart: cartPage },"
+          "code": "pages: {\n  login: loginPage,\n  account: accountPage,\n  products: productsPage,\n  productDetail: productDetailPage,\n  cart: cartPage,\n},"
         },
         {
           "node": "dynamicPage",
@@ -164,7 +164,7 @@
         {
           "node": "pageConfig",
           "title": "executeSection reads the fields",
-          "where": "core/page/DynamicPage.ts",
+          "where": "clients/toolshop/tests/ui/cart.spec.ts",
           "text": "The test passes a section name and data. The engine walks the keys of the data, in the test's order, and finds each field's locator and action list in the config.",
           "code": "await dynamicPage.executeSection('purchase', { quantity: '2', addToCart: true });"
         },
@@ -178,9 +178,9 @@
         {
           "node": "browser",
           "title": "Playwright acts in the browser",
-          "where": "core/actions/",
+          "where": "core/actions/InputActions.ts",
           "text": "InputActions and ElementActions call Playwright's auto-waiting locators and log every step; fill also confirms the value landed. That code is written once for every client. The test reads like a description of intent; the engine does the work.",
-          "code": "await action(field.locator, actionConfig.value ?? value);",
+          "code": "await locator.fill(text);\nawait expect(locator).toHaveValue(text);",
           "status": "success"
         }
       ]
@@ -449,7 +449,7 @@
         {
           "node": "loginPage",
           "title": "The login config fills the form",
-          "where": "clients/toolshop/pages/LoginPage.config.ts",
+          "where": "clients/toolshop/auth/ToolshopAuth.ts",
           "text": "Credentials come from the environment file or CI secrets, never from the code.",
           "code": "await dynamicPage.executeSection('form', { email, password, submit: true });"
         },
