@@ -1,8 +1,7 @@
-# PLACEHOLDER copy for the Home page hero.
 title: Doron Omer
-description: 'PLACEHOLDER: meta description for the Home page.'
-eyebrow: 'PLACEHOLDER: role'
-tagline: 'PLACEHOLDER: one-line tagline.'
-lead: 'PLACEHOLDER: a short paragraph introducing the site.'
+description: 'Doron Omer on test automation architecture: config-driven Playwright frameworks, API testing and CI pipelines that scale.'
+eyebrow: 'QA Automation Engineer · Test Architecture'
+tagline: 'I design test automation that scales.'
+lead: 'Long-form writing on config-driven Playwright architecture, reliable test suites and maintainable pipelines, with the real code behind every idea.'
 primaryCta: Read the series
 secondaryCta: View the code

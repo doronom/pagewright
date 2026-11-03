@@ -1,12 +1,11 @@
-# PLACEHOLDER features. Replace before publishing.
 title: Pagewright
 summary: 'Config-driven test automation for Playwright. Pages are described as data, one generic engine runs them, and each application under test plugs in as a client.'
 repoUrl: https://github.com/doronom/pagewright
 featured: true
 features:
-  - 'PLACEHOLDER: feature one.'
-  - 'PLACEHOLDER: feature two.'
-  - 'PLACEHOLDER: feature three.'
+  - 'Pages described as data: locators and actions live in config, not in classes.'
+  - 'One generic core for many applications: a new client plugs in without touching the engine.'
+  - 'UI and API tests together, with one login per run and lint rules that keep locators out of tests.'
 quickStart: |
   npm install
   CLIENT=toolshop npm test

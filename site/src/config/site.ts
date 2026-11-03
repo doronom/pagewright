@@ -1,4 +1,4 @@
-// Single source for site-wide settings. Values marked PLACEHOLDER must be replaced.
+// Single source for site-wide settings.
 // SITE_URL, SITE_BASE, REPO_URL and REPO_BRANCH environment variables override the defaults
 // (the deploy workflow sets SITE_URL and SITE_BASE from actions/configure-pages).
 
@@ -14,8 +14,8 @@ export const site = {
   name: 'Doron Omer',
   /** Default <title> suffix and RSS title. */
   title: 'Doron Omer',
-  /** Default meta description. PLACEHOLDER */
-  description: 'PLACEHOLDER: technical articles on test automation architecture.',
+  /** Default meta description. */
+  description: 'Doron Omer on test automation architecture: config-driven Playwright frameworks, API testing and CI.',
   /** Origin the site is deployed to, without the base path. */
   url: env.SITE_URL || 'https://doronom.github.io',
   /** Base path, e.g. "/pagewright" for a GitHub project page, "/" for a custom domain. */
@@ -27,7 +27,7 @@ export const site = {
   links: {
     github: 'https://github.com/doronom',
     linkedin: 'https://www.linkedin.com/in/doron-omer-63b14b11/',
-    email: 'Doron.omer@gmail.com',
+    email: 'doron.omer@gmail.com',
   },
   articlesPerPage: 10,
 };
