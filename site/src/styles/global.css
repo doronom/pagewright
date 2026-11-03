@@ -1,7 +1,10 @@
-@import '@fontsource/plus-jakarta-sans/latin-400.css';
-@import '@fontsource/plus-jakarta-sans/latin-600.css';
-@import '@fontsource/plus-jakarta-sans/latin-700.css';
-@import '@fontsource/plus-jakarta-sans/latin-800.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-600.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
 @import '@fontsource/jetbrains-mono/latin-400.css';
 @import '@fontsource/jetbrains-mono/latin-500.css';
 @import '@fontsource/jetbrains-mono/latin-600.css';
@@ -30,20 +33,24 @@
   --color-secondary: var(--secondary);
   --color-tertiary: var(--tertiary);
   --color-error: var(--error);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
 
   --radius-chip: var(--radius-chip);
   --radius-card: var(--radius-card);
+  --radius-hero: var(--radius-hero);
   --radius-pill: var(--radius-pill);
 }
 
 @theme {
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --text-display: 3.5rem;
   --text-display--line-height: 1.15;
   --text-display--letter-spacing: -0.03em;
-  --text-display--font-weight: 800;
+  --text-display--font-weight: 700;
   --text-headline-xl: 2.5rem;
   --text-headline-xl--line-height: 1.2;
   --text-headline-xl--letter-spacing: -0.025em;
@@ -96,6 +103,14 @@
     display: flex;
     flex-direction: column;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
   ::selection {
     background-color: var(--selection-bg);
     color: var(--selection-text);
@@ -134,12 +149,146 @@
     gap: 0.375rem;
     padding: 0.125rem 0.5rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius-chip);
+    border-radius: 6px;
     background: var(--surface);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     line-height: 1.2;
     letter-spacing: 0.06em;
     font-weight: 500;
+  }
+}
+
+/*
+ * Kinetic Glass (DESIGN.md): ambient glow orbs behind the page, translucent gradient cards with
+ * accent borders, a soft cyan aura on hover, and gradient text and buttons for the key actions.
+ */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ambient span {
+  position: absolute;
+  border-radius: 9999px;
+}
+.ambient .orb-1 {
+  top: -10rem;
+  left: 25%;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(closest-side, var(--orb-1), transparent);
+}
+.ambient .orb-2 {
+  top: 45%;
+  right: -10rem;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(closest-side, var(--orb-2), transparent);
+}
+.ambient .orb-3 {
+  bottom: 2.5rem;
+  left: 2.5rem;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(closest-side, var(--orb-3), transparent);
+}
+
+@layer components {
+  .glass-card {
+    --card-accent: var(--accent-cyan);
+    --card-accent-strong: var(--accent-cyan-strong);
+    border: 1px solid var(--card-accent);
+    border-radius: var(--radius-card);
+    background: var(--glass);
+    box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.5);
+  }
+  .glass-card-interactive {
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      translate 200ms ease;
+  }
+  .glass-card-interactive:hover {
+    border-color: var(--card-accent-strong);
+    box-shadow: var(--glow);
+    translate: 0 -2px;
+  }
+  .accent-violet {
+    --card-accent: var(--accent-violet);
+    --card-accent-strong: var(--accent-violet-strong);
+  }
+  .accent-amber {
+    --card-accent: var(--accent-amber);
+    --card-accent-strong: var(--accent-amber-strong);
+  }
+  .glass-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--accent-cyan);
+    border-radius: var(--radius-hero);
+    background: var(--glass-hero);
+    box-shadow: 0 25px 50px -12px rgb(8 51 68 / 0.3);
+  }
+  .glass-hero > .corner-glow {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+  }
+  .glass-hero > .corner-glow-cyan {
+    top: -6rem;
+    left: -6rem;
+    width: 20rem;
+    height: 20rem;
+    background: radial-gradient(closest-side, var(--orb-1), transparent);
+  }
+  .glass-hero > .corner-glow-violet {
+    bottom: -6rem;
+    right: -6rem;
+    width: 24rem;
+    height: 24rem;
+    background: radial-gradient(closest-side, var(--orb-2), transparent);
+  }
+  .text-gradient {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .btn-gradient {
+    background-color: var(--primary);
+    background-image: var(--gradient-primary);
+    color: var(--on-primary);
+    box-shadow: var(--glow);
+  }
+  .btn-gradient:hover {
+    background-color: var(--primary-hover);
+    background-image: var(--gradient-primary-hover);
+    box-shadow: var(--glow-strong);
+  }
+  .tint-cyan {
+    background: var(--tint-cyan);
+    border-color: var(--accent-cyan);
+  }
+  .tint-violet {
+    background: var(--tint-violet);
+    border-color: var(--accent-violet);
+  }
+  .tint-amber {
+    background: var(--tint-amber);
+    border-color: var(--accent-amber);
+  }
+  .icon-glow {
+    filter: drop-shadow(0 0 8px var(--accent-cyan-strong));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card-interactive,
+  .glass-card-interactive:hover {
+    transition: none;
+    translate: none;
   }
 }

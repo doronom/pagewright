@@ -1,95 +1,149 @@
 /*
- * Design tokens: the single place for colors, radii and layout sizes.
- * Dark values: code.html / DESIGN.md frontmatter (they match screen.png).
- * Light values: DESIGN.md "Light Mode Adaptation"; values marked "derived" are not specified there
- * and come from the same slate/teal scale. tests/contrast.spec.ts checks WCAG AA for text tokens.
+ * Design tokens: the single place for colors, radii, gradients and glows.
+ * Dark values: design-reference/DESIGN.md ("Kinetic Glass Architecture") and code.html.
+ * The design is dark-only; the light values are derived from the same hues (cyan, violet, amber, coral)
+ * and darkened until text passes WCAG AA. tests/contrast.spec.ts checks the text tokens in both themes.
+ * Surface tokens are opaque hex values (the glass effect is layered on top in global.css) so contrast
+ * can be measured against them.
  */
 
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0b1326;
-  --surface-lowest: #060e20;
-  --surface-low: #131b2e;
-  --surface: #171f33;
-  --surface-high: #222a3d;
-  --border: #3d4947;
-  --border-strong: #879391;
-  --text: #dae2fd;
-  --text-muted: #bcc9c6;
-  --text-faint: #879391;
-  --primary: #6bd8cb;
-  --primary-hover: #89f5e7;
-  --on-primary: #003732;
-  --primary-container: #29a195;
-  --on-primary-container: #00302b;
-  --secondary: #c0c1ff;
-  --tertiary: #ffb95f;
-  --error: #ffb4ab;
-  --success: #34d399; /* derived; FlowWalkthrough success state */
-  --selection-bg: #29a195;
-  --selection-text: #00302b;
-  --line-highlight: rgb(107 216 203 / 0.12);
+  --bg: #090d16;
+  --surface-lowest: #060a12;
+  --surface-low: #121a2c;
+  --surface: #172036;
+  --surface-high: #1e2942;
+  --border: #1e2942;
+  --border-strong: #3a4a66;
+  --text: #f1f5f9;
+  --text-muted: #a9b6ca;
+  --text-faint: #8a98ae;
+  --primary: #00f2fe;
+  --primary-hover: #6ff6ff;
+  --on-primary: #050811;
+  --primary-container: #003f45;
+  --on-primary-container: #b8fbff;
+  --secondary: #c4a5ff;
+  --tertiary: #fbbf24;
+  --error: #ff5376;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --selection-bg: #00f2fe;
+  --selection-text: #002022;
+  --line-highlight: rgb(0 242 254 / 0.1);
 
-  --astro-code-foreground: #dae2fd;
+  /* Accent borders and glass (DESIGN.md "Elevation & Depth"). */
+  --accent-cyan: rgb(0 242 254 / 0.25);
+  --accent-cyan-strong: rgb(0 242 254 / 0.6);
+  --accent-violet: rgb(167 139 250 / 0.3);
+  --accent-violet-strong: rgb(167 139 250 / 0.65);
+  --accent-amber: rgb(251 191 36 / 0.3);
+  --accent-amber-strong: rgb(251 191 36 / 0.65);
+  --glass: linear-gradient(to bottom, rgb(19 27 46 / 0.9), rgb(14 20 36 / 0.95));
+  --glass-hero: linear-gradient(135deg, rgb(18 25 41 / 0.95), rgb(14 20 36 / 0.9) 50%, rgb(24 17 46 / 0.85));
+  --glass-header: rgb(9 13 22 / 0.8);
+  --glow: 0 0 24px -4px rgb(0 242 254 / 0.25);
+  --glow-strong: 0 0 20px rgb(0 242 254 / 0.4);
+  --gradient-primary: linear-gradient(90deg, #22d3ee, #67e8f9, #5eead4);
+  --gradient-primary-hover: linear-gradient(90deg, #67e8f9, #a5f3fc, #c4b5fd);
+  --gradient-text: linear-gradient(90deg, #22d3ee, #5eead4 45%, #a78bfa);
+  --gradient-progress: linear-gradient(90deg, #22d3ee, #5eead4, #8b5cf6);
+  --orb-1: rgb(6 182 212 / 0.15);
+  --orb-2: rgb(147 51 234 / 0.14);
+  --orb-3: rgb(8 145 178 / 0.1);
+  --tint-cyan: rgb(0 242 254 / 0.08);
+  --tint-violet: rgb(139 92 246 / 0.14);
+  --tint-amber: rgb(245 158 11 / 0.1);
+  --tint-success: rgb(16 185 129 / 0.12);
+  --tint-error: rgb(255 83 118 / 0.12);
+
+  --astro-code-foreground: #e2e8f0;
   --astro-code-background: transparent;
-  --astro-code-token-keyword: #c0c1ff;
-  --astro-code-token-function: #6bd8cb;
-  --astro-code-token-string: #ffb95f;
-  --astro-code-token-string-expression: #ffb95f;
-  --astro-code-token-constant: #ffddb8;
-  --astro-code-token-parameter: #dae2fd;
-  --astro-code-token-comment: #879391;
-  --astro-code-token-punctuation: #bcc9c6;
-  --astro-code-token-link: #6bd8cb;
-  --astro-code-token-inserted: #6bd8cb;
-  --astro-code-token-deleted: #ffb4ab;
+  --astro-code-token-keyword: #c4a5ff;
+  --astro-code-token-function: #67e8f9;
+  --astro-code-token-string: #fcd34d;
+  --astro-code-token-string-expression: #fcd34d;
+  --astro-code-token-constant: #ff8fa6;
+  --astro-code-token-parameter: #e2e8f0;
+  --astro-code-token-comment: #8a98ae;
+  --astro-code-token-punctuation: #a9b6ca;
+  --astro-code-token-link: #67e8f9;
+  --astro-code-token-inserted: #34d399;
+  --astro-code-token-deleted: #ff5376;
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f8fafc;
+  --bg: #f5f7fb;
   --surface-lowest: #ffffff;
   --surface-low: #ffffff;
-  --surface: #f1f5f9; /* derived */
-  --surface-high: #e2e8f0; /* derived */
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1; /* derived */
-  --text: #0f172a;
-  --text-muted: #475569; /* derived */
-  --text-faint: #5f6f86; /* derived; #64748b failed AA on --surface (4.34:1) */
-  --primary: #0f766e;
-  --primary-hover: #115e59; /* derived */
-  --on-primary: #ffffff; /* derived */
-  --primary-container: #99f6e4; /* derived */
-  --on-primary-container: #0f172a; /* derived */
-  --secondary: #4f46e5;
+  --surface: #eef2f8;
+  --surface-high: #e3e9f2;
+  --border: #dbe3ee;
+  --border-strong: #b8c4d6;
+  --text: #0b1220;
+  --text-muted: #44526a;
+  --text-faint: #56657d;
+  --primary: #0e7490;
+  --primary-hover: #155e75;
+  --on-primary: #ffffff;
+  --primary-container: #cffafe;
+  --on-primary-container: #0b1220;
+  --secondary: #6d28d9;
   --tertiary: #b45309;
-  --error: #be123c; /* derived */
-  --success: #047857; /* derived; FlowWalkthrough success state */
-  --selection-bg: #99f6e4; /* derived */
-  --selection-text: #0f172a;
-  --line-highlight: rgb(15 118 110 / 0.1);
+  --error: #be123c;
+  --success: #047857;
+  --warning: #b45309;
+  --selection-bg: #a5f3fc;
+  --selection-text: #0b1220;
+  --line-highlight: rgb(14 116 144 / 0.1);
 
-  --astro-code-foreground: #0f172a;
+  --accent-cyan: rgb(14 116 144 / 0.25);
+  --accent-cyan-strong: rgb(14 116 144 / 0.6);
+  --accent-violet: rgb(109 40 217 / 0.22);
+  --accent-violet-strong: rgb(109 40 217 / 0.55);
+  --accent-amber: rgb(180 83 9 / 0.25);
+  --accent-amber-strong: rgb(180 83 9 / 0.55);
+  --glass: linear-gradient(to bottom, #ffffff, #fafbfe);
+  --glass-hero: linear-gradient(135deg, #ffffff, #f4fbfd 50%, #f6f2ff);
+  --glass-header: rgb(255 255 255 / 0.85);
+  --glow: 0 6px 20px -8px rgb(14 116 144 / 0.25);
+  --glow-strong: 0 6px 20px -6px rgb(14 116 144 / 0.35);
+  --gradient-primary: linear-gradient(90deg, #0e7490, #0f766e);
+  --gradient-primary-hover: linear-gradient(90deg, #155e75, #5b21b6);
+  --gradient-text: linear-gradient(90deg, #0e7490, #0f766e 45%, #6d28d9);
+  --gradient-progress: linear-gradient(90deg, #0891b2, #0d9488, #7c3aed);
+  --orb-1: rgb(6 182 212 / 0.08);
+  --orb-2: rgb(147 51 234 / 0.06);
+  --orb-3: rgb(8 145 178 / 0.05);
+  --tint-cyan: rgb(14 116 144 / 0.07);
+  --tint-violet: rgb(109 40 217 / 0.07);
+  --tint-amber: rgb(180 83 9 / 0.08);
+  --tint-success: rgb(4 120 87 / 0.1);
+  --tint-error: rgb(190 18 60 / 0.08);
+
+  --astro-code-foreground: #0b1220;
   --astro-code-background: transparent;
-  --astro-code-token-keyword: #4f46e5;
-  --astro-code-token-function: #0f766e;
+  --astro-code-token-keyword: #6d28d9;
+  --astro-code-token-function: #0e7490;
   --astro-code-token-string: #b45309;
   --astro-code-token-string-expression: #b45309;
-  --astro-code-token-constant: #9a3412;
-  --astro-code-token-parameter: #0f172a;
-  --astro-code-token-comment: #5f6f86;
-  --astro-code-token-punctuation: #475569;
-  --astro-code-token-link: #0f766e;
-  --astro-code-token-inserted: #0f766e;
+  --astro-code-token-constant: #be123c;
+  --astro-code-token-parameter: #0b1220;
+  --astro-code-token-comment: #56657d;
+  --astro-code-token-punctuation: #44526a;
+  --astro-code-token-link: #0e7490;
+  --astro-code-token-inserted: #047857;
   --astro-code-token-deleted: #be123c;
 }
 
 :root {
-  /* Radii matched to screen.png: chips, buttons, inner cards and code frames 4px; sections and cards 8px. */
-  --radius-chip: 4px;
-  --radius-card: 8px;
+  /* DESIGN.md "Shapes": base elements 8px, cards 16px, hero containers 24px, status pills full. */
+  --radius-chip: 8px;
+  --radius-card: 16px;
+  --radius-hero: 24px;
   --radius-pill: 9999px;
   --container: 1320px;
   --measure: 75ch;

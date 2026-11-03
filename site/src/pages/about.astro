@@ -24,7 +24,7 @@ const contacts = [
     <aside class="flex flex-col gap-6 lg:col-span-4">
       {
         about.data.focusAreas.length > 0 && (
-          <section class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-6" data-test="focus-areas">
+          <section class="flex flex-col gap-3 glass-card p-6" data-test="focus-areas">
             <h2 class="font-mono text-label-sm uppercase text-faint">{about.data.focusTitle ?? 'Focus areas'}</h2>
             <ul class="flex flex-wrap gap-1.5">
               {about.data.focusAreas.map((area) => (
@@ -34,7 +34,7 @@ const contacts = [
           </section>
         )
       }
-      <section class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-6" data-test="contact-links">
+      <section class="flex flex-col gap-3 glass-card accent-violet p-6" data-test="contact-links">
         <h2 class="font-mono text-label-sm uppercase text-faint">Contact</h2>
         <ul class="flex flex-col gap-2">
           {contacts.map((c) => (

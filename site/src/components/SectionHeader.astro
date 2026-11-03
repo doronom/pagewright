@@ -12,7 +12,7 @@ interface Props {
 const { title, linkHref, linkLabel, as: Tag = 'h2', test } = Astro.props;
 ---
 
-<div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+<div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--accent-cyan)] pb-2">
   <Tag class="text-headline-lg text-text" data-test={test}>{title}</Tag>
   {
     linkHref && linkLabel && (

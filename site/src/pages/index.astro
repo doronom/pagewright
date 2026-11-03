@@ -32,22 +32,21 @@ const codeHref = featuredProject ? href(`/projects/#${featuredProject.id}`) : un
 ---
 
 <BaseLayout description={home.data.description}>
-  <section
-    class="relative overflow-hidden rounded-card border border-border bg-surface-lowest p-6 sm:p-10"
-    data-test="hero-section"
-  >
-    <div class="flex max-w-[75ch] flex-col items-start gap-4">
+  <section class="glass-hero p-6 sm:p-10" data-test="hero-section">
+    <span class="corner-glow corner-glow-cyan" aria-hidden="true"></span>
+    <span class="corner-glow corner-glow-violet" aria-hidden="true"></span>
+    <div class="relative z-10 flex max-w-[78ch] flex-col items-start gap-4">
       {
         home.data.eyebrow && (
-          <p class="chip gap-2 px-2 py-1 uppercase text-muted">
-            <span class="size-1.5 rounded-pill bg-primary" aria-hidden="true" />
+          <p class="eyebrow chip gap-2 rounded-pill px-3 py-1.5 font-semibold uppercase text-primary">
+            <span class="eyebrow-dot size-2 animate-pulse rounded-pill bg-primary" aria-hidden="true" />
             {home.data.eyebrow}
           </p>
         )
       }
       <div class="flex flex-col gap-1">
         <h1 class="text-headline-xl text-text sm:text-display" data-test="page-title">{home.data.title}</h1>
-        {home.data.tagline && <p class="text-headline-lg text-primary sm:text-headline-xl" data-test="hero-tagline">{home.data.tagline}</p>}
+        {home.data.tagline && <p class="text-gradient font-display text-headline-lg sm:text-headline-xl" data-test="hero-tagline">{home.data.tagline}</p>}
       </div>
       {home.data.lead && <p class="text-body-lg text-muted">{home.data.lead}</p>}
       <div class="flex flex-wrap items-center gap-4 pt-2">
@@ -97,14 +96,14 @@ const codeHref = featuredProject ? href(`/projects/#${featuredProject.id}`) : un
     }
     <div
       class:list={[
-        'flex flex-col justify-between rounded-card border border-border bg-surface-low p-6',
+        'glass-card accent-violet flex flex-col justify-between p-6',
         featuredProject ? 'lg:col-span-5' : 'lg:col-span-12',
       ]}
       data-test="about-card"
     >
       <div class="flex flex-col gap-4">
         <div class="flex items-center gap-2">
-          <Icon name="person" class="text-primary" />
+          <Icon name="person" class="text-secondary" />
           <h2 class="text-headline-md font-bold text-text">{about.data.homeTitle ?? about.data.title}</h2>
         </div>
         {about.data.homeSummary && <p class="text-body-md text-muted">{about.data.homeSummary}</p>}
@@ -114,14 +113,14 @@ const codeHref = featuredProject ? href(`/projects/#${featuredProject.id}`) : un
               {about.data.focusTitle && <span class="font-mono text-label-sm uppercase text-faint">{about.data.focusTitle}</span>}
               <ul class="flex flex-wrap gap-1.5">
                 {about.data.focusAreas.map((area) => (
-                  <li class="chip px-2 py-1 text-text">{area}</li>
+                  <li class="chip px-2 py-1 text-primary tint-cyan">{area}</li>
                 ))}
               </ul>
             </div>
           )
         }
       </div>
-      <div class="mt-6 border-t border-border pt-6">
+      <div class="mt-6 border-t border-[var(--accent-violet)] pt-6">
         <a href={href('/about/')} class="flex items-center gap-1 font-mono text-label-md text-primary transition-colors hover:text-primary-hover" data-test="about-more">
           <span>Read more</span>
           <Icon name="arrow_forward" size={16} />
@@ -132,3 +131,13 @@ const codeHref = featuredProject ? href(`/projects/#${featuredProject.id}`) : un
 
   <TelemetryStrip />
 </BaseLayout>
+
+<style>
+  .eyebrow {
+    border-color: var(--accent-cyan-strong);
+    background: linear-gradient(90deg, var(--tint-cyan), var(--tint-violet));
+  }
+  .eyebrow-dot {
+    box-shadow: 0 0 8px var(--primary);
+  }
+</style>

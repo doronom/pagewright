@@ -17,8 +17,8 @@ const Tag = article ? 'a' : 'div';
 <Tag
   href={article ? href(`/articles/${article.id}/`) : undefined}
   class:list={[
-    'group flex flex-col gap-1 rounded-chip border border-border bg-surface p-4',
-    article ? 'transition-colors hover:border-border-strong' : 'opacity-90',
+    'glass-card group flex flex-col gap-1.5 p-4',
+    article ? 'glass-card-interactive' : 'opacity-90',
   ]}
   data-test="series-part-row"
   data-test-status={article ? 'published' : 'coming-soon'}

@@ -11,31 +11,31 @@ const summary = loadTestSummary();
 {
   summary && (
     <section
-      class="flex flex-wrap items-center justify-between gap-4 rounded-card border border-border bg-surface-lowest p-4"
+      class="glass-card flex flex-wrap items-center justify-between gap-4 p-4"
       data-test="suite-telemetry"
     >
       <div class="flex flex-wrap items-center gap-4 font-mono text-label-sm text-muted">
-        <span class="flex items-center gap-1" data-test="telemetry-passed">
-          <Icon name="done_all" size={14} class="text-primary" />
+        <span class="chip rounded-pill px-2.5 py-1 text-success bg-[var(--tint-success)] border-[color-mix(in_srgb,var(--success)_35%,transparent)]" data-test="telemetry-passed">
+          <Icon name="done_all" size={14} />
           {summary.passed} passed
         </span>
         <span class="text-border" aria-hidden="true">•</span>
-        <span class:list={['flex items-center gap-1', summary.failed > 0 && 'text-error']} data-test="telemetry-failed">
-          <Icon name={summary.failed > 0 ? 'error' : 'check_circle'} size={14} class={summary.failed > 0 ? '' : 'text-primary'} />
+        <span class:list={['chip rounded-pill px-2.5 py-1', summary.failed > 0 ? 'text-error bg-[var(--tint-error)]' : 'text-primary tint-cyan']} data-test="telemetry-failed">
+          <Icon name={summary.failed > 0 ? 'error' : 'check_circle'} size={14} />
           {summary.failed} failed
         </span>
         <span class="text-border" aria-hidden="true">•</span>
-        <span class="flex items-center gap-1" data-test="telemetry-duration">
-          <Icon name="timer" size={14} class="text-primary" />
+        <span class="chip rounded-pill px-2.5 py-1 text-primary tint-cyan" data-test="telemetry-duration">
+          <Icon name="timer" size={14} />
           {formatDuration(summary.durationMs)}
         </span>
         <span class="text-border" aria-hidden="true">•</span>
-        <span class="flex items-center gap-1" data-test="telemetry-date">
-          <Icon name="schedule" size={14} class="text-primary" />
+        <span class="chip rounded-pill px-2.5 py-1 text-secondary tint-violet" data-test="telemetry-date">
+          <Icon name="schedule" size={14} />
           {formatDate(new Date(summary.date))}
         </span>
       </div>
-      <a href={href('/testing/')} class="flex items-center gap-1 font-mono text-label-sm text-faint transition-colors hover:text-primary">
+      <a href={href('/testing/')} class="chip px-2.5 py-1 text-primary tint-cyan transition-colors hover:border-primary">
         <span>How this site is tested</span>
         <Icon name="arrow_forward" size={14} />
       </a>

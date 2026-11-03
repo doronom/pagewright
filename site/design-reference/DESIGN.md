@@ -1,138 +1,132 @@
 ---
-name: Editorial Test Architecture
+name: Kinetic Glass Architecture
 colors:
-  surface: '#0b1326'
-  surface-dim: '#0b1326'
-  surface-bright: '#31394d'
-  surface-container-lowest: '#060e20'
-  surface-container-low: '#131b2e'
-  surface-container: '#171f33'
-  surface-container-high: '#222a3d'
-  surface-container-highest: '#2d3449'
-  on-surface: '#dae2fd'
-  on-surface-variant: '#bcc9c6'
-  inverse-surface: '#dae2fd'
-  inverse-on-surface: '#283044'
-  outline: '#879391'
-  outline-variant: '#3d4947'
-  surface-tint: '#6bd8cb'
-  primary: '#6bd8cb'
-  on-primary: '#003732'
-  primary-container: '#29a195'
-  on-primary-container: '#00302b'
-  inverse-primary: '#006a61'
-  secondary: '#c0c1ff'
-  on-secondary: '#1000a9'
-  secondary-container: '#3131c0'
-  on-secondary-container: '#b0b2ff'
-  tertiary: '#ffb95f'
-  on-tertiary: '#472a00'
-  tertiary-container: '#ca8100'
-  on-tertiary-container: '#3e2400'
+  surface: '#0f131d'
+  surface-dim: '#0f131d'
+  surface-bright: '#353944'
+  surface-container-lowest: '#0a0e18'
+  surface-container-low: '#171b26'
+  surface-container: '#1c1f2a'
+  surface-container-high: '#262a35'
+  surface-container-highest: '#313540'
+  on-surface: '#dfe2f1'
+  on-surface-variant: '#b9cacb'
+  inverse-surface: '#dfe2f1'
+  inverse-on-surface: '#2c303b'
+  outline: '#849495'
+  outline-variant: '#3a494b'
+  surface-tint: '#00dce6'
+  primary: '#e0fdff'
+  on-primary: '#00373a'
+  primary-container: '#00f2fe'
+  on-primary-container: '#006a70'
+  inverse-primary: '#00696f'
+  secondary: '#dcb8ff'
+  on-secondary: '#480081'
+  secondary-container: '#7701d0'
+  on-secondary-container: '#dcb7ff'
+  tertiary: '#fff5f5'
+  on-tertiary: '#670021'
+  tertiary-container: '#ffcfd3'
+  on-tertiary-container: '#b91b47'
   error: '#ffb4ab'
   on-error: '#690005'
   error-container: '#93000a'
   on-error-container: '#ffdad6'
-  primary-fixed: '#89f5e7'
-  primary-fixed-dim: '#6bd8cb'
-  on-primary-fixed: '#00201d'
-  on-primary-fixed-variant: '#005049'
-  secondary-fixed: '#e1e0ff'
-  secondary-fixed-dim: '#c0c1ff'
-  on-secondary-fixed: '#07006c'
-  on-secondary-fixed-variant: '#2f2ebe'
-  tertiary-fixed: '#ffddb8'
-  tertiary-fixed-dim: '#ffb95f'
-  on-tertiary-fixed: '#2a1700'
-  on-tertiary-fixed-variant: '#653e00'
-  background: '#0b1326'
-  on-background: '#dae2fd'
-  surface-variant: '#2d3449'
+  primary-fixed: '#6ff6ff'
+  primary-fixed-dim: '#00dce6'
+  on-primary-fixed: '#002022'
+  on-primary-fixed-variant: '#004f53'
+  secondary-fixed: '#efdbff'
+  secondary-fixed-dim: '#dcb8ff'
+  on-secondary-fixed: '#2c0051'
+  on-secondary-fixed-variant: '#6700b5'
+  tertiary-fixed: '#ffd9dc'
+  tertiary-fixed-dim: '#ffb2ba'
+  on-tertiary-fixed: '#400011'
+  on-tertiary-fixed-variant: '#910031'
+  background: '#0f131d'
+  on-background: '#dfe2f1'
+  surface-variant: '#313540'
 typography:
   display:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 3.5rem
-    fontWeight: '800'
-    lineHeight: '1.15'
+    fontFamily: Space Grotesk
+    fontSize: 56px
+    fontWeight: '700'
+    lineHeight: 64px
     letterSpacing: -0.03em
-  headline-xl:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 2.5rem
+  display-mobile:
+    fontFamily: Space Grotesk
+    fontSize: 38px
     fontWeight: '700'
-    lineHeight: '1.2'
-    letterSpacing: -0.025em
-  headline-xl-mobile:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 2rem
-    fontWeight: '700'
-    lineHeight: '1.25'
+    lineHeight: 44px
     letterSpacing: -0.02em
   headline-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 1.875rem
-    fontWeight: '700'
-    lineHeight: '1.3'
+    fontFamily: Space Grotesk
+    fontSize: 40px
+    fontWeight: '600'
+    lineHeight: 48px
     letterSpacing: -0.02em
-  headline-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 1.375rem
+  headline-lg-mobile:
+    fontFamily: Space Grotesk
+    fontSize: 28px
     fontWeight: '600'
-    lineHeight: '1.4'
-    letterSpacing: -0.015em
-  headline-sm:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 1.125rem
-    fontWeight: '600'
-    lineHeight: '1.45'
+    lineHeight: 36px
     letterSpacing: -0.01em
+  headline-md:
+    fontFamily: Space Grotesk
+    fontSize: 28px
+    fontWeight: '600'
+    lineHeight: 36px
+    letterSpacing: -0.01em
+  headline-sm:
+    fontFamily: Space Grotesk
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: 28px
+    letterSpacing: 0em
   body-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 1.125rem
+    fontFamily: Inter
+    fontSize: 18px
     fontWeight: '400'
-    lineHeight: '1.75'
-    letterSpacing: -0.005em
+    lineHeight: 28px
+    letterSpacing: -0.01em
   body-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 1rem
+    fontFamily: Inter
+    fontSize: 15px
     fontWeight: '400'
-    lineHeight: '1.7'
+    lineHeight: 24px
     letterSpacing: 0em
   body-sm:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 0.875rem
+    fontFamily: Inter
+    fontSize: 13px
     fontWeight: '400'
-    lineHeight: '1.6'
-    letterSpacing: 0em
-  code-inline:
+    lineHeight: 20px
+    letterSpacing: 0.01em
+  label-lg:
     fontFamily: JetBrains Mono
-    fontSize: 0.875em
+    fontSize: 14px
     fontWeight: '500'
-    lineHeight: '1.4'
-    letterSpacing: -0.01em
-  code-block:
-    fontFamily: JetBrains Mono
-    fontSize: 0.875rem
-    fontWeight: '400'
-    lineHeight: '1.65'
-    letterSpacing: 0em
+    lineHeight: 20px
+    letterSpacing: 0.02em
   label-md:
     fontFamily: JetBrains Mono
-    fontSize: 0.8125rem
-    fontWeight: '600'
-    lineHeight: '1.3'
-    letterSpacing: 0.04em
+    fontSize: 12px
+    fontWeight: '500'
+    lineHeight: 16px
+    letterSpacing: 0.03em
   label-sm:
     fontFamily: JetBrains Mono
-    fontSize: 0.75rem
-    fontWeight: '500'
-    lineHeight: '1.2'
-    letterSpacing: 0.06em
+    fontSize: 10px
+    fontWeight: '600'
+    lineHeight: 14px
+    letterSpacing: 0.05em
 rounded:
-  sm: 0.125rem
-  DEFAULT: 0.25rem
-  md: 0.375rem
-  lg: 0.5rem
-  xl: 0.75rem
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
   full: 9999px
 spacing:
   gutter: 1.5rem
@@ -148,126 +142,102 @@ spacing:
 
 ## Brand & Style
 
-This design system embodies an editorial-technical aesthetic calibrated for deep technical comprehension and zero cognitive fatigue. Built specifically for long-form engineering essays, Playwright architecture guides, and test harness documentation, the visual language balances the composure of an architectural monograph with the mechanical precision of developer tooling.
+This design system crafts an electric, hyper-modern personal platform for a QA Automation Engineer & Test Architect. It bridges high-rigor systems engineering with expressive, luminous creative technology. The brand voice feels authoritative yet forward-leaning, surgical yet vivid—demonstrating that automation infrastructure, test harnesses, and CI/CD pipelines can be visual art forms without sacrificing clarity.
 
-### Personality & Emotional Tenor
-- **Composed & Authoritative:** Quiet confidence achieved through deliberate white space, disciplined hierarchy, and the avoidance of decorative fluff.
-- **Mechanically Precise:** Crisp structural alignments, meticulous monospaced tabular data, and explicit structural framing.
-- **Distraction-Free:** Optimized for extended 45-minute reading sessions, where typographical cadence and contrast take precedence over decorative visuals.
-
-### Style Archetype
-A disciplined hybrid of **Minimalist Editorial** and **Modern Developer Tooling**. Surfaces are flat, structured with ultra-fine hair-thin borders rather than elevated drop shadows. The design system uses micro-details—such as syntax-colored file badges, subtle terminal frames, and distinct test execution indicators—to inject authentic developer character into an otherwise quiet reading canvas.
+### Design Movement: Luminous Cyber-Glass
+The aesthetic merges precision Glassmorphism, deep dark-mode minimalism, and controlled chromatic energy:
+- **Base Canvas:** Deep abyssal navy/slate substrates (`#090D16`) that swallow harsh light while providing infinite depth.
+- **Luminous Chromatics:** Controlled bursts of electric violet, neon cyan, and hot coral that trace key execution flows, code blocks, pass/fail metrics, and interactive triggers.
+- **Glass & Frosting:** Multi-layered translucent panels (`rgba` surfaces with progressive background blur) accented by 1px sub-pixel gradient borders.
+- **Tactile Technical Feedback:** Soft neon glows (`drop-shadow` / `box-shadow` aura overlays) reserved strictly for active states, metrics highlights, and interactive states to maintain enterprise legibility.
 
 ## Colors
 
-The palette employs a dark-first foundation grounded in slate and charcoal neutrals with a balanced, warm undertone to soften harsh glare. Functional syntax accents (teal/emerald, indigo/cyan, amber, rose) punctuate technical copy and provide instant semantic clarity.
+The palette balances dark canvas readability with vivid, hyper-saturated engineering beacons:
 
-### Color Roles
+- **Primary (`#00F2FE` - Hyper Neon Cyan):** Signifies telemetry, active test runners, real-time assertions, and interactive primary actions. High visual resonance against obsidian surfaces.
+- **Secondary (`#8A2BE2` - Electric Violet / Indigo):** Forms architectural scaffolding, structural glow backdrops, pipeline stages, and ambient gradient depth.
+- **Tertiary (`#FF5376` - Radiant Coral / Amber):** Highlights mission-critical exceptions, architectural breakthroughs, high-impact metrics, and tertiary badges.
+- **Neutral (`#0B0F19` - Deep Obsidian Void):** The bedrock surface. Complemented by `#131B2E` for elevated cards, `#1E2942` for structural borders, and `#F1F5F9` for primary typography.
+- **Success / Passed (`#10B981`):** Retained for pure green-path automated suite passes and uptime markers.
+- **Warning / Flaky (`#F59E0B`):** Dedicated to flakiness thresholds and pending test runs.
 
-#### Canvas & Neutrals
-- **Canvas Base (`#0B0F19`):** Deep charcoal slate, avoiding eye fatigue compared to pure `#000000`.
-- **Surface Elevated (`#111827`):** Card panels, code block bodies, and persistent nav elements.
-- **Surface Inset (`#080C14`):** Line numbering gutters, terminal canvas, and subtle recessed containers.
-- **Borders & Dividers (`#1E293B`):** Low-contrast architectural hair-thin lines separating content clusters.
-- **Border Subtle (`#334155`):** Interactive element borders on hover, active tabs, and focused controls.
-- **Text Primary (`#F8FAFC`):** Maximum-contrast copy exceeding WCAG AAA for technical long-form body text.
-- **Text Secondary (`#94A3B8`):** Captions, secondary metadata, line numbers, and author notes.
-- **Text Tertiary (`#64748B`):** Disabled states, structural bracket annotations, and inactive tab headers.
-
-#### Functional & Semantic Colors
-- **Primary / Success (`#0D9488` teal / `#10B981` emerald):** Playwright test passes, assertions confirmed, active links, primary CTA states.
-- **Secondary / Architecture (`#6366F1` indigo / `#06B6D4` cyan):** Playwright fixtures, page objects, API routes, and syntax tokens.
-- **Warning / Tip (`#F59E0B` amber):** Flaky test notices, timeouts, execution warnings, and advisory callouts.
-- **Destructive / Error (`#F43F5E` rose):** Test failure traces, assertions broken, deprecation alerts.
-
-### Light Mode Adaptation
-When toggled to light mode, the canvas flips to warm paper slate (`#F8FAFC`), surfaces to crisp white (`#FFFFFF`), borders to slate grey (`#E2E8F0`), and text primary to deep charcoal (`#0F172A`). Accent hues shift slightly darker (`#0F766E` teal, `#4F46E5` indigo, `#B45309` amber) to maintain WCAG AA/AAA compliance on light grounds.
+### Contrast & Application Rules
+- All text overlaid on tinted glass must meet WCAG AAA standards using `#F8FAFC` or `#94A3B8`.
+- Luminous glows must never back raw body copy; ambient radial gradients are kept below `25%` opacity when intersecting reading planes.
 
 ## Typography
 
-The typographical engine matches the geometric clarity and approachability of **Plus Jakarta Sans** with the structural fidelity of **JetBrains Mono**.
+The typographic hierarchy combines three distinct functional voices:
+1. **Space Grotesk (Headlines & Architecture Anchors):** Geometric, mechanical, yet full of charismatic angularity. Conveys cutting-edge technological forward momentum.
+2. **Inter (Body & Narrative Prose):** Uncompromising clarity, neutral rhythm, and optimized readability across screen sizes for project summaries, architecture whitepapers, and case studies.
+3. **JetBrains Mono (Metadata, KPIs, Code, and Badges):** Reinforces the precision of automation frameworks (Playwright, Cypress, Selenium, CI/CD configs) and system metrics.
 
-### Typographic Principles
-- **Reading Measure:** Article body prose is strictly constrained to a `65ch` to `75ch` column width to prevent ocular tracking strain across wide desktop monitors.
-- **Vertical Rhythm:** Headings enforce a generous `2.25rem` top margin to visibly dissociate subsequent topic sections, followed by an immediate tight `0.75rem` bottom margin binding the heading to its introductory paragraph.
-- **Monospace Integration:** Inline code spans use subtle background clipping (`padding: 0.15em 0.35em`) with a 1px border. Technical labels, table headers, test durations, and terminal logs standardize on JetBrains Mono to ground numerical and test data.
+### Sizing and Fluid Scaling
+- Headlines scale down on mobile breakpoints (`display-mobile`, `headline-lg-mobile`) to prevent awkward hyphenation and preserve screen real estate.
+- Monospaced labels feature slight letter spacing (`0.02em` - `0.05em`) to emphasize precision in metric cards and technical tag chips.
 
 ## Layout & Spacing
 
-The layout philosophy uses a disciplined **Fixed Editorial Center** with fluid container margins. 
+The layout utilizes a structured 12-column fluid grid system on desktop and tablet, collapsing to a single-column sequence on mobile devices.
 
-### Grid & Breakpoints
-- **Mobile (< 640px):** 1-column fluid stacked layout. Outer horizontal margins are locked to `margin-mobile` (1.25rem). Code blocks span edge-to-edge with negative horizontal margins to maximize terminal width.
-- **Tablet (641px - 1024px):** 6-column grid with `1.5rem` gutters. Article contents utilize a 5-column focus with 1 column reserved for collapsible navigation.
-- **Desktop (1025px - 1440px):** 12-column grid. Main content column is pinned to a maximum reading container (`75ch` or 768px). Aside regions (Right: Table of Contents, execution metrics; Left: System navigation) stick dynamically in peripheral columns.
-- **Wide Screen (> 1440px):** Layout remains centered with a max-width wrapper of `1320px`. Generous canvas margins (`margin`: 3rem) ensure the reading line never stretches into peripheral vision.
+### Breakpoints & Reflow
+- **Desktop (1280px+):** Max-width container capped at `1280px` with `margin: 3rem` outer buffer. 12 columns with `gutter: 1.5rem`. Complex dual-column engineering case studies and interactive test architecture diagrams.
+- **Tablet (768px - 1279px):** 8-column layout with `gutter: 1.25rem` and `margin: 2rem`. Secondary metrics flow beneath primary overview cards.
+- **Mobile (< 768px):** 4-column / single stream stacked layout with `margin-mobile: 1.25rem` and `gutter-mobile: 1rem`. Architecture diagrams convert to swipeable horizontal cards.
 
-### Spacing Scale Utilization
-- **`space-xs` (4px):** Internal button icon gaps, status badge dot offsets.
-- **`space-sm` (8px):** Chip padding, table cell padding, metadata tags.
-- **`space-md` (16px):** Standard card padding, code block gutter offsets, input field interior margins.
-- **`space-lg` (24px):** Separation between card groups, callout block interior padding.
-- **`space-xl` (40px):** Vertical spacing between major article sections (`h2`, `h3`).
+### Spacing Rhythm
+Component padding follows strict mathematical multiples of `4px` / `8px`:
+- Tight groupings (icon to metric): `space-xs` (4px) to `space-sm` (8px).
+- Internal card padding: `space-lg` (24px) for desktop, `space-md` (16px) for mobile.
+- Section-to-section breaks: `space-xl` (40px) up to dedicated layout section margins (`margin: 3rem`).
 
 ## Elevation & Depth
 
-This design system rejects heavy, dramatic skeuomorphic drops and aggressive blur-heavy elevations. Visual hierarchy is established strictly through **Tonal Layering** paired with **Low-Contrast Outlines**.
+Visual depth is achieved through translucent planar layering, dynamic backdrop blur, and gradient light leak borders rather than traditional dark dropshadows.
 
-### Elevation Scale
-- **Base Level (`z-index: 0`):** The default application canvas. Rendered in `#0B0F19`.
-- **Layer 1 Surface (`z-index: 1`):** Read-only cards, article containers, and prose content. Neutral surface elevated (`#111827`) bounded by a subtle `1px solid #1E293B` border. Zero shadow.
-- **Layer 2 Interactive (`z-index: 2`):** Hovered cards, floating code copy trays, dropdown panels, and test runner inspectors. Elevated (`#1E293B`) backed by a faint, crisp micro-shadow: `0 4px 12px -2px rgba(0, 0, 0, 0.45)`.
-- **Layer 3 Overlay (`z-index: 50`):** Modal dialogs, trace viewers, and screenshot comparison lightboxes. Backdrop utilizes an ultra-fine blur: `backdrop-filter: blur(8px); background-color: rgba(11, 15, 25, 0.85)`. Border shifts to `#334155`.
+### Layering Hierarchy
+1. **Canvas Layer (`z-index: 0`):** `#090D16` base canvas layered with two deep ambient radial gradient blurs (`rgba(138, 43, 226, 0.08)` and `rgba(0, 242, 254, 0.05)`).
+2. **Structural Glass Layer (`z-index: 10`):** `background: rgba(19, 27, 46, 0.65)` paired with `backdrop-filter: blur(16px)` and a subtle 1px border `rgba(255, 255, 255, 0.08)`.
+3. **Elevated Interactive Layer (`z-index: 20`):** `background: rgba(26, 38, 64, 0.75)` with `backdrop-filter: blur(24px)`. Borders transition on hover to dynamic linear gradients (`linear-gradient(135deg, rgba(0, 242, 254, 0.4), rgba(138, 43, 226, 0.4))`).
+4. **Active Luminescence (Hover/Focus):** Soft localized aura: `box-shadow: 0 0 24px -4px rgba(0, 242, 254, 0.25)`.
+5. **Overlay / Drawer Layer (`z-index: 50`):** `background: rgba(9, 13, 22, 0.85)` with `backdrop-filter: blur(32px)`.
 
 ## Shapes
 
-The design system adopts a **Soft Geometric** roundedness factor (`1`). This yields intentional, crisp curvature that echoes clean developer dashboards and CLI tools without appearing childish or bubbly.
-
-### Corner Radii
-- **Micro Radii (`0.25rem` / 4px):** Tags, badges, test status pills, inline code spans, and button elements.
-- **Medium Radii (`0.5rem` / 8px):** Code blocks, article cards, callout alert containers, and test run trace panels.
-- **Large Radii (`0.75rem` / 12px):** Modals, screenshot diff frames, and architecture overview diagrams.
-- **Full Pill (`9999px`):** Reserved exclusively for dynamic status pips and live execution badges (e.g., `RUNNING`, `PASSED`).
+The design system operates at **Level 2 (Rounded)**:
+- Base elements (buttons, input fields, test assertion tags): `0.5rem` (8px).
+- Cards, code inspection windows, and architecture nodes (`rounded-lg`): `1rem` (16px).
+- Modals, prominent hero containers, and feature showcases (`rounded-xl`): `1.5rem` (24px).
+- Status indicator pills and execution chips use full pill shapes (`9999px`) to distinguish categorical metadata from structural content cards.
 
 ## Components
 
-All components are engineered with deterministic state indicators, high-contrast typography, and explicit `data-test` attributes to make the portfolio an embodiment of Playwright testability.
+### Buttons
+- **Primary Action (Execute / Get In Touch):** Filled gradient from `#00F2FE` to `#8A2BE2`, high-contrast obsidian text (`#050811`), `font-weight: 600`. Hover delivers an ambient teal bloom (`0 0 20px rgba(0, 242, 254, 0.4)`).
+- **Secondary Action (View Framework / GitHub):** Glass surface (`rgba(255, 255, 255, 0.05)`), border `1px solid rgba(0, 242, 254, 0.3)`, text `#F8FAFC`. Hover shifts border to solid `#00F2FE` with subtle internal reflection.
+- **Ghost Action (Inspect Artifacts):** Transparent canvas, text `#94A3B8`, hover states transition to `#00F2FE` with an underlined glow.
 
-### 1. Code Blocks & Terminal Frames
-- **Structure:** Two-tier layout consisting of a header panel and a syntax body.
-- **Header:** Contains the relative file path (`tests/e2e/auth.spec.ts`) in `label-sm` with a file icon, paired with a right-aligned Copy button.
-- **Body:** Recessed `#080C14` background. Left gutter features non-selectable line numbers in `#64748B`. Line-highlighting states introduce a `rgba(13, 148, 136, 0.12)` horizontal bar with a `2px solid #0D9488` left border.
-- **Test Automation Hook:** `data-test="code-block"`, `data-test-file="auth.spec.ts"`, `data-test-action="copy-code"`.
+### Chips & Badges
+- **Framework & Skill Badges:** JetBrains Mono, `label-md`. Background `rgba(0, 242, 254, 0.08)`, border `1px solid rgba(0, 242, 254, 0.2)`, text `#00F2FE`.
+- **Pass/Fail Pipeline Status Chips:** 
+  - Passed: Pill badge, background `rgba(16, 185, 129, 0.12)`, text `#10B981`, pulsing dot beacon.
+  - Flaky / Refactor: Pill badge, background `rgba(255, 83, 118, 0.12)`, text `#FF5376`.
 
-### 2. Test Status Badges & Live Indicators
-- **Variants:**
-  - **Passed:** Green tint (`#064E3B` background, `#10B981` text, `#047857` border).
-  - **Failed:** Red tint (`#4C0519` background, `#F43F5E` text, `#BE123C` border).
-  - **Flaky / Retrying:** Amber tint (`#451A03` background, `#F59E0B` text, `#B45309` border).
-  - **Running:** Indigo tint with a pulsing SVG ring dot.
-- **Format:** Monospace uppercase `label-sm`, horizontal padding `0.5rem`, vertical padding `0.2rem`, radius `0.25rem`.
-- **Test Automation Hook:** `data-test="status-badge"`, `data-test-status="passed|failed|flaky|running"`.
+### Cards & Architecture Displays
+- Translucent backdrop blur with high-fidelity 1px gradient borders (`linear-gradient(to bottom right, rgba(0, 242, 254, 0.2), rgba(138, 43, 226, 0.1), transparent)`).
+- Content headers feature an icon enclosure with an inner neon glow.
+- Interactive cards elevate by `-2px` on hover with dynamic light border intensifications.
 
-### 3. Callout Boxes
-- **Types:** `note` (cyan/slate), `tip` (emerald), `warning` (amber).
-- **Structure:** Solid background at 8% opacity of the accent hue. A distinct `3px` solid accent bar on the left edge.
-- **Typography:** An icon paired with a bold monospaced category label (e.g., `[PLAYWRIGHT BEST PRACTICE]`) above standard `body-md` copy.
-- **Test Automation Hook:** `data-test="callout"`, `data-test-type="note|tip|warning"`.
+### Lists & Test Case Timelines
+- Clean vertical line connectors styled in `rgba(138, 43, 226, 0.3)`.
+- List items feature monospaced numerical prefixes (`01`, `02`, `03`) styled in `#00F2FE`.
+- Hovering over a list item lights up its corresponding connector point into an active cyan node.
 
-### 4. Interactive Architecture Diagrams & Trace Frames
-- **Container:** Structural card with a 1px border (`#1E293B`), centered SVG/Mermaid diagrams, and an integrated bottom caption strip.
-- **Caption Strip:** Displays figure number, file origin, or architecture layer in `label-sm`.
-- **Zoom / Pan Actions:** Floating top-right control toolbar with icons for toggle full-width, reset zoom, and open raw SVG.
-- **Test Automation Hook:** `data-test="diagram-frame"`, `data-test-caption="figure-1"`.
+### Input Fields & Terminal Emulators
+- Form inputs feature `rgba(11, 15, 25, 0.8)` background with `1px solid #1E2942` borders. Focused states shift to `1px solid #00F2FE` accompanied by `box-shadow: 0 0 12px rgba(0, 242, 254, 0.2)`. Placeholder text set in `#64748B`.
+- Integrated terminal components utilize `#070A10` background, a faux macOS traffic-light top bar, and syntax-highlighted automation script previews in JetBrains Mono.
 
-### 5. Buttons & Interactive Controls
-- **Primary:** Background `#0D9488`, text `#FFFFFF`, hover `#0F766E`, focus ring `2px solid #14B8A6` with a 2px offset.
-- **Secondary / Ghost:** Transparent background, border `1px solid #334155`, text `#F8FAFC`, hover background `#1E293B`.
-- **States:** Active, Hover, Focus-Visible, Disabled (`opacity: 0.4`, cursor not-allowed).
-- **Test Automation Hook:** `data-test="btn-primary"`, `data-test="btn-secondary"`.
-
-### 6. Cards & Article Snippets
-- **Style:** Background `#111827`, border `1px solid #1E293B`, radius `0.5rem`.
-- **Hover Behavior:** Border shifts to `#334155`, title shifts from `#F8FAFC` to `#0D9488`. No physical transform (no vertical displacement/jumping), maintaining a calm reading rhythm.
-- **Metadata Group:** Displays publication date, reading duration, and Playwright version compatibility badge in `JetBrains Mono`.
-- **Test Automation Hook:** `data-test="article-card"`, `data-test-id="{article-slug}"`.
+### Checkboxes & Segmented Controls
+- Checkboxes feature rounded corners (`4px`), obsidian fills, and borders of `1px solid rgba(255, 255, 255, 0.2)`. Checked state transitions to full `#00F2FE` fill with a deep obsidian check icon.
+- Segmented architecture toggles (e.g., *E2E Tests* | *API Mocks* | *Performance*) rely on a sliding frosted-glass pill highlight.

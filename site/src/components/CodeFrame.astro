@@ -9,18 +9,29 @@ interface Props {
   /** Text copied by the copy button; when omitted the rendered code text is copied. */
   copy?: string;
   repoUrl?: string;
+  /** Faux window controls in the header, for terminal frames. */
+  dots?: boolean;
 }
 
-const { file, lang, icon = 'description', copy, repoUrl } = Astro.props;
+const { file, lang, icon = 'description', copy, repoUrl, dots = false } = Astro.props;
 const label = file ?? lang ?? 'code';
 const testFile = file ? file.split('/').pop() : (lang ?? 'code');
 ---
 
 <figure class="code-frame not-prose" data-test="code-block" data-test-file={testFile}>
   <figcaption
-    class="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2 font-mono text-label-sm text-muted"
+    class="code-frame-head flex items-center justify-between gap-3 border-b px-4 py-2 font-mono text-label-sm text-muted"
   >
     <span class="flex min-w-0 items-center gap-1.5">
+      {
+        dots && (
+          <span class="mr-1 flex items-center gap-1.5" aria-hidden="true" data-test="window-dots">
+            <span class="size-2.5 rounded-pill bg-[#ef4444cc]" />
+            <span class="size-2.5 rounded-pill bg-[#eab308cc]" />
+            <span class="size-2.5 rounded-pill bg-[#22c55ecc]" />
+          </span>
+        )
+      }
       <Icon name={icon} size={14} />
       <span class="truncate" data-test="code-file">{label}</span>
     </span>

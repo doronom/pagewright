@@ -17,10 +17,10 @@ const { href, variant = 'primary', icon, iconAfter, external = false, test } = A
 <a
   href={href}
   class:list={[
-    'inline-flex items-center gap-1.5 rounded-chip border px-5 py-2.5 font-mono text-label-md transition-colors',
+    'inline-flex items-center gap-1.5 rounded-chip border px-6 py-3 font-mono text-label-md font-semibold transition-all duration-200',
     variant === 'primary'
-      ? 'border-transparent bg-primary text-on-primary hover:bg-primary-hover'
-      : 'border-border bg-transparent text-text hover:border-border-strong hover:bg-surface-low',
+      ? 'btn-gradient border-transparent hover:scale-[1.02]'
+      : 'border-[var(--accent-cyan)] bg-surface-low/80 text-text hover:border-primary hover:shadow-[var(--glow)]',
   ]}
   data-test={test ?? `btn-${variant}`}
   target={external ? '_blank' : undefined}

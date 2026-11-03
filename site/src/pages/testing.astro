@@ -35,7 +35,7 @@ const links = [
 
   {
     summary && (
-      <section class="flex flex-col gap-4 rounded-card border border-border bg-surface-lowest p-6" data-test="test-results">
+      <section class="flex flex-col gap-4 glass-card p-6" data-test="test-results">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h2 class="text-headline-sm text-text">Latest run</h2>
           <div class="flex items-center gap-3 font-mono text-label-sm text-muted">
@@ -58,7 +58,7 @@ const links = [
   <div class="grid grid-cols-1 gap-10 lg:grid-cols-12">
     <div class="prose lg:col-span-8" data-test="testing-body"><Content components={mdxComponents} /></div>
     <aside class="lg:col-span-4">
-      <section class="flex flex-col gap-3 rounded-card border border-border bg-surface-low p-6" data-test="test-code-links">
+      <section class="flex flex-col gap-3 glass-card accent-violet p-6" data-test="test-code-links">
         <h2 class="font-mono text-label-sm uppercase text-faint">Test code</h2>
         <ul class="flex flex-col gap-2">
           {links.map((l) => (

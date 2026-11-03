@@ -21,7 +21,7 @@ const intro = (series.data.intro ?? series.data.summary).split(/\n\s*\n/).map((p
 ---
 
 <BaseLayout title={series.data.title} description={series.data.summary}>
-  <header class="flex flex-col gap-4 rounded-card border border-border bg-surface-lowest p-6 sm:p-10" data-test="series-header">
+  <header class="flex flex-col gap-4 glass-hero p-6 sm:p-10" data-test="series-header">
     <p class="flex flex-wrap items-center gap-2 font-mono text-label-sm text-muted">
       <a href={href('/series/')} class="chip text-tertiary hover:border-border-strong">SERIES</a>
       <span>{status.published} of {series.data.plannedParts} published</span>

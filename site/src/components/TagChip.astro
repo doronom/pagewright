@@ -15,8 +15,8 @@ const slug = slugify(tag);
 <a
   href={href(`/tags/${slug}/`)}
   class:list={[
-    'chip transition-colors hover:border-border-strong hover:text-primary',
-    active ? 'text-primary border-primary' : 'text-faint',
+    'chip transition-colors hover:border-primary hover:text-primary',
+    active ? 'text-primary border-primary tint-cyan' : 'text-primary tint-cyan',
   ]}
   data-test="tag-chip"
   data-test-id={slug}

@@ -17,7 +17,7 @@ const { icon, color } = config[type];
 ---
 
 <aside
-  class="callout not-prose rounded-r-card border border-l-[3px] border-border p-6"
+  class="callout not-prose rounded-r-card border border-l-4 p-6"
   style={`--accent: ${color};`}
   data-test="callout"
   data-test-type={type}
@@ -31,7 +31,17 @@ const { icon, color } = config[type];
 
 <style>
   .callout {
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     border-left-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 8%, var(--surface-low));
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--accent) 12%, var(--surface-low)),
+      var(--surface-low) 45%,
+      var(--surface-low)
+    );
+    box-shadow: 0 10px 30px -20px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .callout :global(svg) {
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent));
   }
 </style>

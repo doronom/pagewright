@@ -9,7 +9,7 @@ const latest = (await getArticles()).slice(0, 3);
 ---
 
 <BaseLayout title="Page not found" description="This page does not exist." noindex>
-  <section class="flex flex-col items-start gap-4 rounded-card border border-border bg-surface-lowest p-6 sm:p-10" data-test="not-found">
+  <section class="flex flex-col items-start gap-4 glass-hero p-6 sm:p-10" data-test="not-found">
     <p class="chip uppercase text-error">404</p>
     <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">Page not found</h1>
     <p class="max-w-[60ch] text-body-lg text-muted">The page you are looking for does not exist or has moved.</p>

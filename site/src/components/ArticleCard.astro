@@ -18,14 +18,18 @@ const url = href(`/articles/${article.id}/`);
 ---
 
 <article
-  class="group relative flex flex-col justify-between rounded-card border border-border bg-surface-low p-6 transition-colors hover:border-border-strong"
+  class:list={[
+    'glass-card glass-card-interactive group relative flex flex-col justify-between overflow-hidden p-6',
+    !series && 'accent-amber',
+  ]}
   data-test="article-card"
   data-test-id={article.id}
 >
-  <div class="flex flex-col gap-2">
+  <span class="card-orb" aria-hidden="true"></span>
+  <div class="relative flex flex-col gap-2">
     <div class="flex items-center justify-between gap-2 font-mono text-label-sm text-muted">
       <span class="flex items-center gap-2">
-        {series && <span class="text-primary">Series: Part {data.seriesPart} of {series.data.plannedParts}</span>}
+        {series && <span class="chip font-semibold text-primary tint-cyan">Series: Part {data.seriesPart} of {series.data.plannedParts}</span>}
         <TypeBadge type={data.type} />
         {data.draft && <span class="chip text-error uppercase" data-test="draft-badge">Draft</span>}
       </span>
@@ -36,10 +40,28 @@ const url = href(`/articles/${article.id}/`);
     </Heading>
     <p class="text-body-sm text-muted">{data.description}</p>
   </div>
-  <div class="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-6">
+  <div class="relative mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--card-accent)] pt-6">
     <div class="relative z-10 flex flex-wrap items-center gap-1.5">
       {data.tags.slice(0, 3).map((tag) => <TagChip tag={tag} />)}
     </div>
     <time class="font-mono text-label-sm text-muted" datetime={isoDate(data.date)}>{formatDate(data.date)}</time>
   </div>
 </article>
+
+<style>
+  .card-orb {
+    position: absolute;
+    top: -5rem;
+    right: -5rem;
+    width: 10rem;
+    height: 10rem;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, var(--card-accent), transparent);
+    opacity: 0.6;
+    transition: opacity 300ms ease;
+    pointer-events: none;
+  }
+  article:hover .card-orb {
+    opacity: 1;
+  }
+</style>

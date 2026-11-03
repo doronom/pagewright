@@ -4,237 +4,236 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Doron Omer - Test Architecture &amp; Playwright Engineering</title>
-<!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+<!-- Google Fonts: Space Grotesk, Inter & JetBrains Mono -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <!-- Material Symbols Outlined -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <!-- Tailwind CSS v3 with Plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-            "on-tertiary-fixed-variant": "#653e00",
-            "on-error": "#690005",
-            "error": "#ffb4ab",
-            "tertiary-fixed": "#ffddb8",
-            "secondary-container": "#3131c0",
-            "inverse-surface": "#dae2fd",
-            "on-surface": "#dae2fd",
-            "on-primary-fixed": "#00201d",
-            "primary-fixed": "#89f5e7",
-            "outline": "#879391",
-            "surface-container-high": "#222a3d",
-            "error-container": "#93000a",
-            "secondary-fixed": "#e1e0ff",
-            "primary-container": "#29a195",
-            "on-tertiary-fixed": "#2a1700",
-            "surface-bright": "#31394d",
-            "on-primary-container": "#00302b",
-            "secondary": "#c0c1ff",
-            "surface-container-low": "#131b2e",
-            "inverse-primary": "#006a61",
-            "inverse-on-surface": "#283044",
-            "surface-container-lowest": "#060e20",
-            "surface-container-highest": "#2d3449",
-            "on-tertiary-container": "#3e2400",
-            "secondary-fixed-dim": "#c0c1ff",
-            "outline-variant": "#3d4947",
-            "on-primary-fixed-variant": "#005049",
-            "on-secondary-fixed-variant": "#2f2ebe",
-            "background": "#0b1326",
-            "primary-fixed-dim": "#6bd8cb",
-            "tertiary-fixed-dim": "#ffb95f",
-            "surface-variant": "#2d3449",
-            "on-primary": "#003732",
-            "primary": "#6bd8cb",
-            "on-tertiary": "#472a00",
-            "tertiary": "#ffb95f",
-            "on-surface-variant": "#bcc9c6",
-            "surface-dim": "#0b1326",
-            "on-background": "#dae2fd",
-            "on-secondary-fixed": "#07006c",
-            "tertiary-container": "#ca8100",
-            "on-secondary-container": "#b0b2ff",
-            "on-secondary": "#1000a9",
-            "surface-container": "#171f33",
-            "surface": "#0b1326",
-            "on-error-container": "#ffdad6",
-            "surface-tint": "#6bd8cb"
-          },
-          "borderRadius": {
-            "DEFAULT": "0.125rem",
-            "lg": "0.25rem",
-            "xl": "0.5rem",
-            "full": "0.75rem"
-          },
-          "spacing": {
-            "space-xl": "2.5rem",
-            "space-xs": "0.25rem",
-            "margin-mobile": "1.25rem",
-            "gutter-mobile": "1rem",
-            "gutter": "1.5rem",
-            "space-md": "1rem",
-            "space-lg": "1.5rem",
-            "space-sm": "0.5rem",
-            "margin": "3rem"
-          },
-          "fontFamily": {
-            "body-lg": [
-              "Plus Jakarta Sans"
-            ],
-            "label-md": [
-              "JetBrains Mono"
-            ],
-            "headline-md": [
-              "Plus Jakarta Sans"
-            ],
-            "label-sm": [
-              "JetBrains Mono"
-            ],
-            "headline-xl": [
-              "Plus Jakarta Sans"
-            ],
-            "code-inline": [
-              "JetBrains Mono"
-            ],
-            "code-block": [
-              "JetBrains Mono"
-            ],
-            "body-sm": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-xl-mobile": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-lg": [
-              "Plus Jakarta Sans"
-            ],
-            "body-md": [
-              "Plus Jakarta Sans"
-            ],
-            "display": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-sm": [
-              "Plus Jakarta Sans"
-            ]
-          },
-          "fontSize": {
-            "body-lg": [
-              "1.125rem",
-              {
-                "lineHeight": "1.75",
-                "letterSpacing": "-0.005em",
-                "fontWeight": "400"
-              }
-            ],
-            "label-md": [
-              "0.8125rem",
-              {
-                "lineHeight": "1.3",
-                "letterSpacing": "0.04em",
-                "fontWeight": "600"
-              }
-            ],
-            "headline-md": [
-              "1.375rem",
-              {
-                "lineHeight": "1.4",
-                "letterSpacing": "-0.015em",
-                "fontWeight": "600"
-              }
-            ],
-            "label-sm": [
-              "0.75rem",
-              {
-                "lineHeight": "1.2",
-                "letterSpacing": "0.06em",
-                "fontWeight": "500"
-              }
-            ],
-            "headline-xl": [
-              "2.5rem",
-              {
-                "lineHeight": "1.2",
-                "letterSpacing": "-0.025em",
-                "fontWeight": "700"
-              }
-            ],
-            "code-inline": [
-              "0.875em",
-              {
-                "lineHeight": "1.4",
-                "letterSpacing": "-0.01em",
-                "fontWeight": "500"
-              }
-            ],
-            "code-block": [
-              "0.875rem",
-              {
-                "lineHeight": "1.65",
-                "letterSpacing": "0em",
-                "fontWeight": "400"
-              }
-            ],
-            "body-sm": [
-              "0.875rem",
-              {
-                "lineHeight": "1.6",
-                "letterSpacing": "0em",
-                "fontWeight": "400"
-              }
-            ],
-            "headline-xl-mobile": [
-              "2rem",
-              {
-                "lineHeight": "1.25",
-                "letterSpacing": "-0.02em",
-                "fontWeight": "700"
-              }
-            ],
-            "headline-lg": [
-              "1.875rem",
-              {
-                "lineHeight": "1.3",
-                "letterSpacing": "-0.02em",
-                "fontWeight": "700"
-              }
-            ],
-            "body-md": [
-              "1rem",
-              {
-                "lineHeight": "1.7",
-                "letterSpacing": "0em",
-                "fontWeight": "400"
-              }
-            ],
-            "display": [
-              "3.5rem",
-              {
-                "lineHeight": "1.15",
-                "letterSpacing": "-0.03em",
-                "fontWeight": "800"
-              }
-            ],
-            "headline-sm": [
-              "1.125rem",
-              {
-                "lineHeight": "1.45",
-                "letterSpacing": "-0.01em",
-                "fontWeight": "600"
-              }
-            ]
-          }
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "tertiary-fixed-dim": "#ffb2ba",
+          "on-surface-variant": "#b9cacb",
+          "on-tertiary-fixed-variant": "#910031",
+          "surface-bright": "#353944",
+          "surface-container-lowest": "#0a0e18",
+          "on-error": "#690005",
+          "on-error-container": "#ffdad6",
+          "surface-dim": "#0f131d",
+          "primary-fixed": "#6ff6ff",
+          "inverse-primary": "#00696f",
+          "outline-variant": "#1f2a3e",
+          "secondary-container": "#7701d0",
+          "secondary-fixed-dim": "#dcb8ff",
+          "tertiary-container": "#ffcfd3",
+          "surface-container-low": "#131826",
+          "background": "#0b0f19",
+          "surface-container-highest": "#313540",
+          "error-container": "#93000a",
+          "outline": "#849495",
+          "primary-container": "#00f2fe",
+          "on-tertiary-fixed": "#400011",
+          "on-surface": "#dfe2f1",
+          "tertiary": "#fff5f5",
+          "on-tertiary-container": "#b91b47",
+          "on-primary-fixed-variant": "#004f53",
+          "on-secondary-fixed": "#2c0051",
+          "surface": "#0f131d",
+          "surface-tint": "#00dce6",
+          "on-primary": "#00373a",
+          "on-secondary": "#480081",
+          "inverse-on-surface": "#2c303b",
+          "on-primary-fixed": "#002022",
+          "on-secondary-container": "#dcb7ff",
+          "surface-container": "#181e2e",
+          "primary-fixed-dim": "#00dce6",
+          "error": "#ffb4ab",
+          "on-primary-container": "#006a70",
+          "on-tertiary": "#670021",
+          "tertiary-fixed": "#ffd9dc",
+          "primary": "#00f2fe",
+          "secondary-fixed": "#efdbff",
+          "on-background": "#dfe2f1",
+          "on-secondary-fixed-variant": "#6700b5",
+          "surface-container-high": "#232a3c",
+          "surface-variant": "#313540",
+          "secondary": "#a855f7",
+          "inverse-surface": "#dfe2f1"
         },
+        "borderRadius": {
+          "DEFAULT": "0.375rem",
+          "lg": "0.625rem",
+          "xl": "1rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "gutter": "1.5rem",
+          "space-sm": "0.5rem",
+          "margin-mobile": "1.25rem",
+          "space-md": "1rem",
+          "gutter-mobile": "1rem",
+          "margin": "3rem",
+          "space-xl": "2.5rem",
+          "space-xs": "0.25rem",
+          "space-lg": "1.5rem"
+        },
+        "fontFamily": {
+          "body-lg": [
+            "Inter", "sans-serif"
+          ],
+          "headline-lg-mobile": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "display-mobile": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "label-sm": [
+            "JetBrains Mono", "monospace"
+          ],
+          "body-md": [
+            "Inter", "sans-serif"
+          ],
+          "headline-lg": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "headline-md": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "label-md": [
+            "JetBrains Mono", "monospace"
+          ],
+          "label-lg": [
+            "JetBrains Mono", "monospace"
+          ],
+          "display": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "headline-sm": [
+            "Space Grotesk", "sans-serif"
+          ],
+          "body-sm": [
+            "Inter", "sans-serif"
+          ],
+          "code-block": [
+            "JetBrains Mono", "monospace"
+          ]
+        },
+        "fontSize": {
+          "body-lg": [
+            "18px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "display-mobile": [
+            "38px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "15px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-md": [
+            "15px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-md": [
+            "24px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-xl": [
+            "2.5rem",
+            {
+              "lineHeight": "1.2",
+              "letterSpacing": "-0.025em",
+              "fontWeight": "700"
+            }
+          ],
+          "label-md": [
+            "13px",
+            {
+              "lineHeight": "18px",
+              "letterSpacing": "0.03em",
+              "fontWeight": "500"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "500"
+            }
+          ],
+          "display": [
+            "56px",
+            {
+              "lineHeight": "64px",
+              "letterSpacing": "-0.03em",
+              "fontWeight": "800"
+            }
+          ],
+          "headline-sm": [
+            "18px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "13px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
       },
-    }
-  </script>
+    },
+  }
+</script>
 <style>
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined';
@@ -251,134 +250,146 @@
       -webkit-font-smoothing: antialiased;
     }
     ::selection {
-      background-color: #29a195;
-      color: #00302b;
+      background-color: #00f2fe;
+      color: #002022;
     }
   </style>
 </head>
-<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-[#090d16] text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black relative overflow-x-hidden">
+<!-- Background Ambient Glow Orbs -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute -top-40 left-1/4 w-[600px] h-[500px] bg-gradient-to-br from-cyan-500/15 via-violet-600/15 to-transparent rounded-full blur-[140px]"></div>
+<div class="absolute top-[45%] -right-40 w-[550px] h-[550px] bg-gradient-to-br from-purple-600/15 via-pink-600/10 to-transparent rounded-full blur-[150px]"></div>
+<div class="absolute bottom-10 left-10 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-600/10 via-emerald-600/10 to-transparent rounded-full blur-[130px]"></div>
+</div>
 <!-- ================= TOPNAVBAR (Shared Component Implementation) ================= -->
-<header class="docked full-width top-0 sticky z-50 bg-surface-container-lowest dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline-variant transition-colors duration-150 ease-in-out">
-<div class="w-full px-space-lg mx-auto flex items-center justify-between h-14 max-w-[1320px]">
+<header class="docked full-width top-0 sticky z-50 bg-[#090d16]/80 backdrop-blur-xl border-b border-cyan-500/15 transition-all duration-200">
+<div class="w-full px-space-lg mx-auto flex items-center justify-between h-16 max-w-[1320px]">
 <!-- Brand Logo / Identity -->
-<a class="flex items-center gap-space-xs text-headline-sm font-headline-sm font-bold text-on-surface dark:text-on-surface tracking-tight group" data-test="brand-home" href="#">
-<span class="text-primary font-label-md text-label-md mr-1 font-semibold group-hover:text-primary-fixed-dim transition-colors">&gt;_</span>
-<span>Doron Omer</span>
-<span class="hidden lg:inline-block ml-space-sm py-0.5 px-1.5 rounded-lg bg-surface-container text-outline text-label-sm font-label-sm border border-outline-variant">arch.ts</span>
+<a class="flex items-center gap-space-xs text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight group" data-test="brand-home" href="#">
+<span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 text-black font-label-md font-bold text-xs shadow-lg shadow-cyan-500/25 mr-1 group-hover:scale-105 transition-transform">&gt;_</span>
+<span class="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-violet-300 transition-colors">Doron Omer</span>
+<span class="hidden lg:inline-block ml-space-sm py-0.5 px-2 rounded-full bg-cyan-950/60 text-cyan-300 text-label-sm font-label-sm border border-cyan-500/30 shadow-inner">arch.ts</span>
 </a>
 <!-- Desktop Navigation Links -->
 <nav class="hidden md:flex items-center gap-space-lg">
-<a class="text-primary dark:text-primary font-label-md text-label-md border-b-2 border-primary dark:border-primary pb-1" href="#articles">Articles</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant font-label-md text-label-md hover:text-on-surface dark:hover:text-on-surface transition-colors" href="#series">Series</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant font-label-md text-label-md hover:text-on-surface dark:hover:text-on-surface transition-colors" href="#projects">Projects</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant font-label-md text-label-md hover:text-on-surface dark:hover:text-on-surface transition-colors" href="#about">About</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant font-label-md text-label-md hover:text-on-surface dark:hover:text-on-surface transition-colors" href="#testing">Testing</a>
+<a class="text-cyan-400 font-label-md text-label-md border-b-2 border-cyan-400 pb-1 font-semibold drop-shadow-[0_0_8px_rgba(0,242,254,0.5)]" href="#articles">Articles</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-white hover:drop-shadow-[0_0_6px_rgba(168,85,247,0.6)] transition-all" href="#series">Series</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-white hover:drop-shadow-[0_0_6px_rgba(168,85,247,0.6)] transition-all" href="#projects">Projects</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-white hover:drop-shadow-[0_0_6px_rgba(168,85,247,0.6)] transition-all" href="#about">About</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-white hover:drop-shadow-[0_0_6px_rgba(168,85,247,0.6)] transition-all" href="#testing">Testing</a>
 </nav>
 <!-- Trailing Action: Live Test Status, RSS & Dark Mode Toggle -->
 <div class="flex items-center gap-space-md">
 <!-- Live Test Status Badge -->
-<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-surface-container-low border border-outline-variant" data-test="status-badge" data-test-status="passed">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 shadow-sm shadow-emerald-500/10 backdrop-blur-md" data-test="status-badge" data-test-status="passed">
 <span class="relative flex h-2 w-2">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
 </span>
-<span class="font-label-sm text-label-sm text-primary tracking-wide">42 passed · 0.8s</span>
+<span class="font-label-sm text-label-sm text-emerald-300 font-semibold tracking-wide">42 passed · 0.8s</span>
 </div>
 <!-- Trailing Primary Action: RSS -->
-<a class="hidden sm:inline-flex font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-150 items-center gap-1" data-test="link-rss" href="#rss">
-<span class="material-symbols-outlined text-sm">rss_feed</span>
+<a class="hidden sm:inline-flex font-label-md text-label-md text-amber-300/80 hover:text-amber-300 hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] transition-all items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-500/20 bg-amber-500/5" data-test="link-rss" href="#rss">
+<span class="material-symbols-outlined text-sm text-amber-400">rss_feed</span>
 <span>RSS</span>
 </a>
 <!-- Trailing Icon Action: dark_mode Toggle -->
-<button aria-label="Toggle theme" class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-center border border-transparent hover:border-outline-variant" data-test="theme-toggle" type="button">
-<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+<button aria-label="Toggle theme" class="p-2 rounded-lg text-cyan-300 hover:text-white bg-cyan-950/30 hover:bg-cyan-900/40 border border-cyan-500/30 shadow-sm transition-all duration-150 flex items-center justify-center" data-test="theme-toggle" type="button">
+<span class="material-symbols-outlined text-cyan-300" data-icon="dark_mode">dark_mode</span>
 </button>
 </div>
 </div>
 </header>
 <!-- ================= MAIN CONTENT CANVAS ================= -->
-<main class="flex-grow w-full max-w-[1320px] mx-auto px-space-lg py-space-xl flex flex-col gap-space-xl">
+<main class="relative z-10 flex-grow w-full max-w-[1320px] mx-auto px-space-lg py-space-xl flex flex-col gap-space-xl">
 <!-- HERO SECTION -->
-<section class="border border-outline-variant bg-surface-container-lowest rounded-xl p-space-xl relative overflow-hidden" data-test="hero-section">
+<section class="border border-cyan-500/25 bg-gradient-to-br from-[#121929]/95 via-[#0e1424]/90 to-[#18112e]/85 backdrop-blur-xl rounded-xl p-space-xl relative overflow-hidden shadow-2xl shadow-cyan-950/30 group" data-test="hero-section">
+<!-- Ambient Corner Glows -->
+<div class="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-24 -right-24 w-96 h-96 bg-violet-600/25 rounded-full blur-3xl pointer-events-none"></div>
 <!-- Subtle architectural coordinate grid watermark -->
-<div class="absolute top-0 right-0 p-space-md opacity-20 pointer-events-none select-none font-label-sm text-label-sm text-outline hidden md:block">
-        GRID: 12-COL // ENGINE: CHROMIUM // HEADLESS: TRUE
-      </div>
-<div class="max-w-[75ch] flex flex-col items-start gap-space-md">
+<div class="absolute top-0 right-0 p-space-md opacity-40 pointer-events-none select-none font-label-sm text-label-sm text-cyan-300/50 hidden md:flex items-center gap-2 border-b border-l border-cyan-500/20 bg-cyan-950/30 rounded-bl-xl backdrop-blur-sm">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+<span>GRID: 12-COL // ENGINE: CHROMIUM // HEADLESS: TRUE</span>
+</div>
+<div class="max-w-[78ch] flex flex-col items-start gap-space-md relative z-10">
 <!-- Status / Role Chip -->
-<div class="inline-flex items-center gap-2 px-space-sm py-1 rounded-lg bg-surface-container border border-outline-variant">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-<span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">QA AUTOMATION ENGINEER &amp; TEST ARCHITECT</span>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-950/80 to-violet-950/70 border border-cyan-400/40 shadow-sm shadow-cyan-500/10">
+<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f2fe]"></span>
+<span class="font-label-sm text-label-sm text-cyan-200 tracking-wider font-semibold uppercase">QA AUTOMATION ENGINEER &amp; TEST ARCHITECT</span>
 </div>
 <!-- Headline & Tagline -->
-<div class="flex flex-col gap-1">
-<h1 class="font-display text-display text-on-surface tracking-tight font-extrabold">Doron Omer</h1>
-<h2 class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight">I design test automation that scales.</h2>
+<div class="flex flex-col gap-2">
+<h1 class="font-display text-display text-white tracking-tight font-extrabold drop-shadow-md">Doron Omer</h1>
+<h2 class="font-headline-xl text-headline-xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,242,254,0.3)]">
+  I design test automation that scales.
+</h2>
 </div>
 <!-- Editorial Lead Paragraph -->
-<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-          Long-form technical engineering on config-driven Playwright architecture, reliable test suites, and maintainable pipelines. Focused on deterministic execution and zero-flakiness design systems.
-        </p>
+<p class="font-body-lg text-body-lg text-slate-300 leading-relaxed font-normal">
+  Long-form technical engineering on config-driven Playwright architecture, reliable test suites, and maintainable pipelines. Focused on deterministic execution and zero-flakiness design systems.
+</p>
 <!-- CTA Buttons -->
 <div class="flex flex-wrap items-center gap-space-md pt-space-sm">
-<a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md font-semibold transition-colors duration-150 border border-transparent shadow-none" data-test="cta-read-series" href="#series">
+<a class="inline-flex items-center gap-space-xs px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-400 via-cyan-300 to-teal-300 hover:from-cyan-300 hover:to-violet-400 text-slate-950 font-label-md text-label-md font-bold transition-all duration-200 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/50 hover:scale-[1.02]" data-test="cta-read-series" href="#series">
 <span>Read the series</span>
 <span class="material-symbols-outlined text-base">arrow_forward</span>
 </a>
-<a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-transparent hover:bg-surface-container-low text-on-surface font-label-md text-label-md border border-outline-variant hover:border-outline transition-colors duration-150" data-test="cta-view-code" href="#qa-template">
-<span class="material-symbols-outlined text-base">code</span>
+<a class="inline-flex items-center gap-space-xs px-6 py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800/90 text-cyan-200 font-label-md text-label-md border border-cyan-500/30 hover:border-cyan-400 transition-all duration-200 shadow-md backdrop-blur-md hover:drop-shadow-[0_0_8px_rgba(0,242,254,0.4)]" data-test="cta-view-code" href="#qa-template">
+<span class="material-symbols-outlined text-base text-cyan-400">code</span>
 <span>View the code</span>
 </a>
 </div>
 </div>
 </section>
 <!-- TWO-COLUMN / STRUCTURED SERIES SPOTLIGHT -->
-<section class="border border-outline-variant bg-surface-container-low rounded-xl p-space-xl" data-test="series-spotlight" id="series">
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-lg border-b border-outline-variant">
+<section class="border border-violet-500/30 bg-gradient-to-br from-[#121426]/90 via-[#151a30]/85 to-[#0e1628]/90 backdrop-blur-xl rounded-xl p-space-xl relative shadow-xl shadow-violet-950/20" data-test="series-spotlight" id="series">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-lg border-b border-violet-500/20">
 <div class="flex items-center gap-space-sm">
-<span class="font-label-sm text-label-sm text-tertiary bg-surface-container px-2 py-0.5 rounded-lg border border-outline-variant">SERIES SPOTLIGHT</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">2 of 6 published · In Progress</span>
+<span class="font-label-sm text-label-sm text-amber-300 bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-500/40 shadow-sm shadow-amber-500/20 font-bold uppercase tracking-wider">SERIES SPOTLIGHT</span>
+<span class="font-label-sm text-label-sm text-slate-300">2 of 6 published · In Progress</span>
 </div>
-<div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-<span class="material-symbols-outlined text-sm text-primary">terminal</span>
+<div class="font-label-sm text-label-sm text-cyan-300 flex items-center gap-1.5 px-3 py-1 rounded-md bg-cyan-950/40 border border-cyan-500/30">
+<span class="material-symbols-outlined text-sm text-cyan-400">terminal</span>
 <span>Target: Playwright &gt;= v1.48</span>
 </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg pt-space-lg items-center">
 <!-- Series Text & Overview -->
 <div class="lg:col-span-7 flex flex-col gap-space-md">
-<h3 class="font-headline-lg text-headline-lg text-on-surface font-bold">Config-Driven Playwright Framework</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">
-            A deep architectural dive into eliminating test flakiness, abstracting dynamic test data, and structuring maintainable enterprise suites. Transforms rigid page objects into highly reusable action layers.
-          </p>
+<h3 class="font-headline-lg text-headline-lg text-white font-bold bg-gradient-to-r from-white via-cyan-100 to-violet-200 bg-clip-text text-transparent">Config-Driven Playwright Framework</h3>
+<p class="font-body-md text-body-md text-slate-300 leading-relaxed">
+  A deep architectural dive into eliminating test flakiness, abstracting dynamic test data, and structuring maintainable enterprise suites. Transforms rigid page objects into highly reusable action layers.
+</p>
 <!-- Progress Bar Component -->
-<div class="flex flex-col gap-1.5 pt-1">
+<div class="flex flex-col gap-2 pt-1">
 <div class="flex items-center justify-between font-label-sm text-label-sm">
-<span class="text-on-surface">Framework Core Architecture</span>
-<span class="text-primary font-semibold">33% Completed</span>
+<span class="text-slate-200 font-medium">Framework Core Architecture</span>
+<span class="text-cyan-300 font-bold tracking-wide">33% Completed</span>
 </div>
-<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden border border-outline-variant">
-<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 33.33%;"></div>
+<div class="w-full h-2.5 bg-slate-900/90 rounded-full overflow-hidden border border-cyan-500/30 p-0.5">
+<div class="h-full bg-gradient-to-r from-cyan-400 via-teal-300 to-violet-500 rounded-full shadow-[0_0_10px_#00f2fe] transition-all duration-500" style="width: 33.33%;"></div>
 </div>
 </div>
 </div>
 <!-- Quick Part Navigation Links (Side-by-side cards) -->
 <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-space-md">
-<a class="p-space-md rounded-lg bg-surface-container border border-outline-variant hover:border-outline transition-colors duration-150 flex flex-col gap-1 group" href="#article-part-1">
-<div class="flex items-center justify-between font-label-sm text-label-sm text-primary">
-<span>Part 01</span>
-<span class="text-on-surface-variant">Oct 24, 2026</span>
+<a class="p-space-md rounded-lg bg-gradient-to-br from-[#181d33] to-[#121626] border border-cyan-500/25 hover:border-cyan-400/70 transition-all duration-200 flex flex-col gap-1.5 group shadow-md hover:shadow-cyan-500/20 hover:-translate-y-0.5" href="#article-part-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-cyan-400">
+<span class="font-bold px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-500/30">Part 01</span>
+<span class="text-slate-400 font-normal">Oct 24, 2026</span>
 </div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Why Config-Driven?</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Solving scale breakdown in sprawling page-object repos.</p>
+<h4 class="font-headline-sm text-headline-sm text-white group-hover:text-cyan-300 transition-colors font-semibold">Why Config-Driven?</h4>
+<p class="font-body-sm text-body-sm text-slate-300 line-clamp-1">Solving scale breakdown in sprawling page-object repos.</p>
 </a>
-<a class="p-space-md rounded-lg bg-surface-container border border-outline-variant hover:border-outline transition-colors duration-150 flex flex-col gap-1 group" href="#article-part-2">
-<div class="flex items-center justify-between font-label-sm text-label-sm text-primary">
-<span>Part 02</span>
-<span class="text-on-surface-variant">Nov 2, 2026</span>
+<a class="p-space-md rounded-lg bg-gradient-to-br from-[#181d33] to-[#121626] border border-violet-500/25 hover:border-violet-400/70 transition-all duration-200 flex flex-col gap-1.5 group shadow-md hover:shadow-violet-500/20 hover:-translate-y-0.5" href="#article-part-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-violet-400">
+<span class="font-bold px-2 py-0.5 rounded bg-violet-950/70 border border-violet-500/30">Part 02</span>
+<span class="text-slate-400 font-normal">Nov 2, 2026</span>
 </div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">DynamicPage &amp; The Actions Layer</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Decoupling locators and assertions from workflow scripts.</p>
+<h4 class="font-headline-sm text-headline-sm text-white group-hover:text-violet-300 transition-colors font-semibold">DynamicPage &amp; The Actions Layer</h4>
+<p class="font-body-sm text-body-sm text-slate-300 line-clamp-1">Decoupling locators and assertions from workflow scripts.</p>
 </a>
 </div>
 </div>
@@ -386,217 +397,227 @@
 <!-- LATEST ARTICLES GRID -->
 <section class="flex flex-col gap-space-lg" data-test="latest-articles-section" id="articles">
 <!-- Section Header -->
-<div class="flex items-center justify-between border-b border-outline-variant pb-space-sm">
+<div class="flex items-center justify-between border-b border-cyan-500/20 pb-space-sm">
 <div class="flex items-center gap-space-sm">
-<h3 class="font-headline-lg text-headline-lg text-on-surface font-bold">Latest Articles</h3>
-<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface-variant border border-outline-variant">Playwright &amp; E2E</span>
+<h3 class="font-headline-lg text-headline-lg text-white font-bold tracking-tight">Latest Articles</h3>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-gradient-to-r from-cyan-950/80 to-blue-950/80 text-cyan-300 border border-cyan-500/30 shadow-sm">Playwright &amp; E2E</span>
 </div>
-<a class="font-label-md text-label-md text-primary hover:text-primary-fixed-dim transition-colors flex items-center gap-1" href="#all-articles">
+<a class="font-label-md text-label-md text-cyan-300 hover:text-white transition-colors flex items-center gap-1 font-semibold group" href="#all-articles">
 <span>View all articles</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </a>
 </div>
 <!-- 3 Desktop Article Cards Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
 <!-- Card 1 -->
-<article class="bg-surface-container-low border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between hover:border-outline transition-colors duration-150 group" data-test="article-card" data-test-id="dynamic-page-actions-layer">
-<div class="flex flex-col gap-space-sm">
-<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-<span class="text-primary font-medium">Series: Part 2 of 6</span>
-<span>8 min read</span>
+<article class="bg-gradient-to-b from-[#131b2e]/90 to-[#0e1424]/95 border border-cyan-500/25 hover:border-cyan-400/70 rounded-xl p-space-lg flex flex-col justify-between transition-all duration-300 group shadow-lg hover:shadow-cyan-500/15 hover:-translate-y-1 relative overflow-hidden" data-test="article-card" data-test-id="dynamic-page-actions-layer">
+<div class="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
+<div class="flex flex-col gap-space-sm relative z-10">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-cyan-300 font-semibold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30">Series: Part 2 of 6</span>
+<span class="text-slate-400">8 min read</span>
 </div>
-<h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors font-semibold">
-              DynamicPage &amp; The Actions Layer
-            </h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-              How decoupling runtime locators into declarative action schemas eliminated test rewrite overhead across 40+ client variations.
-            </p>
+<h4 class="font-headline-md text-headline-md text-white group-hover:text-cyan-300 transition-colors font-bold leading-snug">
+  DynamicPage &amp; The Actions Layer
+</h4>
+<p class="font-body-sm text-body-sm text-slate-300 leading-relaxed">
+  How decoupling runtime locators into declarative action schemas eliminated test rewrite overhead across 40+ client variations.
+</p>
 </div>
-<div class="pt-space-lg border-t border-outline-variant mt-space-lg flex items-center justify-between">
+<div class="pt-space-lg border-t border-cyan-500/15 mt-space-lg flex items-center justify-between relative z-10">
 <div class="flex items-center gap-1.5 font-label-sm text-label-sm">
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#playwright</span>
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#architecture</span>
+<span class="px-2 py-0.5 rounded-md bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">#playwright</span>
+<span class="px-2 py-0.5 rounded-md bg-violet-950/80 text-violet-300 border border-violet-500/40">#architecture</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Nov 2, 2026</span>
+<span class="font-label-sm text-label-sm text-slate-400">Nov 2, 2026</span>
 </div>
 </article>
 <!-- Card 2 -->
-<article class="bg-surface-container-low border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between hover:border-outline transition-colors duration-150 group" data-test="article-card" data-test-id="why-config-driven-test-automation">
-<div class="flex flex-col gap-space-sm">
-<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-<span class="text-primary font-medium">Series: Part 1 of 6</span>
-<span>11 min read</span>
+<article class="bg-gradient-to-b from-[#16172e]/90 to-[#101224]/95 border border-violet-500/25 hover:border-violet-400/70 rounded-xl p-space-lg flex flex-col justify-between transition-all duration-300 group shadow-lg hover:shadow-violet-500/15 hover:-translate-y-1 relative overflow-hidden" data-test="article-card" data-test-id="why-config-driven-test-automation">
+<div class="absolute -top-20 -right-20 w-40 h-40 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all"></div>
+<div class="flex flex-col gap-space-sm relative z-10">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-violet-300 font-semibold px-2 py-0.5 rounded bg-violet-950/60 border border-violet-500/30">Series: Part 1 of 6</span>
+<span class="text-slate-400">11 min read</span>
 </div>
-<h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors font-semibold">
-              Why Config-Driven Test Automation Wins at Scale
-            </h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-              The anti-pattern of hard-coding selectors and URLs, and how metadata-driven execution provides rock-solid CI determinism.
-            </p>
+<h4 class="font-headline-md text-headline-md text-white group-hover:text-violet-300 transition-colors font-bold leading-snug">
+  Why Config-Driven Test Automation Wins at Scale
+</h4>
+<p class="font-body-sm text-body-sm text-slate-300 leading-relaxed">
+  The anti-pattern of hard-coding selectors and URLs, and how metadata-driven execution provides rock-solid CI determinism.
+</p>
 </div>
-<div class="pt-space-lg border-t border-outline-variant mt-space-lg flex items-center justify-between">
+<div class="pt-space-lg border-t border-violet-500/15 mt-space-lg flex items-center justify-between relative z-10">
 <div class="flex items-center gap-1.5 font-label-sm text-label-sm">
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#playwright</span>
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#design-patterns</span>
+<span class="px-2 py-0.5 rounded-md bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">#playwright</span>
+<span class="px-2 py-0.5 rounded-md bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-500/40">#design-patterns</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 2026</span>
+<span class="font-label-sm text-label-sm text-slate-400">Oct 24, 2026</span>
 </div>
 </article>
 <!-- Card 3 -->
-<article class="bg-surface-container-low border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between hover:border-outline transition-colors duration-150 group" data-test="article-card" data-test-id="flaky-proof-auth-fixtures">
-<div class="flex flex-col gap-space-sm">
-<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-<span class="text-tertiary font-medium">Stand-alone Article</span>
-<span>6 min read</span>
+<article class="bg-gradient-to-b from-[#181a26]/90 to-[#12131f]/95 border border-amber-500/25 hover:border-amber-400/70 rounded-xl p-space-lg flex flex-col justify-between transition-all duration-300 group shadow-lg hover:shadow-amber-500/15 hover:-translate-y-1 relative overflow-hidden" data-test="article-card" data-test-id="flaky-proof-auth-fixtures">
+<div class="absolute -top-20 -right-20 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+<div class="flex flex-col gap-space-sm relative z-10">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-amber-300 font-semibold px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">Stand-alone Article</span>
+<span class="text-slate-400">6 min read</span>
 </div>
-<h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors font-semibold">
-              Flaky-Proof Auth Fixtures with Encrypted State Storage
-            </h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-              Skip redundant UI login steps safely. Preserving worker storage states securely in shared runner caches without session collision.
-            </p>
+<h4 class="font-headline-md text-headline-md text-white group-hover:text-amber-300 transition-colors font-bold leading-snug">
+  Flaky-Proof Auth Fixtures with Encrypted State Storage
+</h4>
+<p class="font-body-sm text-body-sm text-slate-300 leading-relaxed">
+  Skip redundant UI login steps safely. Preserving worker storage states securely in shared runner caches without session collision.
+</p>
 </div>
-<div class="pt-space-lg border-t border-outline-variant mt-space-lg flex items-center justify-between">
+<div class="pt-space-lg border-t border-amber-500/15 mt-space-lg flex items-center justify-between relative z-10">
 <div class="flex items-center gap-1.5 font-label-sm text-label-sm">
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#typescript</span>
-<span class="px-2 py-0.5 rounded-lg bg-surface-container text-outline border border-outline-variant">#ci-cd</span>
+<span class="px-2 py-0.5 rounded-md bg-blue-950/80 text-blue-300 border border-blue-500/40">#typescript</span>
+<span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">#ci-cd</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 10, 2026</span>
+<span class="font-label-sm text-label-sm text-slate-400">Oct 10, 2026</span>
 </div>
 </article>
 </div>
 </section>
 <!-- CALLOUT BLOCK (Design System Showcase) -->
-<div class="border-l-4 border-primary bg-surface-container-low p-space-lg rounded-r-xl border border-outline-variant" data-test="callout" data-test-type="tip">
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-primary text-base">check_circle</span>
-<span class="font-label-sm text-label-sm font-bold text-primary tracking-wider">[PLAYWRIGHT BEST PRACTICE]</span>
+<div class="border-l-4 border-l-cyan-400 border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-[#131b2e]/80 to-[#101524]/90 p-space-lg rounded-r-xl shadow-lg shadow-cyan-950/20" data-test="callout" data-test-type="tip">
+<div class="flex items-center gap-2 mb-1.5">
+<span class="material-symbols-outlined text-cyan-400 text-lg drop-shadow-[0_0_6px_#00f2fe]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold text-cyan-300 tracking-wider">[PLAYWRIGHT BEST PRACTICE]</span>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant">
-        Never hardcode locator timeouts in spec files. Enforce explicit web assertions (`await expect(locator).toBeVisible()`) that automatically respect polling intervals and Playwright's auto-waiting state engine.
-      </p>
+<p class="font-body-md text-body-md text-slate-200">
+  Never hardcode locator timeouts in spec files. Enforce explicit web assertions (<code class="font-mono text-cyan-300 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-500/30 text-xs">await expect(locator).toBeVisible()</code>) that automatically respect polling intervals and Playwright's auto-waiting state engine.
+</p>
 </div>
 <!-- FEATURED PROJECT & ABOUT SECTION (Split 2-Column Desktop Grid) -->
 <section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg" data-test="featured-project-and-about" id="projects">
 <!-- Left Column: Featured Repository (qa-template) -->
-<div class="lg:col-span-7 bg-surface-container-low border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between" id="qa-template">
+<div class="lg:col-span-7 bg-gradient-to-br from-[#121929]/90 to-[#0e1424]/95 border border-cyan-500/30 rounded-xl p-space-lg flex flex-col justify-between shadow-xl shadow-cyan-950/20" id="qa-template">
 <div class="flex flex-col gap-space-md">
 <!-- Repo Header -->
 <div class="flex items-center justify-between flex-wrap gap-2">
 <div class="flex items-center gap-space-sm">
-<span class="material-symbols-outlined text-primary">inventory_2</span>
-<h4 class="font-headline-md text-headline-md text-on-surface font-bold">qa-template</h4>
+<span class="material-symbols-outlined text-cyan-400 text-2xl drop-shadow-[0_0_8px_#00f2fe]">inventory_2</span>
+<h4 class="font-headline-md text-headline-md text-white font-bold">qa-template</h4>
 </div>
-<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-lg bg-surface-container text-primary border border-outline-variant">
-              v1.4.2 · Production Tested
-            </span>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 shadow-sm font-semibold">
+  v1.4.2 · Production Tested
+</span>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant">
-            Production-ready starter template for Playwright with config-driven page abstractions, multi-tenant fixtures, and parallel CI matrix execution.
-          </p>
-<!-- Interactive Terminal Frame Snippet -->
-<div class="rounded-lg border border-outline-variant bg-surface-container-lowest overflow-hidden" data-test="code-block" data-test-file="terminal">
-<div class="flex items-center justify-between px-space-md py-2 bg-surface-container border-b border-outline-variant">
-<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
-<span class="material-symbols-outlined text-xs">terminal</span>
-<span>bash — test runner</span>
+<p class="font-body-md text-body-md text-slate-300">
+  Production-ready starter template for Playwright with config-driven page abstractions, multi-tenant fixtures, and parallel CI matrix execution.
+</p>
+<!-- Interactive Terminal Frame Snippet with Vibrant Syntax Highlighting -->
+<div class="rounded-lg border border-cyan-500/30 bg-[#060a12] overflow-hidden shadow-inner" data-test="code-block" data-test-file="terminal">
+<div class="flex items-center justify-between px-space-md py-2 bg-[#0c1220] border-b border-cyan-500/20">
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-slate-400">
+<div class="flex items-center gap-1.5 mr-1">
+<span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
 </div>
-<button class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" data-test="copy-snippet" data-test-action="copy-code" onclick="navigator.clipboard?.writeText('CLIENT=toolshop npm test'); this.innerText='copied!';" type="button">
+<span class="material-symbols-outlined text-xs text-cyan-400">terminal</span>
+<span class="text-cyan-200 font-mono text-xs">bash — test runner</span>
+</div>
+<button class="font-label-sm text-label-sm text-cyan-300 hover:text-white transition-colors flex items-center gap-1 px-2 py-0.5 rounded hover:bg-cyan-950/60" data-test="copy-snippet" data-test-action="copy-code" onclick="navigator.clipboard?.writeText('CLIENT=toolshop npm test'); this.innerText='copied!';" type="button">
 <span class="material-symbols-outlined text-xs">content_copy</span>
 <span>copy</span>
 </button>
 </div>
-<div class="p-space-md font-code-block text-code-block text-on-surface flex items-center">
-<span class="text-primary mr-2 select-none">$</span>
-<span class="text-on-surface">CLIENT=toolshop npm test</span>
-<span class="inline-block w-2 h-4 bg-primary ml-2 animate-pulse"></span>
+<div class="p-space-md font-code-block text-code-block text-on-surface flex items-center font-mono text-sm">
+<span class="text-cyan-400 mr-2 font-bold select-none">$</span>
+<span class="text-amber-300 font-semibold">CLIENT</span><span class="text-cyan-300">=</span><span class="text-emerald-400">toolshop</span>
+<span class="text-violet-400 ml-2">npm</span>
+<span class="text-cyan-200 ml-1.5">test</span>
+<span class="inline-block w-2 h-4 bg-cyan-400 ml-2 animate-pulse shadow-[0_0_8px_#00f2fe]"></span>
 </div>
 </div>
 </div>
 <!-- Repo Action Controls -->
-<div class="flex items-center gap-space-md pt-space-lg border-t border-outline-variant mt-space-lg">
-<a class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors" data-test="btn-secondary" href="https://github.com" rel="noopener noreferrer" target="_blank">
-<span class="material-symbols-outlined text-sm">folder_code</span>
+<div class="flex items-center gap-space-md pt-space-lg border-t border-cyan-500/20 mt-space-lg">
+<a class="px-5 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-cyan-200 hover:text-white border border-cyan-500/30 hover:border-cyan-400 font-label-md text-label-md flex items-center gap-space-xs transition-all shadow-sm" data-test="btn-secondary" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-sm text-cyan-400">folder_code</span>
 <span>Repository</span>
 </a>
-<a class="px-space-md py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md flex items-center gap-space-xs transition-colors" data-test="btn-primary" href="#architecture">
+<a class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-cyan-300 hover:to-violet-400 text-slate-950 font-label-md text-label-md font-bold flex items-center gap-space-xs transition-all shadow-md shadow-cyan-500/25 hover:shadow-cyan-400/40" data-test="btn-primary" href="#architecture">
 <span>Deep Dive</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
 </a>
 </div>
 </div>
 <!-- Right Column: About Doron -->
-<div class="lg:col-span-5 bg-surface-container-low border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between" id="about">
+<div class="lg:col-span-5 bg-gradient-to-br from-[#161329]/90 to-[#101224]/95 border border-violet-500/30 rounded-xl p-space-lg flex flex-col justify-between shadow-xl shadow-violet-950/20" id="about">
 <div class="flex flex-col gap-space-md">
 <div class="flex items-center gap-space-sm">
-<span class="material-symbols-outlined text-primary">person</span>
-<h4 class="font-headline-md text-headline-md text-on-surface font-bold">About Doron</h4>
+<span class="material-symbols-outlined text-violet-400 text-2xl drop-shadow-[0_0_8px_#8b5cf6]">person</span>
+<h4 class="font-headline-md text-headline-md text-white font-bold">About Doron</h4>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant">
-            I build test automation infrastructure and developer tooling for fast-moving engineering teams. Currently documenting patterns learned building suites running 100k+ daily assertions without false alarms.
-          </p>
+<p class="font-body-md text-body-md text-slate-300 leading-relaxed">
+  I build test automation infrastructure and developer tooling for fast-moving engineering teams. Currently documenting patterns learned building suites running 100k+ daily assertions without false alarms.
+</p>
 <!-- Core Competency Chips -->
 <div class="flex flex-col gap-2 pt-1">
-<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Core Architecture Focus:</span>
-<div class="flex flex-wrap gap-1.5 font-label-sm text-label-sm">
-<span class="px-2 py-1 rounded-lg bg-surface-container text-on-surface border border-outline-variant">Playwright &amp; TypeScript</span>
-<span class="px-2 py-1 rounded-lg bg-surface-container text-on-surface border border-outline-variant">API Testing</span>
-<span class="px-2 py-1 rounded-lg bg-surface-container text-on-surface border border-outline-variant">CI/CD Matrix</span>
-<span class="px-2 py-1 rounded-lg bg-surface-container text-on-surface border border-outline-variant">Test Observability</span>
+<span class="font-label-sm text-label-sm text-violet-300 uppercase tracking-wider font-semibold">Core Architecture Focus:</span>
+<div class="flex flex-wrap gap-2 font-label-sm text-label-sm">
+<span class="px-2.5 py-1 rounded-md bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 font-mono shadow-sm">Playwright &amp; TypeScript</span>
+<span class="px-2.5 py-1 rounded-md bg-violet-950/80 text-violet-300 border border-violet-500/40 font-mono shadow-sm">API Testing</span>
+<span class="px-2.5 py-1 rounded-md bg-indigo-950/80 text-indigo-300 border border-indigo-500/40 font-mono shadow-sm">CI/CD Matrix</span>
+<span class="px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 font-mono shadow-sm">Test Observability</span>
 </div>
 </div>
 </div>
-<div class="pt-space-lg border-t border-outline-variant mt-space-lg">
-<a class="font-label-md text-label-md text-primary hover:text-primary-fixed-dim flex items-center gap-1 transition-colors" href="#about-full">
+<div class="pt-space-lg border-t border-violet-500/20 mt-space-lg">
+<a class="font-label-md text-label-md text-violet-300 hover:text-white flex items-center gap-1 transition-colors font-semibold group" href="#about-full">
 <span>Read full background &amp; experience</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="material-symbols-outlined text-sm text-violet-400 group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </a>
 </div>
 </div>
 </section>
 <!-- TEST SUITE INTEGRITY ACCORDION / METRICS STRIP -->
-<section class="border border-outline-variant bg-surface-container-lowest rounded-xl p-space-md flex flex-wrap items-center justify-between gap-space-md" data-test="suite-telemetry" id="testing">
+<section class="border border-cyan-500/30 bg-gradient-to-r from-[#0c1424]/90 via-[#10172e]/90 to-[#121326]/90 rounded-xl p-space-md flex flex-wrap items-center justify-between gap-space-md shadow-lg shadow-cyan-950/20 backdrop-blur-md" data-test="suite-telemetry" id="testing">
 <div class="flex items-center gap-space-md flex-wrap">
-<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-<span class="material-symbols-outlined text-xs text-primary">done_all</span>
-          E2E Coverage: 98.4%
-        </span>
-<span class="text-outline-variant">•</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-<span class="material-symbols-outlined text-xs text-primary">timer</span>
-          Median Wall Clock: 4.2s (8 Workers)
-        </span>
-<span class="text-outline-variant">•</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-<span class="material-symbols-outlined text-xs text-primary">refresh</span>
-          Flake Rate: 0.00%
-        </span>
+<span class="font-label-sm text-label-sm text-emerald-300 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/50 border border-emerald-500/30">
+<span class="material-symbols-outlined text-sm text-emerald-400">done_all</span>
+<span class="font-semibold">E2E Coverage: 98.4%</span>
+</span>
+<span class="text-slate-600 hidden sm:inline">•</span>
+<span class="font-label-sm text-label-sm text-cyan-300 flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/30">
+<span class="material-symbols-outlined text-sm text-cyan-400">timer</span>
+<span class="font-semibold">Median Wall Clock: 4.2s (8 Workers)</span>
+</span>
+<span class="text-slate-600 hidden sm:inline">•</span>
+<span class="font-label-sm text-label-sm text-purple-300 flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/50 border border-purple-500/30">
+<span class="material-symbols-outlined text-sm text-purple-400">refresh</span>
+<span class="font-semibold">Flake Rate: 0.00%</span>
+</span>
 </div>
-<a class="font-label-sm text-label-sm text-outline hover:text-primary transition-colors flex items-center gap-1" href="#how-tested">
+<a class="font-label-sm text-label-sm text-cyan-300 hover:text-white transition-colors flex items-center gap-1 px-3 py-1 rounded-lg border border-cyan-500/25 bg-cyan-950/30 hover:bg-cyan-900/40" href="#how-tested">
 <span>Inspect Test Report</span>
 <span class="material-symbols-outlined text-xs">open_in_new</span>
 </a>
 </section>
 </main>
 <!-- ================= FOOTER (Shared Component Implementation) ================= -->
-<footer class="docked full-width bottom bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline-variant transition-colors duration-150 ease-in-out mt-auto" data-test="footer">
+<footer class="docked full-width bottom bg-[#070b14]/95 border-t border-cyan-500/20 transition-colors duration-150 ease-in-out mt-auto relative z-10" data-test="footer">
 <div class="w-full px-space-lg py-space-xl mx-auto flex flex-col md:flex-row items-center justify-between gap-space-md max-w-[1320px]">
 <!-- Brand & Status / Copyright -->
 <div class="flex flex-col sm:flex-row items-center gap-space-sm text-center sm:text-left">
-<span class="text-label-md font-label-md font-semibold text-on-surface dark:text-on-surface">Doron Omer</span>
-<span class="hidden sm:inline text-outline-variant">|</span>
-<p class="text-body-sm font-body-sm text-on-surface-variant">
-          Tested with Playwright on every commit · © 2026 Doron Omer. Verified with Playwright E2E Suite.
-        </p>
+<span class="text-label-md font-label-md font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">Doron Omer</span>
+<span class="hidden sm:inline text-slate-700">|</span>
+<p class="text-body-sm font-body-sm text-slate-400">
+  Tested with Playwright on every commit · © 2026 Doron Omer. Verified with Playwright E2E Suite.
+</p>
 </div>
 <!-- Footer Navigation Links -->
 <nav class="flex flex-wrap items-center justify-center gap-space-md text-label-sm font-label-sm">
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#articles">Articles</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#series">Series</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#architecture">Architecture</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#qa-template">qa-template</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#rss">RSS</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface hover:text-primary dark:hover:text-primary transition-colors duration-150" href="https://github.com" rel="noopener noreferrer" target="_blank">Source</a>
+<a class="text-slate-300 hover:text-cyan-300 transition-colors duration-150" href="#articles">Articles</a>
+<a class="text-slate-300 hover:text-violet-300 transition-colors duration-150" href="#series">Series</a>
+<a class="text-slate-300 hover:text-cyan-300 transition-colors duration-150" href="#architecture">Architecture</a>
+<a class="text-slate-300 hover:text-cyan-300 transition-colors duration-150" href="#qa-template">qa-template</a>
+<a class="text-slate-300 hover:text-amber-300 transition-colors duration-150" href="#rss">RSS</a>
+<a class="text-slate-300 hover:text-cyan-300 transition-colors duration-150" href="https://github.com" rel="noopener noreferrer" target="_blank">Source</a>
 </nav>
 </div>
 </footer>

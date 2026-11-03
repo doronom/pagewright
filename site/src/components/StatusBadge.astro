@@ -9,19 +9,20 @@ interface Props {
 }
 
 const { status, label, pulse = false, uppercase = true } = Astro.props;
+// DESIGN.md "Pass/Fail Pipeline Status Chips": tinted pills; passed is green, failed and flaky are coral.
 const tone = {
-  passed: 'text-primary',
-  published: 'text-primary',
-  failed: 'text-error',
-  flaky: 'text-tertiary',
-  'coming-soon': 'text-tertiary',
-  running: 'text-secondary',
+  passed: 'text-success bg-[var(--tint-success)] border-[color-mix(in_srgb,var(--success)_35%,transparent)]',
+  published: 'text-primary tint-cyan',
+  failed: 'text-error bg-[var(--tint-error)] border-[color-mix(in_srgb,var(--error)_35%,transparent)]',
+  flaky: 'text-error bg-[var(--tint-error)] border-[color-mix(in_srgb,var(--error)_35%,transparent)]',
+  'coming-soon': 'text-tertiary tint-amber',
+  running: 'text-secondary tint-violet',
 }[status];
 const defaultLabel = { 'coming-soon': 'Coming soon' }[status as 'coming-soon'] ?? status;
 ---
 
 <span
-  class:list={['chip whitespace-nowrap bg-surface-low', uppercase && 'uppercase', tone]}
+  class:list={['chip whitespace-nowrap rounded-pill px-2.5 py-1 font-semibold', uppercase && 'uppercase', tone]}
   data-test="status-badge"
   data-test-status={status}
 >

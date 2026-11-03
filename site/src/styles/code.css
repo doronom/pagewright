@@ -1,9 +1,14 @@
 /* Code blocks produced by Shiki (css-variables theme) with the site-code transformer. */
 .code-frame {
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent-cyan);
   border-radius: var(--radius-chip);
   background: var(--surface-lowest);
   overflow: hidden;
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 0.25);
+}
+.code-frame-head {
+  border-color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--surface) 70%, var(--surface-lowest));
 }
 .code-frame pre.astro-code {
   margin: 0;

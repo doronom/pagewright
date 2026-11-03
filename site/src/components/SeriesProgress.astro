@@ -15,13 +15,20 @@ const percent = planned ? Math.round((published / planned) * 100) : 0;
     <span class="font-semibold text-primary">{percent}%</span>
   </div>
   <div
-    class="h-1.5 w-full overflow-hidden rounded-pill border border-border bg-surface"
+    class="h-2.5 w-full overflow-hidden rounded-pill border border-[var(--accent-cyan)] bg-surface-lowest p-0.5"
     role="progressbar"
     aria-valuemin="0"
     aria-valuemax={planned}
     aria-valuenow={published}
     aria-label="Series progress"
   >
-    <div class="h-full rounded-pill bg-primary" style={`width: ${percent}%;`}></div>
+    <div class="progress-fill h-full rounded-pill" style={`width: ${percent}%;`}></div>
   </div>
 </div>
+
+<style>
+  .progress-fill {
+    background: var(--gradient-progress);
+    box-shadow: 0 0 10px var(--accent-cyan-strong);
+  }
+</style>

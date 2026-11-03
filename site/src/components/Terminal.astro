@@ -13,6 +13,6 @@ const lines = commands
   .filter(Boolean);
 ---
 
-<CodeFrame file={label} icon="terminal" copy={lines.join('\n')}>
+<CodeFrame file={label} icon="terminal" copy={lines.join('\n')} dots>
   <pre class="overflow-x-auto p-4 font-mono text-code text-text"><code class="grid">{lines.map((line) => <span class="whitespace-pre"><span class="mr-2 select-none text-primary" aria-hidden="true">$</span>{line}</span>)}</code></pre>
 </CodeFrame>
