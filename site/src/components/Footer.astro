@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
 const links = [
   { label: 'GitHub', url: site.links.github, icon: 'github' as const, external: true },
   { label: 'LinkedIn', url: site.links.linkedin, icon: 'linkedin' as const, external: true },
-  { label: 'RSS', url: href('/rss.xml'), icon: 'rss_feed' as const, external: false },
+  { label: 'RSS', url: href('/rss/'), icon: 'rss_feed' as const, external: false },
   { label: 'Email', url: `mailto:${site.links.email}`, icon: 'mail' as const, external: false },
 ];
 ---

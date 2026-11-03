@@ -9,7 +9,8 @@ export async function GET(context: APIContext) {
   return rss({
     title: site.title,
     description: site.description,
-    site: context.site ?? site.url,
+    // The channel link is the site's home page, including the base path (context.site is only the origin).
+    site: new URL(href('/'), context.site ?? site.url).toString(),
     items: articles.map((article) => ({
       title: article.data.title,
       description: article.data.description,

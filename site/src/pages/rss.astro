@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import CodeFrame from '../components/CodeFrame.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+import { getArticles } from '../lib/content';
+import { href } from '../lib/url';
+
+// The RSS button links here instead of to the raw feed: browsers show rss.xml as an unstyled XML tree.
+const feedUrl = new URL(href('/rss.xml'), site.url).toString();
+const recent = (await getArticles()).slice(0, 6);
+const title = 'RSS feed';
+const description = 'Subscribe to new articles with any RSS feed reader.';
+---
+
+<BaseLayout title={title} description={description}>
+  <header class="flex flex-col gap-2">
+    <h1 class="text-headline-xl-mobile text-text sm:text-headline-xl" data-test="page-title">{title}</h1>
+    <p class="max-w-[75ch] text-body-lg text-muted">
+      Get new articles in your feed reader as soon as they're published. Copy the feed address below into any RSS
+      reader, such as Feedly, Inoreader or NetNewsWire.
+    </p>
+  </header>
+
+  <section class="glass-card flex flex-col gap-4 p-6" data-test="rss-subscribe">
+    <h2 class="flex items-center gap-2 text-headline-sm text-text">
+      <Icon name="rss_feed" class="text-tertiary" />
+      Feed address
+    </h2>
+    <CodeFrame file="rss.xml" copy={feedUrl}>
+      <pre class="overflow-x-auto p-4 font-mono text-code text-text"><code data-test="rss-feed-url">{feedUrl}</code></pre>
+    </CodeFrame>
+    <a
+      href={href('/rss.xml')}
+      class="inline-flex items-center gap-1 self-start font-mono text-label-md text-primary transition-colors hover:text-primary-hover"
+      data-test="rss-raw-link"
+    >
+      <span>Open the raw feed (XML)</span>
+      <Icon name="open_in_new" size={16} />
+    </a>
+  </section>
+
+  {
+    recent.length > 0 && (
+      <section class="flex flex-col gap-6" data-test="rss-recent">
+        <h2 class="border-b border-[var(--accent-cyan)] pb-2 text-headline-lg text-text">In the feed</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {recent.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
