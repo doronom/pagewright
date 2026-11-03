@@ -7,8 +7,10 @@ test('no page scrolls horizontally at 360px', async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   const routes = [...sitemapPaths(String(testInfo.project.metadata.distDir)), 'does-not-exist/'];
   const overflowing: string[] = [];
+  await page.goto('');
   for (const theme of ['dark', 'light'] as const) {
-    await page.emulateMedia({ colorScheme: theme });
+    // The site defaults to dark; a saved choice is how a visitor gets light.
+    await page.evaluate((t) => localStorage.setItem('theme', t), theme);
     for (const route of routes) {
       await page.goto(route);
       const { scrollWidth, clientWidth } = await page.evaluate(() => ({
@@ -22,7 +24,6 @@ test('no page scrolls horizontally at 360px', async ({ page }, testInfo) => {
 });
 
 test('mobile menu holds the navigation and the theme toggle', async ({ page }) => {
-  await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('');
   await expect(page.getByTestId('nav-desktop')).toBeHidden();
   await expect(page.getByTestId('mobile-menu')).toBeHidden();

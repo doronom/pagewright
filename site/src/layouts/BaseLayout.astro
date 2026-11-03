@@ -39,7 +39,7 @@ const imageUrl = image ? new URL(image, Astro.site).toString() : undefined;
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
-      // Applies the saved theme, or the system setting, before first paint.
+      // Applies the saved theme before first paint. Dark is the default until the visitor picks a theme.
       (function () {
         const stored = (function () {
           try {
@@ -48,12 +48,7 @@ const imageUrl = image ? new URL(image, Astro.site).toString() : undefined;
             return null;
           }
         })();
-        const theme =
-          stored === 'light' || stored === 'dark'
-            ? stored
-            : window.matchMedia('(prefers-color-scheme: light)').matches
-              ? 'light'
-              : 'dark';
+        const theme = stored === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>

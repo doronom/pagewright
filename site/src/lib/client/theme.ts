@@ -2,14 +2,6 @@ type Theme = 'light' | 'dark';
 
 const STORAGE_KEY = 'theme';
 
-function readStored(): string | null {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
 function current(): Theme {
   return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 }
@@ -35,8 +27,4 @@ export function setupThemeToggle(): void {
       }
     });
   }
-  // Follow the system setting until the visitor picks a theme.
-  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => {
-    if (!readStored()) apply(event.matches ? 'light' : 'dark');
-  });
 }
