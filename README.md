@@ -194,6 +194,9 @@ git-ignored.
 as artifacts. Node is taken from `.nvmrc`. Secrets are exposed to the tests as env vars; add any your client needs
 to the `secrets` list under `workflow_call` and to the job's `env` block.
 
+On push and pull request, `run-tests.yml` runs only the `api` project; UI tests run locally or through a manual
+dispatch, because the Toolshop demo site's bot protection blocks the UI login on CI runners.
+
 `.github/workflows/run-tests.yml` calls it on push to `main`, on pull requests, and on manual dispatch (with inputs),
 defaulting to `toolshop` / `dev`. The Toolshop client's credentials are the public customer demo account, so
 `run-tests.yml` passes them as literal values. A job that calls a reusable workflow cannot set `env`, so the values

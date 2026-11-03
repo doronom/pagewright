@@ -15,7 +15,7 @@ on:
         type: string
         default: dev
       project:
-        description: Playwright project
+        description: Playwright project (empty runs the full suite - setup, ui and api)
         type: choice
         options: ['', ui, api]
         default: ''
@@ -26,7 +26,9 @@ jobs:
     with:
       client: ${{ inputs.client || 'toolshop' }}
       env: ${{ inputs.env || 'dev' }}
-      project: ${{ inputs.project || '' }}
+      # Push and pull request run only the api project: the demo site's bot protection blocks the UI login
+      # on CI runners. A manual run (workflow_dispatch) uses the chosen project, or the full suite when empty.
+      project: ${{ github.event_name == 'workflow_dispatch' && inputs.project || github.event_name != 'workflow_dispatch' && 'api' || '' }}
     secrets:
       APP_EMAIL: customer@practicesoftwaretesting.com
       APP_PASSWORD: welcome01
