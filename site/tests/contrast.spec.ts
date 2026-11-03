@@ -97,7 +97,11 @@ async function walkthroughText(page: Page): Promise<TextSample[]> {
         if (el instanceof SVGTextElement) {
           const rect = el.parentElement?.querySelector('rect');
           const surface = backgroundOf(el);
-          samples.push({ label, fg: hex([style.fill]), bg: hex([surface, rect ? getComputedStyle(rect).fill : surface]) });
+          samples.push({
+            label,
+            fg: hex([style.fill]),
+            bg: hex([surface, rect ? getComputedStyle(rect).fill : surface]),
+          });
         } else {
           samples.push({ label, fg: hex([style.color]), bg: backgroundOf(el) });
         }
@@ -130,7 +134,56 @@ test('flow walkthrough text meets WCAG AA in both themes', async ({ page }, test
       }
     }
   }
-  await test.info().attach('walkthrough-contrast.txt', { body: rows.join('\n') || 'no walkthrough', contentType: 'text/plain' });
+  await test.info().attach('walkthrough-contrast.txt', {
+    body: rows.join('\n') || 'no walkthrough',
+    contentType: 'text/plain',
+  });
   if (roots) expect(rows.length).toBeGreaterThan(0);
+  expect(failures, failures.join('\n')).toEqual([]);
+});
+
+// Gradient buttons: the solid background-color under the gradient is only a fallback, so measure the text
+// against every color stop of the gradient that is actually rendered, at rest and on hover.
+const GRADIENT_BUTTONS = ['cta-read-series', 'project-deep-dive', 'flow-play'];
+
+test('gradient buttons meet WCAG AA at every color stop in both themes', async ({ page }, testInfo) => {
+  await page.goto(route(testInfo));
+  const rows: string[] = [];
+  const failures: string[] = [];
+  for (const theme of THEMES) {
+    await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
+    for (const id of GRADIENT_BUTTONS) {
+      const button = page.getByTestId(id).first();
+      if (!(await button.count()) || !(await button.isVisible())) continue;
+      for (const state of ['rest', 'hover'] as const) {
+        await button.scrollIntoViewIfNeeded();
+        if (state === 'hover') await button.hover();
+        else await page.mouse.move(0, 0);
+        const { color, stops } = await button.evaluate(async (el) => {
+          // Read the settled colors, not a frame in the middle of the theme or hover transition.
+          await Promise.all(el.getAnimations().map((animation) => animation.finished));
+          const toHex = (rgb: string) =>
+            `#${(rgb.match(/\d+(\.\d+)?/g) ?? [])
+              .slice(0, 3)
+              .map((n) => Math.round(Number(n)).toString(16).padStart(2, '0'))
+              .join('')}`;
+          const style = getComputedStyle(el);
+          return {
+            color: toHex(style.color),
+            stops: (style.backgroundImage.match(/rgba?\([^)]*\)/g) ?? []).map(toHex),
+          };
+        });
+        expect(stops.length, `${id} (${theme}, ${state}) has no gradient`).toBeGreaterThan(1);
+        for (const stop of stops) {
+          const ratio = contrastRatio(color, stop);
+          const line = `${theme.padEnd(5)} ${id.padEnd(17)} ${state.padEnd(5)} ${color} on ${stop} ${ratio.toFixed(2)}:1`;
+          rows.push(line);
+          if (ratio < AA) failures.push(line);
+        }
+      }
+    }
+  }
+  await test.info().attach('gradient-contrast.txt', { body: rows.join('\n'), contentType: 'text/plain' });
+  expect(rows.length, 'no gradient button found on the page').toBeGreaterThan(0);
   expect(failures, failures.join('\n')).toEqual([]);
 });

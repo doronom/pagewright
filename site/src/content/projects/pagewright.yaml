@@ -1,7 +1,7 @@
-# PLACEHOLDER features and GitHub user in repoUrl. Replace before publishing.
+# PLACEHOLDER features. Replace before publishing.
 title: Pagewright
 summary: 'Config-driven test automation for Playwright. Pages are described as data, one generic engine runs them, and each application under test plugs in as a client.'
-repoUrl: https://github.com/your-user/pagewright
+repoUrl: https://github.com/doronom/pagewright
 featured: true
 features:
   - 'PLACEHOLDER: feature one.'

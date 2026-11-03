@@ -16,18 +16,18 @@ export const site = {
   title: 'Doron Omer',
   /** Default meta description. PLACEHOLDER */
   description: 'PLACEHOLDER: technical articles on test automation architecture.',
-  /** Origin the site is deployed to, without the base path. PLACEHOLDER */
-  url: env.SITE_URL || 'https://your-user.github.io',
+  /** Origin the site is deployed to, without the base path. */
+  url: env.SITE_URL || 'https://doronom.github.io',
   /** Base path, e.g. "/pagewright" for a GitHub project page, "/" for a custom domain. */
   base: normalizeBase(env.SITE_BASE || '/pagewright'),
-  /** Repository used by RepoCode and the Testing page links. PLACEHOLDER */
-  repoUrl: (env.REPO_URL || 'https://github.com/your-user/pagewright').replace(/\/+$/, ''),
+  /** Repository used by RepoCode and the Testing page links. */
+  repoUrl: (env.REPO_URL || 'https://github.com/doronom/pagewright').replace(/\/+$/, ''),
   repoBranch: env.REPO_BRANCH || 'main',
-  /** Footer and About links. PLACEHOLDER values. */
+  /** Footer and About links. */
   links: {
-    github: 'https://github.com/your-user',
-    linkedin: 'https://www.linkedin.com/in/your-profile',
-    email: 'you@example.com',
+    github: 'https://github.com/doronom',
+    linkedin: 'https://www.linkedin.com/in/doron-omer-63b14b11/',
+    email: 'Doron.omer@gmail.com',
   },
   articlesPerPage: 10,
 };

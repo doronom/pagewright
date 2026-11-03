@@ -4,13 +4,13 @@ import { sitemapPaths } from './helpers';
 // Production build only (the "site" project).
 test('production build contains no draft pages', async ({ request }) => {
   const articleRoutes = sitemapPaths('dist').filter((r) => r.startsWith('articles/'));
-  expect(articleRoutes.filter((r) => !r.startsWith('articles/page/'))).toEqual(['articles/']);
-  for (const draft of ['placeholder-article', 'why-config-driven']) {
-    expect((await request.get(`articles/${draft}/`)).status()).toBe(404);
-  }
+  expect(articleRoutes.filter((r) => !r.startsWith('articles/page/'))).toEqual([
+    'articles/',
+    'articles/why-config-driven/',
+  ]);
+  expect((await request.get('articles/placeholder-article/')).status()).toBe(404);
   const rss = await (await request.get('rss.xml')).text();
   expect(rss).not.toContain('placeholder-article');
-  expect(rss).not.toContain('why-config-driven');
 });
 
 test('test numbers render only together (badge, telemetry, footer line)', async ({ page }) => {
