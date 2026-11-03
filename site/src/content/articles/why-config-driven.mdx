@@ -121,7 +121,7 @@ Every test in the project travels one of three paths: UI, API or authentication.
 <FlowWalkthrough data={architectureFlows} />
 
 <Callout type="tip">
-Look at `skipNavigation` in the UI flow's spec: after a click that changes the page, the test only switches the active config with `goto('productDetail', { skipNavigation: true })`, without navigating again. That way the test checks the transition itself instead of jumping straight to a URL.
+After a click that changes the page, a test doesn't navigate again. It only switches the active config: the login spec submits the form and then calls `goto('account', { skipNavigation: true })` before checking the title. That way the test checks the transition itself, instead of jumping straight to the URL.
 </Callout>
 
 <Callout type="warning">

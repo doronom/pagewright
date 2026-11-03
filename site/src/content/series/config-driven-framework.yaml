@@ -1,25 +1,24 @@
-# PLACEHOLDER summaries. Replace with real copy; part titles are the planned series outline.
 title: Config-driven Playwright framework
-summary: 'PLACEHOLDER: one or two sentences describing the series.'
+summary: 'A six-part walk through a config-driven Playwright and TypeScript framework: the architecture, the code behind it, and the lessons from running it in production.'
 plannedParts: 6
 featured: true
 project: qa-template
 parts:
   - part: 1
     title: Why a config-driven framework
-    summary: 'PLACEHOLDER: part 1 summary.'
+    summary: 'Page objects mix where, what and how. The overall shape of a framework where pages are data and one engine does the work.'
   - part: 2
     title: DynamicPage and the actions layer
-    summary: 'PLACEHOLDER: part 2 summary.'
+    summary: 'How executeSection turns a page config into browser actions, how clients add or override actions, and a real autocomplete bug as a case study.'
   - part: 3
     title: Authentication and fixtures
-    summary: 'PLACEHOLDER: part 3 summary.'
+    summary: 'From a two-method AuthStrategy to a facade that keeps several applications signed in, and how fixtures compose per test.'
   - part: 4
     title: The API layer and test data
-    summary: 'PLACEHOLDER: part 4 summary.'
+    summary: 'BaseApiClient''s retries and logging, mocks versus real services, and factories that build test data without hard-coded values.'
   - part: 5
     title: CI/CD and observability
-    summary: 'PLACEHOLDER: part 5 summary.'
+    summary: 'Running suites in parallel on GitHub Actions, merging reports, and recording API traffic so a failure can be explained after the fact.'
   - part: 6
     title: From a company framework to a reusable template
-    summary: 'PLACEHOLDER: part 6 summary.'
+    summary: 'What moved into the core, what stayed out, and what I would do differently.'

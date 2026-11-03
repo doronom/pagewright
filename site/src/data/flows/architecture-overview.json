@@ -116,8 +116,8 @@
           "node": "spec",
           "title": "The test asks for dynamicPage",
           "where": "clients/toolshop/tests/ui/cart.spec.ts",
-          "text": "The spec never builds anything itself. It names the fixture it needs, and Playwright works out how to create it.",
-          "code": "test('adds a product to the cart', async ({ dynamicPage }) => {"
+          "text": "The spec never builds anything itself. It names the fixtures it needs, and Playwright works out how to create them.",
+          "code": "test('adds a product to the cart', async ({ dynamicPage, api, sharedData }) => {"
         },
         {
           "node": "clientFx",
@@ -156,10 +156,10 @@
         },
         {
           "node": "pageConfig",
-          "title": "goto() loads the page config",
+          "title": "goto() fills the URL from shared data",
           "where": "core/page/DynamicPage.ts",
-          "text": "goto('products') looks the name up in client.pages and calls the config factory with the current page. On the first call it runs onPageInit, then resolves the URL against baseUrl and navigates with retry.",
-          "code": "this.currentConfig = configFactory(this.page);"
+          "text": "Before this, the test asked the API for a product that is in stock and stored its id with sharedData.set('productId', id). goto('productDetail') finds the config in client.pages, replaces ${productId} in its URL from SharedData, resolves it against baseUrl, and navigates with retry. On the first call it also runs onPageInit.",
+          "code": "return url.replace(/\\$\\{(\\w+)\\}/g, (match, key: string) => {"
         },
         {
           "node": "pageConfig",
