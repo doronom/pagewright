@@ -12,7 +12,7 @@ test.describe('article layout', () => {
 
   test('header shows series badge, meta and tags', async ({ page }) => {
     await expect(page.getByTestId('page-title')).toHaveText('Placeholder article');
-    await expect(page.getByTestId('series-badge')).toHaveText(/Part 1 of 6/);
+    await expect(page.getByTestId('series-badge')).toHaveText(/Part 2 of 6/);
     await expect(page.getByTestId('article-date')).toBeVisible();
     await expect(page.getByTestId('reading-time')).toHaveText(/^\d+ min read$/);
     await expect(page.getByTestId('article-tags').getByTestId('tag-chip')).toHaveCount(2);
@@ -74,7 +74,7 @@ test.describe('article layout', () => {
     await expect(nav.getByTestId('series-nav-next')).toHaveAttribute('data-test-status', 'coming-soon');
     await nav.getByTestId('series-nav-index').click();
     await expect(page).toHaveURL(/\/series\/config-driven-framework\/$/);
-    await expect(page.locator('[data-test="series-part-row"][data-test-part="1"]')).toHaveAttribute(
+    await expect(page.locator('[data-test="series-part-row"][data-test-part="2"]')).toHaveAttribute(
       'data-test-status',
       'published',
     );

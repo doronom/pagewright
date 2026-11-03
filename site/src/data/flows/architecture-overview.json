@@ -1,0 +1,481 @@
+{
+  "id": "architecture-overview",
+  "title": "How a call travels through the layers",
+  "intro": "Three paths through qa-template, one step at a time. The dot is the call moving between components. Press Play, or step through manually (arrow keys work too).",
+  "flows": [
+    {
+      "id": "ui",
+      "label": "UI test",
+      "summary": "What happens between a spec asking for dynamicPage and a click landing in the browser.",
+      "height": 320,
+      "nodes": [
+        {
+          "id": "spec",
+          "label": "*.spec.ts",
+          "sub": "the test",
+          "x": 90,
+          "y": 40
+        },
+        {
+          "id": "clientFx",
+          "label": "fixtures.ts",
+          "sub": "client fixtures",
+          "x": 260,
+          "y": 40
+        },
+        {
+          "id": "coreFx",
+          "label": "core/fixtures.ts",
+          "sub": "builds tools per test",
+          "x": 430,
+          "y": 40
+        },
+        {
+          "id": "dynamicPage",
+          "label": "DynamicPage",
+          "sub": "generic engine",
+          "x": 260,
+          "y": 120
+        },
+        {
+          "id": "loadClient",
+          "label": "loadClient",
+          "sub": "reads CLIENT",
+          "x": 430,
+          "y": 120
+        },
+        {
+          "id": "pageConfig",
+          "label": "page config",
+          "sub": "locators + actions",
+          "x": 90,
+          "y": 200
+        },
+        {
+          "id": "actions",
+          "label": "action map",
+          "sub": "name to function",
+          "x": 260,
+          "y": 200
+        },
+        {
+          "id": "clientTs",
+          "label": "client.ts",
+          "sub": "ClientDefinition",
+          "x": 430,
+          "y": 200
+        },
+        {
+          "id": "browser",
+          "label": "Playwright",
+          "sub": "real browser",
+          "x": 260,
+          "y": 280
+        }
+      ],
+      "edges": [
+        [
+          "spec",
+          "clientFx"
+        ],
+        [
+          "clientFx",
+          "coreFx"
+        ],
+        [
+          "coreFx",
+          "loadClient"
+        ],
+        [
+          "loadClient",
+          "clientTs"
+        ],
+        [
+          "coreFx",
+          "dynamicPage"
+        ],
+        [
+          "dynamicPage",
+          "pageConfig"
+        ],
+        [
+          "dynamicPage",
+          "actions"
+        ],
+        [
+          "pageConfig",
+          "actions"
+        ],
+        [
+          "actions",
+          "browser"
+        ]
+      ],
+      "steps": [
+        {
+          "node": "spec",
+          "title": "The test asks for dynamicPage",
+          "where": "clients/toolshop/tests/ui/cart.spec.ts",
+          "text": "The spec never builds anything itself. It names the fixture it needs, and Playwright works out how to create it.",
+          "code": "test('adds a product to the cart', async ({ dynamicPage }) => {"
+        },
+        {
+          "node": "clientFx",
+          "title": "The client's fixtures extend the core",
+          "where": "clients/toolshop/fixtures.ts",
+          "text": "Specs import test from their client's fixtures.ts. That file extends the core test instead of replacing it, so every core fixture is available, plus the client's own additions.",
+          "code": "import { test as base } from '@core/fixtures';"
+        },
+        {
+          "node": "coreFx",
+          "title": "Playwright resolves the fixture chain",
+          "where": "core/fixtures.ts",
+          "text": "dynamicPage declares its dependencies in its signature: page, client, logger and sharedData. Playwright builds each one on demand, so a test that never asks for dynamicPage never pays for it.",
+          "code": "dynamicPage: async ({ page, client, logger, sharedData }, use) =>"
+        },
+        {
+          "node": "loadClient",
+          "title": "The core loads the active client",
+          "where": "core/client/loadClient.ts",
+          "text": "The client fixture calls loadClient(), which reads the CLIENT environment variable and requires clients/<name>/client.ts. This is the only dynamic link between core and client.",
+          "code": "const file = path.resolve(__dirname, '..', '..', 'clients', name, 'client.ts');"
+        },
+        {
+          "node": "clientTs",
+          "title": "client.ts hands over its definition",
+          "where": "clients/toolshop/client.ts",
+          "text": "The ClientDefinition tells the engine everything app-specific: base URLs per environment, the page registry, the auth strategy and how to build the API client.",
+          "code": "pages: { login: loginPage, products: productsPage, productDetail: productDetailPage, cart: cartPage },"
+        },
+        {
+          "node": "dynamicPage",
+          "title": "A DynamicPage is built for this test",
+          "where": "core/fixtures.ts",
+          "text": "Each test gets its own DynamicPage, bound to its own page, logger and shared data. Nothing is shared between tests running in parallel.",
+          "code": "use(new DynamicPage(page, client, logger, sharedData)),"
+        },
+        {
+          "node": "pageConfig",
+          "title": "goto() loads the page config",
+          "where": "core/page/DynamicPage.ts",
+          "text": "goto('products') looks the name up in client.pages and calls the config factory with the current page. On the first call it runs onPageInit, then resolves the URL against baseUrl and navigates with retry.",
+          "code": "this.currentConfig = configFactory(this.page);"
+        },
+        {
+          "node": "pageConfig",
+          "title": "executeSection reads the fields",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The test passes a section name and data. The engine walks the keys of the data, in the test's order, and finds each field's locator and action list in the config.",
+          "code": "await dynamicPage.executeSection('purchase', { quantity: '2', addToCart: true });"
+        },
+        {
+          "node": "actions",
+          "title": "Each action runs by name",
+          "where": "core/page/DynamicPage.ts",
+          "text": "Action names map to functions: built-in ones (fill, click, check, selectOption and more) merged with any the client registers. An unknown name fails with the section and field in the message.",
+          "code": "const action = this.actions.get(actionConfig.action);"
+        },
+        {
+          "node": "browser",
+          "title": "Playwright acts in the browser",
+          "where": "core/actions/",
+          "text": "InputActions and ElementActions call Playwright's auto-waiting locators and log every step; fill also confirms the value landed. That code is written once for every client. The test reads like a description of intent; the engine does the work.",
+          "code": "await action(field.locator, actionConfig.value ?? value);",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "label": "API test",
+      "summary": "How an API spec reaches the server without opening a browser, and what gets retried.",
+      "height": 320,
+      "nodes": [
+        {
+          "id": "spec",
+          "label": "*.spec.ts",
+          "sub": "the test",
+          "x": 90,
+          "y": 40
+        },
+        {
+          "id": "clientFx",
+          "label": "fixtures.ts",
+          "sub": "client fixtures",
+          "x": 260,
+          "y": 40
+        },
+        {
+          "id": "coreFx",
+          "label": "core/fixtures.ts",
+          "sub": "apiClient fixture",
+          "x": 430,
+          "y": 40
+        },
+        {
+          "id": "apiClient",
+          "label": "ToolshopApiClient",
+          "sub": "endpoint methods",
+          "x": 260,
+          "y": 120
+        },
+        {
+          "id": "base",
+          "label": "BaseApiClient",
+          "sub": "axios + logging",
+          "x": 260,
+          "y": 200
+        },
+        {
+          "id": "retry",
+          "label": "retry interceptor",
+          "sub": "5xx, connection resets",
+          "x": 430,
+          "y": 200
+        },
+        {
+          "id": "server",
+          "label": "Toolshop API",
+          "sub": "external",
+          "x": 260,
+          "y": 280
+        }
+      ],
+      "edges": [
+        [
+          "spec",
+          "clientFx"
+        ],
+        [
+          "clientFx",
+          "coreFx"
+        ],
+        [
+          "coreFx",
+          "apiClient"
+        ],
+        [
+          "apiClient",
+          "base"
+        ],
+        [
+          "base",
+          "retry"
+        ],
+        [
+          "base",
+          "server"
+        ]
+      ],
+      "steps": [
+        {
+          "node": "spec",
+          "title": "The test asks for api",
+          "where": "clients/toolshop/tests/api/auth.spec.ts",
+          "text": "API specs request the typed api fixture and never touch page. The api project in playwright.config.ts has no setup dependency and no browser state.",
+          "code": "test('rejects login for an unknown user', async ({ api }) => {"
+        },
+        {
+          "node": "clientFx",
+          "title": "The client narrows the type",
+          "where": "clients/toolshop/fixtures.ts",
+          "text": "The client fixture does not build its own API client. It takes the one the core built and narrows it with instanceof, so a wrong CLIENT fails loudly instead of being hidden by a cast.",
+          "code": "if (!(apiClient instanceof ToolshopApiClient)) {"
+        },
+        {
+          "node": "coreFx",
+          "title": "The core builds it from the definition",
+          "where": "core/fixtures.ts",
+          "text": "apiClient calls the client's createApiClient. One place decides how the API client is constructed.",
+          "code": "await use(client.createApiClient(logger));"
+        },
+        {
+          "node": "apiClient",
+          "title": "The test calls an endpoint",
+          "where": "clients/toolshop/tests/api/auth.spec.ts",
+          "text": "Endpoint methods are thin. With expectError the call returns the status and body instead of throwing, which is what a negative test needs.",
+          "code": "await api.post('/users/login', { email, password }, { expectError: true });"
+        },
+        {
+          "node": "base",
+          "title": "BaseApiClient sends the request",
+          "where": "core/api/BaseApiClient.ts",
+          "text": "axios is configured from the ClientDefinition: base URL per environment and default headers. Every request is logged as a curl command, with authorization and token headers masked.",
+          "code": "baseURL: client.apiBaseUrl(testEnv),"
+        },
+        {
+          "node": "retry",
+          "title": "Only server errors are retried",
+          "where": "core/api/BaseApiClient.ts",
+          "text": "5xx responses and connection resets are retried up to 3 times, waiting 2, 4 and 8 seconds. A 4xx is never retried: it is an answer, not an outage. With expectError, no status counts as an error, so nothing reaches the retry interceptor.",
+          "code": "const retryable = status >= 500 || RETRYABLE_CODES.includes(error.code ?? '');"
+        },
+        {
+          "node": "server",
+          "title": "The server answers 401",
+          "where": "clients/toolshop/tests/api/auth.spec.ts",
+          "text": "The unknown user is rejected and the test asserts the status. It uses an email that doesn't exist on purpose: repeated wrong passwords lock a real account.",
+          "code": "expect(status).toBe(401);",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "label": "Log in once",
+      "summary": "How the run logs in a single time, and why every UI test starts already signed in.",
+      "height": 320,
+      "nodes": [
+        {
+          "id": "config",
+          "label": "playwright.config",
+          "sub": "projects",
+          "x": 90,
+          "y": 40
+        },
+        {
+          "id": "setup",
+          "label": "auth.setup.ts",
+          "sub": "setup project",
+          "x": 260,
+          "y": 40
+        },
+        {
+          "id": "clientTs",
+          "label": "client.ts",
+          "sub": "auth strategy",
+          "x": 430,
+          "y": 40
+        },
+        {
+          "id": "loginPage",
+          "label": "DynamicPage",
+          "sub": "login page config",
+          "x": 260,
+          "y": 120
+        },
+        {
+          "id": "auth",
+          "label": "ToolshopAuth",
+          "sub": "login, isLoggedIn",
+          "x": 430,
+          "y": 120
+        },
+        {
+          "id": "app",
+          "label": "Toolshop UI",
+          "sub": "login form",
+          "x": 90,
+          "y": 200
+        },
+        {
+          "id": "state",
+          "label": ".auth/<client>.json",
+          "sub": "storageState",
+          "x": 260,
+          "y": 200
+        },
+        {
+          "id": "uiTests",
+          "label": "ui project",
+          "sub": "every UI test",
+          "x": 260,
+          "y": 280
+        }
+      ],
+      "edges": [
+        [
+          "config",
+          "setup"
+        ],
+        [
+          "setup",
+          "clientTs"
+        ],
+        [
+          "clientTs",
+          "auth"
+        ],
+        [
+          "auth",
+          "loginPage"
+        ],
+        [
+          "loginPage",
+          "app"
+        ],
+        [
+          "loginPage",
+          "state"
+        ],
+        [
+          "app",
+          "state"
+        ],
+        [
+          "state",
+          "uiTests"
+        ]
+      ],
+      "steps": [
+        {
+          "node": "config",
+          "title": "The ui project depends on setup",
+          "where": "playwright.config.ts",
+          "text": "Playwright runs the setup project first, once per run. The api project has no such dependency, so API tests never wait for a login.",
+          "code": "dependencies: ['setup'],"
+        },
+        {
+          "node": "setup",
+          "title": "Setup checks for an auth strategy",
+          "where": "clients/toolshop/tests/auth.setup.ts",
+          "text": "The setup file is generic. A client without auth is skipped, and its UI tests simply run without saved state.",
+          "code": "if (!auth) { return setup.skip(true, `Client \"${client.name}\" has no auth strategy`); }"
+        },
+        {
+          "node": "clientTs",
+          "title": "client.auth is the strategy",
+          "where": "clients/toolshop/client.ts",
+          "text": "The strategy gets a getter, not the client object, because the object doesn't exist yet while it's being defined.",
+          "code": "auth: new ToolshopAuth(() => client),"
+        },
+        {
+          "node": "auth",
+          "title": "login() uses the same engine as the tests",
+          "where": "clients/toolshop/auth/ToolshopAuth.ts",
+          "text": "AuthStrategy has two methods: login and isLoggedIn. The implementation builds a DynamicPage, so login has no locators of its own.",
+          "code": "const dynamicPage = new DynamicPage(page, this.getClient(), new Logger('auth'), new SharedData());"
+        },
+        {
+          "node": "loginPage",
+          "title": "The login config fills the form",
+          "where": "clients/toolshop/pages/LoginPage.config.ts",
+          "text": "Credentials come from the environment file or CI secrets, never from the code.",
+          "code": "await dynamicPage.executeSection('form', { email, password, submit: true });"
+        },
+        {
+          "node": "app",
+          "title": "Setup waits until the app agrees",
+          "where": "clients/toolshop/tests/auth.setup.ts",
+          "text": "Instead of a fixed wait, setup polls isLoggedIn until the app shows a signed-in state.",
+          "code": "await expect.poll(() => auth.isLoggedIn(page)).toBe(true);"
+        },
+        {
+          "node": "state",
+          "title": "The session is saved once",
+          "where": "clients/toolshop/tests/auth.setup.ts",
+          "text": "Cookies and local storage are written to .auth/<client>.json.",
+          "code": "await page.context().storageState({ path: storageStatePath(clientName) });"
+        },
+        {
+          "node": "uiTests",
+          "title": "Every UI test starts signed in",
+          "where": "playwright.config.ts",
+          "text": "The ui project loads the saved state into each new browser context. One login per run, however many UI tests there are.",
+          "code": "storageState: client.auth ? storageStatePath(clientName) : undefined,",
+          "status": "success"
+        }
+      ]
+    }
+  ]
+}

@@ -26,6 +26,7 @@
   --secondary: #c0c1ff;
   --tertiary: #ffb95f;
   --error: #ffb4ab;
+  --success: #34d399; /* derived; FlowWalkthrough success state */
   --selection-bg: #29a195;
   --selection-text: #00302b;
   --line-highlight: rgb(107 216 203 / 0.12);
@@ -65,6 +66,7 @@
   --secondary: #4f46e5;
   --tertiary: #b45309;
   --error: #be123c; /* derived */
+  --success: #047857; /* derived; FlowWalkthrough success state */
   --selection-bg: #99f6e4; /* derived */
   --selection-text: #0f172a;
   --line-highlight: rgb(15 118 110 / 0.1);

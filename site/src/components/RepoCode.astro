@@ -1,6 +1,6 @@
 ---
 import CodeBlock from './CodeBlock.astro';
-import { readRepoLines, validateHighlight } from '../lib/repo';
+import { assertSnippetContains, readRepoLines, validateHighlight } from '../lib/repo';
 
 interface Props {
   /** Path relative to the repository root, e.g. "core/page/DynamicPage.ts". */
@@ -10,10 +10,13 @@ interface Props {
   /** Lines to highlight, using the file's line numbers: "64,66-68". */
   highlight?: string;
   lang?: string;
+  /** Exact text the quoted range must contain. Fails the build when the range has drifted. */
+  match?: string;
 }
 
-const { file, lines, highlight, lang } = Astro.props;
+const { file, lines, highlight, lang, match } = Astro.props;
 const snippet = readRepoLines(file, lines);
+assertSnippetContains(snippet, match);
 const highlightLines = validateHighlight(highlight, snippet);
 const label = lines ? `${snippet.file}:${snippet.startLine}-${snippet.endLine}` : snippet.file;
 ---

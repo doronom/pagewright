@@ -1,0 +1,796 @@
+---
+/**
+ * FlowWalkthrough: an animated, step-by-step walk through a call path.
+ *
+ * Without JavaScript every step renders as an ordered list, so the content is
+ * always readable. With JavaScript the component shows one step at a time,
+ * moves a dot between diagram nodes, and offers Previous / Play / Next / Restart,
+ * step dots, tabs and arrow-key navigation.
+ *
+ * Usage in MDX:
+ *   import FlowWalkthrough from '../../components/FlowWalkthrough.astro';
+ *   import flows from '../../data/flows/architecture-overview.json';
+ *   <FlowWalkthrough data={flows} />
+ */
+import { Code } from 'astro:components';
+import type { ComponentProps } from 'astro/types';
+
+type CodeLang = ComponentProps<typeof Code>['lang'];
+
+interface FlowNode {
+  id: string;
+  label: string;
+  sub?: string;
+  x: number;
+  y: number;
+}
+
+interface FlowStep {
+  node: string;
+  title: string;
+  where?: string;
+  text: string;
+  code?: string;
+  lang?: string;
+  status?: 'success' | 'failure';
+}
+
+interface Flow {
+  id: string;
+  label: string;
+  summary?: string;
+  height: number;
+  nodes: FlowNode[];
+  edges: [string, string][];
+  steps: FlowStep[];
+}
+
+interface FlowSet {
+  id: string;
+  title: string;
+  intro?: string;
+  flows: Flow[];
+}
+
+interface Props {
+  data: FlowSet;
+}
+
+const { data } = Astro.props;
+
+const VIEW_WIDTH = 520;
+const NODE_WIDTH = 150;
+const NODE_HEIGHT = 44;
+
+for (const flow of data.flows) {
+  const ids = new Set(flow.nodes.map((n) => n.id));
+  for (const [from, to] of flow.edges) {
+    if (!ids.has(from) || !ids.has(to)) {
+      throw new Error(`FlowWalkthrough "${data.id}/${flow.id}": edge ${from} -> ${to} references an unknown node`);
+    }
+  }
+  for (const [i, step] of flow.steps.entries()) {
+    if (!ids.has(step.node)) {
+      throw new Error(`FlowWalkthrough "${data.id}/${flow.id}": step ${i + 1} references unknown node "${step.node}"`);
+    }
+  }
+}
+
+const nodeById = (flow: Flow, id: string): FlowNode => flow.nodes.find((n) => n.id === id) as FlowNode;
+const tabId = (flow: Flow) => `${data.id}-tab-${flow.id}`;
+const panelId = (flow: Flow) => `${data.id}-panel-${flow.id}`;
+---
+
+<figure class="flow" data-flow-root data-test="flow-walkthrough" data-test-id={data.id}>
+  <figcaption class="flow-head">
+    <span class="flow-title">{data.title}</span>
+    {data.intro && <span class="flow-intro">{data.intro}</span>}
+  </figcaption>
+
+  <div class="flow-tabs" role="tablist" aria-label={data.title}>
+    {
+      data.flows.map((flow, i) => (
+        <button
+          type="button"
+          class="flow-tab"
+          role="tab"
+          id={tabId(flow)}
+          aria-controls={panelId(flow)}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-flow-tab={flow.id}
+          data-test="flow-tab"
+        >
+          {flow.label}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    data.flows.map((flow, i) => {
+      const first = nodeById(flow, flow.steps[0].node);
+      return (
+        <section
+          class="flow-panel"
+          role="tabpanel"
+          id={panelId(flow)}
+          aria-labelledby={tabId(flow)}
+          hidden={i !== 0}
+          data-flow-panel={flow.id}
+          data-test="flow-panel"
+        >
+          {flow.summary && <p class="flow-summary">{flow.summary}</p>}
+          <div class="flow-body">
+            <div class="flow-diagram">
+              <div
+                class="flow-svg-scroll"
+                tabindex="0"
+                aria-label={`${flow.label} diagram, scrollable`}
+                data-test="flow-diagram-scroll"
+              >
+              <svg
+                viewBox={`0 0 ${VIEW_WIDTH} ${flow.height}`}
+                role="img"
+                aria-label={`${flow.label} diagram`}
+                class="flow-svg"
+              >
+                <g class="flow-edges">
+                  {flow.edges.map(([from, to]) => {
+                    const a = nodeById(flow, from);
+                    const b = nodeById(flow, to);
+                    return <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />;
+                  })}
+                </g>
+                <g class="flow-nodes">
+                  {flow.nodes.map((node) => (
+                    <g class="flow-node" data-node={node.id} data-x={node.x} data-y={node.y} data-test="flow-node">
+                      <rect
+                        x={node.x - NODE_WIDTH / 2}
+                        y={node.y - NODE_HEIGHT / 2}
+                        width={NODE_WIDTH}
+                        height={NODE_HEIGHT}
+                        rx="6"
+                      />
+                      <text class="flow-node-label" x={node.x} y={node.sub ? node.y - 3 : node.y + 4}>
+                        {node.label}
+                      </text>
+                      {node.sub && (
+                        <text class="flow-node-sub" x={node.x} y={node.y + 13}>
+                          {node.sub}
+                        </text>
+                      )}
+                    </g>
+                  ))}
+                </g>
+                <circle
+                  class="flow-dot"
+                  r="6"
+                  cx="0"
+                  cy="0"
+                  style={`transform: translate(${first.x}px, ${first.y - NODE_HEIGHT / 2}px)`}
+                  data-test="flow-dot"
+                />
+              </svg>
+              </div>
+              <ul class="flow-legend" aria-label="Legend">
+                <li><span class="swatch swatch-call" />The call</li>
+                <li><span class="swatch swatch-visited" />Already visited</li>
+                <li><span class="swatch swatch-success" />Success</li>
+                <li><span class="swatch swatch-failure" />Failure or exception</li>
+              </ul>
+            </div>
+
+            <div class="flow-steps">
+              <ol class="flow-step-list" data-flow-steps aria-live="polite">
+                {flow.steps.map((step, j) => (
+                  <li
+                    class="flow-step"
+                    data-step={j}
+                    data-node={step.node}
+                    data-status={step.status}
+                    data-test="flow-step"
+                  >
+                    <p class="flow-step-head">
+                      <span class="flow-step-count">
+                        Step {j + 1} of {flow.steps.length}
+                      </span>
+                      <span class="flow-step-title">{step.title}</span>
+                    </p>
+                    {step.where && (
+                      <p class="flow-step-where">
+                        Where in the code: <code>{step.where}</code>
+                      </p>
+                    )}
+                    <p class="flow-step-text">{step.text}</p>
+                    {step.code && (
+                      <div class="flow-step-code">
+                        <Code code={step.code} lang={(step.lang ?? 'ts') as CodeLang} theme="css-variables" />
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ol>
+
+              <div class="flow-controls" data-flow-controls hidden data-test="flow-controls">
+                <div class="flow-buttons">
+                  <button type="button" class="flow-btn" data-action="prev" data-test="flow-prev">
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    class="flow-btn flow-btn-primary"
+                    data-action="play"
+                    data-test="flow-play"
+                    aria-pressed="false"
+                  >
+                    Play
+                  </button>
+                  <button type="button" class="flow-btn" data-action="next" data-test="flow-next">
+                    Next
+                  </button>
+                  <button type="button" class="flow-btn" data-action="restart" data-test="flow-restart">
+                    Restart
+                  </button>
+                </div>
+                <div class="flow-dots" role="group" aria-label="Go to step">
+                  {flow.steps.map((step, j) => (
+                    <button
+                      type="button"
+                      class="flow-dot-btn"
+                      data-goto={j}
+                      aria-label={`Step ${j + 1}: ${step.title}`}
+                      data-test="flow-step-dot"
+                    >
+                      {j + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    })
+  }
+</figure>
+
+<style>
+  .flow {
+    container-type: inline-size;
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-low);
+    color: var(--text);
+  }
+
+  .flow-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 1rem;
+  }
+
+  .flow-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .flow-intro,
+  .flow-summary {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .flow-summary {
+    margin-bottom: 1rem;
+  }
+
+  .flow-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .flow-tab {
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .flow-tab:hover {
+    border-color: var(--border-strong);
+  }
+
+  .flow-tab[aria-selected='true'] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--on-primary);
+  }
+
+  .flow-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .flow-body > * {
+    min-width: 0;
+  }
+
+  @container (min-width: 880px) {
+    .flow-body {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .flow-diagram {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-lowest);
+  }
+
+  .flow-svg-scroll {
+    overflow-x: auto;
+  }
+
+  .flow-svg {
+    display: block;
+    min-width: 480px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .flow-edges line {
+    stroke: var(--border-strong);
+    stroke-width: 1.25;
+  }
+
+  .flow-node rect {
+    fill: var(--surface-lowest);
+    stroke: var(--border-strong);
+    stroke-width: 1.25;
+    transition:
+      stroke 200ms ease,
+      fill 200ms ease;
+  }
+
+  .flow-node-label {
+    fill: var(--text);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+
+  .flow-node-sub {
+    fill: var(--text-muted);
+    font-size: 10.5px;
+    text-anchor: middle;
+  }
+
+  .flow-node.is-visited rect {
+    stroke: var(--primary);
+  }
+
+  .flow-node.is-current rect {
+    stroke: var(--primary);
+    stroke-width: 2;
+    fill: color-mix(in srgb, var(--primary) 16%, var(--surface-lowest));
+  }
+
+  .flow-node.is-success rect {
+    stroke: var(--success, #10b981);
+    stroke-width: 2;
+    fill: color-mix(in srgb, var(--success, #10b981) 16%, var(--surface-lowest));
+  }
+
+  .flow-node.is-failure rect {
+    stroke: var(--error);
+    stroke-width: 2;
+    fill: color-mix(in srgb, var(--error) 16%, var(--surface-lowest));
+  }
+
+  .flow-dot {
+    fill: var(--tertiary);
+    stroke: var(--surface-lowest);
+    stroke-width: 2;
+    transition: transform 650ms cubic-bezier(0.45, 0, 0.25, 1);
+    display: none;
+  }
+
+  .flow.is-enhanced .flow-dot {
+    display: block;
+  }
+
+  .flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+  }
+
+  .flow-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .swatch {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 9999px;
+  }
+
+  .swatch-call {
+    background: var(--tertiary);
+  }
+
+  .swatch-visited {
+    background: var(--primary);
+  }
+
+  .swatch-success {
+    background: var(--success, #10b981);
+  }
+
+  .swatch-failure {
+    background: var(--error);
+  }
+
+  .flow-step-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .flow.is-enhanced .flow-step {
+    display: none;
+  }
+
+  .flow.is-enhanced .flow-step.is-active {
+    display: block;
+  }
+
+  .flow-step-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .flow-step-count {
+    color: var(--primary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .flow-step-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .flow-step-where {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .flow-step-where code {
+    overflow-wrap: anywhere;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+  }
+
+  .flow-step-text {
+    margin: 0 0 0.75rem;
+    line-height: 1.7;
+  }
+
+  .flow-step-code :global(pre) {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-lowest);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .flow-controls {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .flow-controls[hidden] {
+    display: none;
+  }
+
+  .flow-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .flow-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .flow-btn:hover:not(:disabled) {
+    background: var(--surface);
+  }
+
+  .flow-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .flow-btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--on-primary);
+  }
+
+  .flow-btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+
+  .flow-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .flow-dot-btn {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  .flow-dot-btn.is-visited {
+    border-color: var(--primary);
+    color: var(--text);
+  }
+
+  .flow-dot-btn[aria-current='step'] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--on-primary);
+  }
+
+  .flow button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-dot,
+    .flow-node rect {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const PLAY_INTERVAL_MS = 2800;
+  const NODE_HALF_HEIGHT = 22;
+
+  interface PanelController {
+    stop: () => void;
+  }
+
+  function setupPanel(panel: HTMLElement): PanelController {
+    const steps = Array.from(panel.querySelectorAll<HTMLLIElement>('[data-flow-steps] > li'));
+    const nodes = new Map<string, SVGGElement>();
+    panel.querySelectorAll<SVGGElement>('.flow-node').forEach((node) => {
+      nodes.set(node.dataset.node ?? '', node);
+    });
+    const dot = panel.querySelector<SVGCircleElement>('.flow-dot');
+    const controls = panel.querySelector<HTMLElement>('[data-flow-controls]');
+    const prevBtn = panel.querySelector<HTMLButtonElement>('[data-action="prev"]');
+    const nextBtn = panel.querySelector<HTMLButtonElement>('[data-action="next"]');
+    const playBtn = panel.querySelector<HTMLButtonElement>('[data-action="play"]');
+    const restartBtn = panel.querySelector<HTMLButtonElement>('[data-action="restart"]');
+    const dotBtns = Array.from(panel.querySelectorAll<HTMLButtonElement>('[data-goto]'));
+    const scroller = panel.querySelector<HTMLElement>('.flow-svg-scroll');
+    const svg = panel.querySelector<SVGSVGElement>('.flow-svg');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let index = 0;
+    let timer: number | undefined;
+
+    controls?.removeAttribute('hidden');
+
+    function render(): void {
+      const current = steps[index];
+      const visited = new Set(steps.slice(0, index).map((s) => s.dataset.node));
+
+      steps.forEach((step, i) => step.classList.toggle('is-active', i === index));
+
+      nodes.forEach((node, id) => {
+        const isCurrent = id === current.dataset.node;
+        node.classList.toggle('is-current', isCurrent && !current.dataset.status);
+        node.classList.toggle('is-success', isCurrent && current.dataset.status === 'success');
+        node.classList.toggle('is-failure', isCurrent && current.dataset.status === 'failure');
+        node.classList.toggle('is-visited', !isCurrent && visited.has(id));
+      });
+
+      const target = nodes.get(current.dataset.node ?? '');
+      if (dot && target) {
+        const x = Number(target.dataset.x);
+        const y = Number(target.dataset.y) - NODE_HALF_HEIGHT;
+        dot.style.transform = `translate(${x}px, ${y}px)`;
+        keepInView(x);
+      }
+
+      dotBtns.forEach((btn, i) => {
+        btn.classList.toggle('is-visited', i < index);
+        if (i === index) {
+          btn.setAttribute('aria-current', 'step');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+      });
+
+      if (prevBtn) prevBtn.disabled = index === 0;
+      if (nextBtn) nextBtn.disabled = index === steps.length - 1;
+    }
+
+    function keepInView(x: number): void {
+      if (!scroller || !svg || scroller.scrollWidth <= scroller.clientWidth) return;
+      const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+      const left = x * scale - scroller.clientWidth / 2;
+      scroller.scrollTo({ left, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    function setPlaying(playing: boolean): void {
+      if (!playBtn) return;
+      playBtn.textContent = playing ? 'Pause' : 'Play';
+      playBtn.setAttribute('aria-pressed', String(playing));
+    }
+
+    function stop(): void {
+      if (timer !== undefined) {
+        window.clearInterval(timer);
+        timer = undefined;
+      }
+      setPlaying(false);
+    }
+
+    function go(i: number): void {
+      index = Math.max(0, Math.min(steps.length - 1, i));
+      render();
+    }
+
+    function play(): void {
+      if (index === steps.length - 1) go(0);
+      setPlaying(true);
+      timer = window.setInterval(() => {
+        if (index >= steps.length - 1) {
+          stop();
+          return;
+        }
+        go(index + 1);
+        if (index === steps.length - 1) stop();
+      }, PLAY_INTERVAL_MS);
+    }
+
+    prevBtn?.addEventListener('click', () => {
+      stop();
+      go(index - 1);
+    });
+    nextBtn?.addEventListener('click', () => {
+      stop();
+      go(index + 1);
+    });
+    restartBtn?.addEventListener('click', () => {
+      stop();
+      go(0);
+    });
+    playBtn?.addEventListener('click', () => {
+      if (timer !== undefined) {
+        stop();
+      } else {
+        play();
+      }
+    });
+    dotBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        stop();
+        go(Number(btn.dataset.goto));
+      }),
+    );
+
+    panel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        stop();
+        go(index + 1);
+        event.preventDefault();
+      } else if (event.key === 'ArrowLeft') {
+        stop();
+        go(index - 1);
+        event.preventDefault();
+      }
+    });
+
+    render();
+    return { stop };
+  }
+
+  function setupRoot(root: HTMLElement): void {
+    root.classList.add('is-enhanced');
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-flow-panel]'));
+    const controllers = panels.map(setupPanel);
+
+    function select(i: number): void {
+      tabs.forEach((tab, j) => {
+        const selected = i === j;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        panels[j].hidden = !selected;
+        if (!selected) controllers[j].stop();
+      });
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (event) => {
+        let next = -1;
+        if (event.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        if (event.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        if (next >= 0) {
+          event.preventDefault();
+          event.stopPropagation();
+          select(next);
+          tabs[next].focus();
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-flow-root]').forEach(setupRoot);
+</script>

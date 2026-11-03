@@ -74,6 +74,22 @@ export function readRepoLines(file: string, lines?: string): RepoSnippet {
   };
 }
 
+/**
+ * Throws, and so fails the build, when `match` is set and the snippet does not contain it.
+ * Catches a line range that no longer points at the code the article talks about.
+ */
+export function assertSnippetContains(snippet: RepoSnippet, match: string | undefined): void {
+  if (match === undefined) return;
+  if (snippet.code.includes(match)) return;
+  const wholeFile = snippet.startLine === 1 && snippet.endLine === snippet.totalLines;
+  const subject = wholeFile
+    ? `${snippet.file} does`
+    : snippet.startLine === snippet.endLine
+      ? `${snippet.file} line ${snippet.startLine} does`
+      : `${snippet.file} lines ${snippet.startLine}-${snippet.endLine} do`;
+  throw new Error(`RepoCode: ${subject} not contain "${match}"`);
+}
+
 export function validateHighlight(spec: string | undefined, snippet: RepoSnippet): number[] {
   if (!spec) return [];
   const context = `RepoCode file="${snippet.file}" highlight="${spec}"`;

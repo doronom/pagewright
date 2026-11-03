@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" role="img" aria-labelledby="cc-title" class="diagram-core-client">
+<title id="cc-title">Every app plugs into the core through one ClientDefinition</title>
+<style>
+.layer{fill:none;stroke:var(--border);stroke-width:1.25}
+.layer-core{fill:var(--surface);stroke:var(--border);stroke-width:1.25}
+.box{fill:var(--surface-lowest);stroke:var(--border-strong);stroke-width:1.25}
+.box-main{fill:color-mix(in srgb,var(--primary) 14%,var(--surface-lowest));stroke:var(--primary);stroke-width:2}
+.name{fill:var(--text);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:600}
+.body{fill:var(--text-muted);font-size:11.5px}
+.body-main{fill:var(--text);font-size:11.5px}
+.layer-name{fill:var(--text);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:600}
+.note{fill:var(--text-muted);font-size:11.5px}
+.edge{fill:none;stroke:var(--border-strong);stroke-width:1.25}
+.arrowhead{fill:var(--border-strong)}
+</style>
+<defs><marker id="cc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arrowhead"/></marker></defs>
+<rect x="24" y="24" width="712" height="224" rx="8" class="layer"/>
+<text x="40" y="52" class="layer-name">clients/&lt;name&gt;/</text><text x="168" y="52" class="note">one folder per app, edited per client</text>
+<rect x="24" y="272" width="712" height="200" rx="8" class="layer-core"/>
+<text x="40" y="414" class="layer-name">core/</text><text x="40" y="434" class="note">generic engine,</text><text x="40" y="450" class="note">never edited per app</text>
+<g><path d="M196 120H212" class="edge" marker-end="url(#cc-arrow)"/><path d="M540 120H556" class="edge" marker-end="url(#cc-arrow)"/><path d="M290 152V312" class="edge" marker-end="url(#cc-arrow)"/><path d="M462 312V152" class="edge" marker-end="url(#cc-arrow)"/><path d="M118 232V312" class="edge" marker-end="url(#cc-arrow)"/><path d="M634 232V312" class="edge" marker-end="url(#cc-arrow)"/><path d="M368 344H384" class="edge" marker-end="url(#cc-arrow)"/><path d="M290 376V392" class="edge" marker-end="url(#cc-arrow)"/><path d="M368 424H384" class="edge" marker-end="url(#cc-arrow)"/></g>
+<g data-part="tests"><rect x="40" y="88" width="156" height="64" rx="8" class="box"/><text x="52" y="114" class="name">tests/</text><text x="52" y="134" class="body">specs, no locators</text></g>
+<g data-part="client-fixtures"><rect x="212" y="88" width="156" height="64" rx="8" class="box"/><text x="224" y="114" class="name">fixtures.ts</text><text x="224" y="134" class="body">adds a typed api</text></g>
+<g data-part="client-ts"><rect x="384" y="88" width="156" height="64" rx="8" class="box-main"/><text x="396" y="114" class="name">client.ts</text><text x="396" y="134" class="body-main">ClientDefinition</text></g>
+<g data-part="pages"><rect x="556" y="88" width="156" height="64" rx="8" class="box"/><text x="568" y="114" class="name">pages/*.config.ts</text><text x="568" y="134" class="body">locators + actions</text></g>
+<g data-part="auth"><rect x="40" y="168" width="156" height="64" rx="8" class="box"/><text x="52" y="194" class="name">auth/</text><text x="52" y="214" class="body">login, isLoggedIn</text></g>
+<g data-part="api"><rect x="556" y="168" width="156" height="64" rx="8" class="box"/><text x="568" y="194" class="name">api/</text><text x="568" y="214" class="body">endpoint methods</text></g>
+<g data-part="auth-strategy"><rect x="40" y="312" width="156" height="64" rx="8" class="box"/><text x="52" y="338" class="name">AuthStrategy</text><text x="52" y="358" class="body">2-method interface</text></g>
+<g data-part="core-fixtures"><rect x="212" y="312" width="156" height="64" rx="8" class="box"/><text x="224" y="338" class="name">fixtures.ts</text><text x="224" y="358" class="body">builds tools per test</text></g>
+<g data-part="load-client"><rect x="384" y="312" width="156" height="64" rx="8" class="box"/><text x="396" y="338" class="name">loadClient</text><text x="396" y="358" class="body">reads CLIENT env</text></g>
+<g data-part="base-api-client"><rect x="556" y="312" width="156" height="64" rx="8" class="box"/><text x="568" y="338" class="name">BaseApiClient</text><text x="568" y="358" class="body">axios, retry, logs</text></g>
+<g data-part="dynamic-page"><rect x="212" y="392" width="156" height="64" rx="8" class="box"/><text x="224" y="418" class="name">DynamicPage</text><text x="224" y="438" class="body">goto, executeSection</text></g>
+<g data-part="actions"><rect x="384" y="392" width="156" height="64" rx="8" class="box"/><text x="396" y="418" class="name">actions/</text><text x="396" y="438" class="body">fill, click, check</text></g>
+<text x="126" y="264" class="note">implements</text>
+<text x="298" y="264" class="note">extends</text>
+<text x="470" y="264" class="note">loads</text>
+<text x="642" y="264" class="note">extends</text>
+</svg>

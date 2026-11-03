@@ -21,13 +21,20 @@ export default defineConfig({
   projects: [
     {
       name: 'site',
-      testIgnore: ['article-layout.spec.ts'],
+      testIgnore: ['article-layout.spec.ts', 'flow-walkthrough.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: `http://127.0.0.1:${PORT}${base}/` },
       metadata: { distDir: 'dist' },
     },
     {
       name: 'drafts',
-      testMatch: ['article-layout.spec.ts', 'routes.spec.ts', 'links.spec.ts', 'mobile.spec.ts'],
+      testMatch: [
+        'article-layout.spec.ts',
+        'flow-walkthrough.spec.ts',
+        'routes.spec.ts',
+        'links.spec.ts',
+        'mobile.spec.ts',
+        'contrast.spec.ts',
+      ],
       use: { ...devices['Desktop Chrome'], baseURL: `http://127.0.0.1:${DRAFTS_PORT}${base}/` },
       metadata: { distDir: 'dist-drafts' },
     },

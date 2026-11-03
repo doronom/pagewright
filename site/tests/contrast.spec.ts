@@ -1,16 +1,23 @@
-import { test, expect } from '@playwright/test';
-import { contrastRatio } from './helpers';
+import { test, expect, type Page, type TestInfo } from '@playwright/test';
+import { contrastRatio, distDir } from './helpers';
 
-// WCAG AA for normal text is 4.5:1. Checks the token values the built CSS actually ships.
+// WCAG AA for normal text is 4.5:1. Checks the token values the built CSS actually ships, then the
+// rendered text of any flow walkthrough on the page. Runs in both projects: the production build
+// checks the home page, the drafts build checks series part 1, which has the walkthrough.
 const AA = 4.5;
 const FOREGROUNDS = ['--text', '--text-muted', '--text-faint', '--primary'];
 const BACKGROUNDS = ['--bg', '--surface-lowest', '--surface-low', '--surface'];
+const THEMES = ['dark', 'light'] as const;
 
-test('text tokens meet WCAG AA in both themes', async ({ page }) => {
-  await page.goto('');
+function route(testInfo: TestInfo): string {
+  return distDir(testInfo) === 'dist-drafts' ? 'articles/why-config-driven/' : '';
+}
+
+test('text tokens meet WCAG AA in both themes', async ({ page }, testInfo) => {
+  await page.goto(route(testInfo));
   const rows: string[] = [];
   const failures: string[] = [];
-  for (const theme of ['dark', 'light'] as const) {
+  for (const theme of THEMES) {
     const tokens = await page.evaluate(
       ({ theme, names }) => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -31,5 +38,99 @@ test('text tokens meet WCAG AA in both themes', async ({ page }) => {
   }
   console.log(`\nContrast ratios (AA = ${AA}:1)\n${rows.join('\n')}`);
   await test.info().attach('contrast.txt', { body: rows.join('\n'), contentType: 'text/plain' });
+  expect(failures, failures.join('\n')).toEqual([]);
+});
+
+interface TextSample {
+  label: string;
+  fg: string;
+  bg: string;
+}
+
+/**
+ * Every visible text node inside the walkthroughs, with its color and the color actually behind it
+ * (translucent and color-mix() backgrounds composited on a canvas). SVG labels sit on their node's rect.
+ * Code blocks are left out: their colors are the Shiki tokens. Disabled buttons are exempt in WCAG.
+ */
+async function walkthroughText(page: Page): Promise<TextSample[]> {
+  return page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+    const hex = (layers: string[]): string => {
+      ctx.clearRect(0, 0, 1, 1);
+      for (const color of layers) {
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+      }
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return `#${[r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
+    };
+    const alpha = (color: string): number => {
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1, 1);
+      return ctx.getImageData(0, 0, 1, 1).data[3];
+    };
+    const backgroundOf = (el: Element): string => {
+      const layers: string[] = [];
+      for (let node: Element | null = el; node; node = node.parentElement) {
+        const color = getComputedStyle(node).backgroundColor;
+        if (alpha(color) === 0) continue;
+        layers.unshift(color);
+        if (alpha(color) === 255) break;
+      }
+      return hex([getComputedStyle(document.body).backgroundColor, ...layers]);
+    };
+
+    const samples: { label: string; fg: string; bg: string }[] = [];
+    for (const root of document.querySelectorAll('[data-test="flow-walkthrough"]')) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+        const el = text.parentElement;
+        if (!el || !text.textContent?.trim() || el.closest('pre, title')) continue;
+        if (!el.getClientRects().length || el.closest('[hidden]')) continue;
+        if ((el.closest('button') as HTMLButtonElement | null)?.disabled) continue;
+        const style = getComputedStyle(el);
+        if (style.visibility === 'hidden') continue;
+        const label = `${el.tagName.toLowerCase()} "${text.textContent.trim().slice(0, 40)}"`;
+        if (el instanceof SVGTextElement) {
+          const rect = el.parentElement?.querySelector('rect');
+          const surface = backgroundOf(el);
+          samples.push({ label, fg: hex([style.fill]), bg: hex([surface, rect ? getComputedStyle(rect).fill : surface]) });
+        } else {
+          samples.push({ label, fg: hex([style.color]), bg: backgroundOf(el) });
+        }
+      }
+    }
+    return samples;
+  });
+}
+
+test('flow walkthrough text meets WCAG AA in both themes', async ({ page }, testInfo) => {
+  await page.goto(route(testInfo));
+  const roots = await page.getByTestId('flow-walkthrough').count();
+  const rows: string[] = [];
+  const failures: string[] = [];
+  for (const theme of THEMES) {
+    await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
+    for (const id of ['ui', 'api', 'auth']) {
+      if (!roots) break;
+      await page.locator(`[data-test="flow-tab"][data-flow-tab="${id}"]`).click();
+      const panel = page.locator(`[data-test="flow-panel"][data-flow-panel="${id}"]`);
+      // First step (current node) and last step (success node).
+      for (const state of ['first', 'last'] as const) {
+        await panel.getByTestId('flow-step-dot')[state]().click();
+        for (const s of await walkthroughText(page)) {
+          const ratio = contrastRatio(s.fg, s.bg);
+          const line = `${theme.padEnd(5)} ${id.padEnd(4)} ${state.padEnd(5)} ${s.fg} on ${s.bg} ${ratio.toFixed(2)}:1  ${s.label}`;
+          rows.push(line);
+          if (ratio < AA) failures.push(line);
+        }
+      }
+    }
+  }
+  await test.info().attach('walkthrough-contrast.txt', { body: rows.join('\n') || 'no walkthrough', contentType: 'text/plain' });
+  if (roots) expect(rows.length).toBeGreaterThan(0);
   expect(failures, failures.join('\n')).toEqual([]);
 });

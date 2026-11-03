@@ -1,0 +1,227 @@
+---
+title: Why a config-driven test framework
+description: Page objects mix three things that change at different speeds. This series takes them apart, starting with the overall shape of a framework where pages are data and the engine is written once.
+date: 2026-11-16
+series: config-driven-framework
+seriesPart: 1
+tags: [playwright, architecture, typescript]
+featured: false
+draft: true
+---
+
+import RepoCode from '../../components/RepoCode.astro';
+import Callout from '../../components/Callout.astro';
+import Diagram from '../../components/Diagram.astro';
+import FlowWalkthrough from '../../components/FlowWalkthrough.astro';
+import CoreClientDiagram from '../../assets/diagrams/core-client.svg';
+import architectureFlows from '../../data/flows/architecture-overview.json';
+import { site } from '../../config/site';
+
+## The problem: page objects that grow faster than the product
+
+When a test suite grows to cover several applications and dozens of screens, a page object class for every screen gets expensive. Every class repeats the same code: a locator, a wait, a fill, a click, a log line.
+
+This series describes a different approach. Pages are defined as data, and a generic engine handles the common execution work: waits, retries and logging. Adding a new application means adding data and a little app-specific code, without touching the engine.
+
+The problem isn't page objects themselves. It's what they mix together. Every page class holds three things that change at different speeds:
+
+- **Where** an element is (the locator): changes with every UI change.
+- **What** you do with it (fill, click, select): almost never changes.
+- **How** to do it reliably (waits, retries, logging): the same across the whole project.
+
+The framework separates the three. The *where* and the *what* are written as data in a page config. The common *how* is written once, in a generic engine; only genuinely app-specific behavior still needs code. The approach grew out of a large production automation project that covered several applications, and was later extracted into an open template, <a href={site.repoUrl}>qa-template</a>.
+
+All examples run against [Toolshop](https://practicesoftwaretesting.com), a public practice application with a UI and an API behind it. The original framework tested internal systems that can't be shown. Toolshop has the same shape: a web UI, an API with token-based login, and flows that combine the two. The architecture and the lessons come from the production framework.
+
+This first article gives the big picture: how the code is organized, how a new application plugs into it, and how UI, API and authentication tests travel through it.
+
+At the highest level, the framework has four layers, and each one only talks to the one below it:
+
+1. **Tests** describe the scenario and its data. They contain no locators.
+2. **The client** describes one application: its pages, locators, actions, login and API endpoints.
+3. **The core** is the generic engine: fixtures, page execution, logging and retries.
+4. **The application under test**, through its browser UI and its API.
+
+The rest of this article walks down those layers, starting with how a page is described.
+
+## The idea: a page is data, not a class
+
+Instead of a class per screen, each screen is described by a configuration object with four levels: a page has sections, a section has fields, and each field has a locator and an ordered list of actions. This is the whole contract:
+
+<RepoCode file="core/page/types.ts" lines="8-25" match="export interface ActionConfig" />
+
+Two small details do a lot of work here. The type `ActionType | (string & {})` keeps autocomplete for the built-in actions while still allowing clients to register custom actions. And `url` is optional, because not every state of the UI is reachable by direct navigation.
+
+This is Toolshop's login page:
+
+```ts title="clients/toolshop/pages/LoginPage.config.ts"
+export const loginPage = (page: Page): PageConfig => ({
+  url: '/auth/login',
+  sections: {
+    form: {
+      fields: {
+        email: { locator: page.locator('[data-test="email"]'), actions: [{ action: 'fill' }] },
+        password: { locator: page.locator('[data-test="password"]'), actions: [{ action: 'fill' }] },
+        submit: { locator: page.locator('[data-test="login-submit"]'), actions: [{ action: 'click' }] },
+        error: { locator: page.locator('[data-test="login-error"]'), actions: [] },
+      },
+    },
+  },
+});
+```
+
+The config is a function that takes a `Page`, not a static object. Locators are created against the current test's page, so nothing is shared between tests running in parallel. A field with `actions: []`, like `error`, exists only so its locator can be used in an assertion.
+
+The test never sees a locator. It passes a section name and an object of data:
+
+```ts
+await dynamicPage.goto('login');
+await dynamicPage.executeSection('form', {
+  email: requireEnv('APP_EMAIL'),
+  password: requireEnv('APP_PASSWORD'),
+  submit: true,
+});
+```
+
+All the work happens in `executeSection`, which is shorter than you might expect:
+
+<RepoCode file="core/page/DynamicPage.ts" lines="90-102" match="async executeSection" />
+
+Three things in this implementation are worth noticing:
+
+1. **The test decides which fields run, and in what order. The config decides what happens inside each field.** The loop walks the keys of `data`, so fields the test leaves out are simply not executed, and the rest run in the order the test wrote them. Within each field, its actions run in the order the config lists them.
+2. **A fixed value beats a value from the test.** `actionConfig.value ?? value` lets a field define, say, `check` with a fixed `value: true`, and the test only signals that it should run.
+3. **Errors speak the config's language.** An unknown action fails with the section and field names, and so does a field the config doesn't have (`getField` throws `Field "x" not found in section "y"`), instead of a Playwright stack trace.
+
+Two caveats come with letting object key order drive execution. JavaScript keeps string keys in insertion order, but integer-like keys (`'1'`, `'2'`) always come first, so field names should be real names. And when one field depends on another, such as a dropdown that has to open before an option can be chosen, the dependency belongs inside one field's action list or in a custom action, not in the hope that the test lists keys in the right order. The actions are built on Playwright's auto-waiting locators, which wait until an element is visible and enabled before acting, and `fill` also confirms the value landed. So a field that appears only after the previous one changed the UI is handled by waiting on the element, not by a sleep.
+
+Actions are looked up by name in one map: the built-in ones (fill, click, check, selectOption and more) merged with any the client defines in `ClientDefinition.actions`. A client action with the same name as a built-in one replaces it, which is how an app with an unusual dropdown gets its own `select` without touching the core.
+
+The details of `DynamicPage` and the actions layer get their own article. For now, the point is that the app-specific parts are data, and the common execution behavior is code, written once.
+
+## Core and client: one object between them
+
+The repository is split into two folders with one clear rule: `core/` is a generic engine that nobody edits when adding an application, and `clients/<name>/` holds everything specific to one application. The connection between them goes through a single interface, `ClientDefinition`:
+
+<Diagram caption="core and client: two layers, one connection point">
+  <CoreClientDiagram />
+</Diagram>
+
+<RepoCode file="core/client/ClientDefinition.ts" lines="7-17" match="export interface ClientDefinition" />
+
+This interface is the engine's list of extension points. Only three fields are required: `name`, `baseUrl` and `pages`. Everything else is optional: without `auth`, the setup project skips the login step and UI tests run without a saved session; without `createApiClient`, the client can't run API tests. URLs are functions of the environment: the core reads `TEST_ENV` (default `dev`) and calls `baseUrl(testEnv)`, so the same client runs against every environment without code changes.
+
+Toolshop fills in the interface in its `client.ts`:
+
+```ts title="clients/toolshop/client.ts"
+const client: ClientDefinition = {
+  name: 'toolshop',
+  baseUrl: () => 'https://practicesoftwaretesting.com',
+  apiBaseUrl: () => 'https://api.practicesoftwaretesting.com',
+  defaultHeaders: { Accept: 'application/json' },
+  pages: {
+    login: loginPage,
+    products: productsPage,
+    productDetail: productDetailPage,
+    cart: cartPage,
+  },
+  auth: new ToolshopAuth(() => client),
+  createApiClient: (logger) => new ToolshopApiClient(client, logger),
+};
+
+export default client;
+```
+
+Notice `() => client`. The auth strategy receives a getter, not the object itself, because while it's being constructed the object doesn't exist yet. It's the same closure pattern `createApiClient` uses, and it means login always runs with the client it belongs to, not with whatever an environment variable points at.
+
+The core finds this file by environment variable. `loadClient` is the entire plugin mechanism:
+
+<RepoCode file="core/client/loadClient.ts" lines="6-12" match="export function loadClient" />
+
+`clientName` comes from `process.env.CLIENT`, defaulting to `toolshop`. This dynamic `require` is the only place in the project where the ESLint rule against `require` is turned off, and that's deliberate: there is exactly one dynamic link, and it's marked.
+
+What connects the client to the tests is the core's fixtures. Each test receives the loaded client, and every other tool is built from it:
+
+<RepoCode file="core/fixtures.ts" lines="17-29" match="export const test = base.extend" />
+
+Each fixture declares its dependencies in its signature, and Playwright builds them only when a test asks for them. An API test that never asks for `dynamicPage` never opens a browser, and every test gets a `Logger` named after it and a fresh `SharedData` of its own.
+
+On the client side, `fixtures.ts` extends the core's test instead of replacing it. It doesn't build its own API client either: it takes the `apiClient` the core already built from `createApiClient` and narrows it to Toolshop's type with `instanceof`. There is one place that decides how the client is built, and if `CLIENT` points at a different application, the test fails with a clear message instead of a silent cast:
+
+```ts title="clients/toolshop/fixtures.ts"
+export const test = base.extend<{ api: ToolshopApiClient }>({
+  api: async ({ apiClient }, use) => {
+    if (!(apiClient instanceof ToolshopApiClient)) {
+      throw new Error('apiClient is not a ToolshopApiClient (check CLIENT env)');
+    }
+    await use(apiClient);
+  },
+});
+```
+
+Specs import only from this file. That way they get everything the core provides, plus whatever the specific application adds.
+
+## Three paths through the same engine
+
+Every test in the project travels one of three paths: UI, API or authentication. All three start in the client and end in the core, and all three are defined as separate projects in `playwright.config.ts`. Step through them below.
+
+<FlowWalkthrough data={architectureFlows} />
+
+<Callout type="tip">
+Look at `skipNavigation` in the UI flow's spec: after a click that changes the page, the test only switches the active config with `goto('productDetail', { skipNavigation: true })`, without navigating again. That way the test checks the transition itself instead of jumping straight to a URL.
+</Callout>
+
+<Callout type="warning">
+The API example logs in with an email that doesn't exist, not with a wrong password for a real user. Toolshop locks an account after several failed attempts, and a test that tries a wrong password on a shared demo user would break login for every other test. This is a test isolation problem as much as a security one: any test that changes shared data, a demo user, a shared account, a global setting, can break tests it never touches. Negative tests are the easiest place to miss that.
+</Callout>
+
+## Adding an application without touching the core
+
+A new application is a new folder under `clients/`, and not a single line in `core/` changes. A small script copies the Toolshop client and renames it:
+
+```bash
+npm run new-client my-app
+```
+
+The script (`scripts/new-client.ts`) does four things:
+
+1. Checks that the name is lowercase with dashes and that the folder doesn't exist yet.
+2. Copies `clients/toolshop` and replaces its tests with `test.fixme` placeholders, so the first run doesn't fail on Toolshop's tests.
+3. Replaces `Toolshop` with `MyApp` in file names and contents, and `'toolshop'` with `'my-app'`.
+4. Prints the next steps.
+
+From there, the work stays inside the new folder: update the URLs in `client.ts`, write page configs, implement login and the API client, add credentials to `env/.env.<TEST_ENV>`, and run `CLIENT=my-app npm test`.
+
+### The rules that keep the separation honest
+
+The separation between config and test breaks easily: one test with a `page.locator(...)` in the middle is enough. So the template enforces it with ESLint, not just with good intentions. These rules apply to every file under `tests/`:
+
+<RepoCode file="eslint.config.mjs" lines="31-55" match="files: ['**/tests/**/*.ts']" />
+
+The first two rules protect the architecture: locators live only in page configs. The other two protect stability: no fixed waits and no `networkidle`. Both fail in lint, before code review, with a message that says what to do instead.
+
+## What you gain, what you pay
+
+The approach pays off when there are many screens built from the same basic actions, or several applications that should share one infrastructure. It isn't free:
+
+| What you gain | What you pay |
+| --- | --- |
+| A UI change is fixed in one place: the page's config file | Fields are referenced by strings (`'header', 'cartQuantity'`), and TypeScript won't catch a typo at compile time |
+| Waits, retries and logging are written once, in the core | A genuinely complex interaction still needs code, as a custom action or a helper |
+| Short tests that read like a script | Debugging goes through one more layer, which is why the logs in `executeSection` matter |
+| A new application plugs in without touching the engine | A new developer has to learn a new convention instead of the familiar POM |
+
+In the project the template was extracted from, the same engine served three applications, around 45 page configs and around 70 spec files. At that scale, three things were added that the template doesn't have: centralized authentication that skips login while a session is still valid, fixtures that keep several applications signed in within the same test, and a layer of helpers for long business flows. Each of them gets a place in the articles that follow.
+
+## When to use it
+
+Use this architecture when the same kinds of actions repeat across many screens, or when several applications should share one testing infrastructure. For a single small application with a handful of screens, classic page objects are simpler and perfectly fine. The value of the config-driven approach grows with the number of pages and applications, and so does the cost of not having it.
+
+## Next in the series
+
+1. **Why a config-driven test framework** (this article)
+2. **DynamicPage and the actions layer:** built-in actions, client overrides, and a real autocomplete bug as a case study
+3. **Authentication and fixtures:** from a simple `AuthStrategy` to a facade that manages several applications
+4. **The API layer and test data:** `BaseApiClient`, mock versus real, and factories
+5. **CI/CD and observability:** parallel suites, merged reports, and API traffic tracking
+6. **From a company framework to a reusable template:** what went into the core, what stayed out, and what I'd do differently
