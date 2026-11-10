@@ -24,13 +24,13 @@ As before, all the code comes from Pagewright, the open template, and every exam
 
 ## Inside DynamicPage
 
-`DynamicPage` is a class of under 140 lines, and it does three things: it loads a page config and navigates to it, runs actions on the config's fields, and returns locators for assertions. It holds one active config at a time, and each test gets its own instance through the fixture.
+`DynamicPage` is a class of about 140 lines, and it does three things: it loads a page config and navigates to it, runs actions on the config's fields, and returns locators for assertions. It holds one active config at a time, and each test gets its own instance through the fixture.
 
 ### goto: from a page name to a URL
 
-<RepoCode file="core/page/DynamicPage.ts" lines="59-88" match="async goto(pageName: string" />
+<RepoCode file="core/page/DynamicPage.ts" lines="60-89" match="async goto(pageName: string" />
 
-Step through it below. The second tab follows the same call when a placeholder has no value: every failure in `goto` happens before the browser moves. The third tab follows `executeSection` from the first article, field by field.
+Step through it below. The second tab follows the same call when a placeholder has no value: a config error fails before the browser moves. Once `page.goto` starts, it can still fail on the network, and that's what the retry is for. The third tab follows `executeSection` from the first article, field by field.
 
 <FlowWalkthrough data={dynamicPageFlows} />
 
@@ -40,13 +40,13 @@ A few small decisions are worth noticing:
 2. **`onPageInit` runs once per DynamicPage**, which means once per test, on the first `goto`. It's where a client does one-time browser setup, for example a route that blocks an analytics script.
 3. **`skipNavigation` switches the config without navigating.** After a click that changes the page, the test tells the engine where it is instead of jumping to a URL, so the transition itself gets tested.
 4. **`domcontentloaded`, not `networkidle`.** Navigation waits only until the HTML has loaded. Whether the page is ready is checked through the elements the test actually needs, which is why the ESLint rule from the first article bans `networkidle` in tests. In an app with polling or websockets, the network simply never goes quiet.
-5. **Retry on navigation only.** Three attempts, waiting 1 and then 2 seconds between them. A momentary network failure while loading a page doesn't fail a test, but field actions are not wrapped in retry: a click that fails should fail, so it can't hide a bug.
+5. **Retry on navigation only.** Three attempts, waiting 1 and then 2 seconds between them. Loading the same URL twice is safe, so a momentary network failure doesn't fail a test. A click isn't safe to repeat: a second click on Submit can create a second order, and a click that failed usually points to a real problem. So field actions are not wrapped in retry.
 
 ### Placeholders: failing early
 
 A page URL can contain `${productId}`, and the value comes from the test's `SharedData`:
 
-<RepoCode file="core/page/DynamicPage.ts" lines="131-138" match="private replacePlaceholders" />
+<RepoCode file="core/page/DynamicPage.ts" lines="132-139" match="private replacePlaceholders" />
 
 The important line is the `throw`. Without it, a missing value would become `/product/undefined`, the browser would show an error page, and the test would fail three steps later on an element it couldn't find. This way it fails where the problem is, with the placeholder's name in the message.
 
@@ -62,11 +62,11 @@ Every action in the system is a function with the same signature: a locator and 
 
 <RepoCode file="core/page/types.ts" lines="6" match="export type ActionFunction" />
 
-That single signature is what lets the engine run any action the same way, without knowing what it does. The price is `unknown`: each action is responsible for interpreting its own value.
+That single signature is what lets the engine run any action the same way, without knowing what it does. The trade-off is that the value is typed as `unknown`, so each action has to interpret it itself, and that's where it can quietly go wrong. Test data often arrives as strings, and `Boolean('false')` is `true`. So `check` and `toggle` accept only a real `true` or `false` and fail on anything else, including a missing value.
 
 The `DynamicPage` constructor builds the map from two sources:
 
-<RepoCode file="core/page/DynamicPage.ts" lines="33-52" match="const builtIn: Record<string, ActionFunction>" />
+<RepoCode file="core/page/DynamicPage.ts" lines="34-53" match="const builtIn: Record<string, ActionFunction>" />
 
 The built-in actions, and what each does with its value:
 
@@ -82,7 +82,7 @@ The built-in actions, and what each does with its value:
 | `waitForElement` | Waits for the element to be visible | Timeout in ms, optional |
 | `getText` | Reads text, and stores it in `SharedData` if given a key | The key, optional |
 
-`getText` is especially interesting because it closes a loop with placeholders. A field with `{ action: 'getText', value: 'orderId' }` reads an order number from the page and stores it, and a page whose URL is `/orders/${orderId}` later opens with that value. Information moves between steps without the test holding variables.
+`getText` closes a loop with placeholders. A field with `{ action: 'getText', value: 'orderId' }` reads an order number from the page and stores it, and a page whose URL is `/orders/${orderId}` later opens with that value. Information moves between steps without the test holding variables.
 
 ### Three ways to add an action
 
@@ -99,15 +99,15 @@ const client: ClientDefinition = {
 };
 ```
 
-Why a pack and not built-in actions? Because the core shouldn't assume which UI library an application uses. `muiAutocomplete` is broken anywhere there's no MUI, so it comes in only when a client asks for it.
+Why a pack? Because the core shouldn't assume which UI library an application uses. `muiAutocomplete` is broken anywhere there's no MUI, so it comes in only when a client asks for it.
 
 ## The actions layer: deliberately thin wrappers
 
-Behind the map are four classes: `ElementActions`, `InputActions`, `WaitAndAssertActions` and `FileUploadActions`. The first surprise is how little they do:
+Behind the map are four classes: `ElementActions`, `InputActions`, `WaitAndAssertActions` and `FileUploadActions`. They do very little, and that's on purpose:
 
 <RepoCode file="core/actions/ElementActions.ts" lines="7-10" match="async click(locator: Locator)" />
 
-There's no `waitFor`, no visibility check and no retry. That's a decision, not an omission. Playwright's `locator.click()` already waits for the element to be visible, stable, enabled and able to receive events. A wrapper that adds its own `waitFor` only doubles the wait, and a wrapper with retry hides real bugs. The rule for this layer: add only what Playwright doesn't give you.
+There's no `waitFor`, no visibility check and no retry. Playwright's `locator.click()` already waits for the element to be visible, stable, enabled and able to receive events. A wrapper that adds its own `waitFor` only doubles the wait, and a wrapper with retry hides real bugs. The rule for this layer: add only what Playwright doesn't give you.
 
 What the wrappers do add:
 
@@ -164,11 +164,11 @@ export const muiActions: Record<string, ActionFunction> = {
 
 The `toHaveValue` looks like verification, but it always passes: two lines earlier, the action itself typed exactly that value. And the multi version has no check at all.
 
-The fix checks what the application saved, not what we typed:
+The fix checks what the application saved:
 
 <RepoCode file="core/actions/packs/mui.ts" lines="10-26" match="await locator.blur();" />
 
-The `blur` is the key. In MUI's default mode, unselected text is cleared when the field loses focus, so afterwards the value survives only if an option was really selected. In `freeSolo` fields, which accept free text, the typed text really is the value, and a plain `fill` is enough. Pagewright's tests for the pack run against real MUI components, including one that rejects the selection, to prove the action now fails when it should.
+The `blur` is the key. In MUI's default mode, unselected text is cleared when the field loses focus, so afterwards the value survives only if an option was really selected. In `freeSolo` fields, which accept free text, blur clears nothing, so this check can't tell a selection from typing. The pack isn't meant for them: there the typed text really is the value, and a plain `fill` is enough. Pagewright's tests for the pack run against real MUI components, including one that rejects the selection, to prove the action now fails when it should.
 
 Here is the same rejected selection with both versions. Watch where each one decides that it succeeded:
 
@@ -176,18 +176,11 @@ Here is the same rejected selection with both versions. Watch where each one dec
 
 The rule that carries over to every action in the system: **an assertion that checks something your own action just did proves nothing.** A good check asks a question only the application can answer: a chip that was created, a value that survived blur, or a response from the server. The same principle is behind the check in `fill`: it's worth something only because masked fields change what was typed.
 
-## When an action, when a helper
+## Action or helper?
 
 A new action is worth it when it describes an interaction with **one element** that repeats across many pages: an autocomplete, a date picker, a masked field. It goes into the map once, and any field in any config can use it by name.
 
 A process that spans several sections or several pages, like a full purchase or a multi-step approval, doesn't belong in the action map. It belongs in a helper that uses `DynamicPage` and calls `goto` and `executeSection` like a regular test. When an action starts navigating between pages or calling an API, that's a sign it's in the wrong place. The original framework's helper layer gets its place in the last article of the series.
-
-What's worth taking from this article, even without adopting the whole approach:
-
-- **A wrapper has to add something:** a log, a self-check, or a better error message. Waits that already exist in Playwright don't belong on the list.
-- **Retry only where the failure is external.** Navigation, yes. A click, no.
-- **Fail early.** A missing placeholder, a missing field or an unknown action stop the test where the problem started.
-- **Check the application's state, not your own action.**
 
 ## In the next article
 
