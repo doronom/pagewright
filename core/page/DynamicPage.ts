@@ -8,6 +8,7 @@ import { testEnv } from '../env';
 import { Logger } from '../Logger';
 import { retry } from '../RetryHelper';
 import { SharedData } from '../SharedData';
+import { requireBoolean } from './requireBoolean';
 import { ActionFunction, FieldConfig, PageConfig } from './types';
 
 export class DynamicPage {
@@ -33,10 +34,10 @@ export class DynamicPage {
     const builtIn: Record<string, ActionFunction> = {
       fill: (locator, value) => this.inputActions.fillText(locator, String(value)),
       click: (locator) => this.elementActions.click(locator),
-      check: (locator, value) => this.elementActions.setChecked(locator, Boolean(value)),
+      check: (locator, value) => this.elementActions.setChecked(locator, requireBoolean('check', value)),
       radio: (locator, value) =>
         this.elementActions.selectRadio(locator, typeof value === 'string' ? value : undefined),
-      toggle: (locator, value) => this.elementActions.toggle(locator, Boolean(value)),
+      toggle: (locator, value) => this.elementActions.toggle(locator, requireBoolean('toggle', value)),
       selectOption: (locator, value) => this.elementActions.selectOption(locator, value as string | string[]),
       upload: (locator, value) => this.fileUploadActions.uploadFile(locator, value as string | string[]),
       waitForElement: (locator, value) =>
