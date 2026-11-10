@@ -15,9 +15,9 @@ on:
         type: string
         default: dev
       project:
-        description: Playwright project (empty runs the full suite - setup, ui and api)
+        description: Playwright project (empty runs the full suite - setup, ui, api and packs)
         type: choice
-        options: ['', ui, api]
+        options: ['', ui, api, packs]
         default: ''
 
 jobs:
@@ -32,3 +32,13 @@ jobs:
     secrets:
       APP_EMAIL: customer@practicesoftwaretesting.com
       APP_PASSWORD: welcome01
+
+  packs:
+    # Core action packs tested against real MUI in the browser. They need no network, so push and
+    # pull request run them next to api. A manual run covers them through the project input.
+    if: github.event_name != 'workflow_dispatch'
+    uses: ./.github/workflows/test-execution.yml
+    with:
+      client: toolshop
+      env: dev
+      project: packs

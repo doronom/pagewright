@@ -53,4 +53,12 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // React harness apps that pack tests bundle with esbuild and render in the browser.
+    files: ['core/actions/packs/tests/fixtures/**/*.jsx'],
+    languageOptions: {
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: { document: 'readonly' },
+    },
+  },
 );

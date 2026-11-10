@@ -40,5 +40,20 @@ export default defineConfig({
       name: 'api',
       testMatch: 'api/**/*.spec.ts',
     },
+    {
+      // Core action packs tested against real component libraries rendered in the browser.
+      // Self-contained: no auth, no client, no base URL and no network access.
+      name: 'packs',
+      testDir: 'core/actions/packs/tests',
+      testMatch: '**/*.spec.ts',
+      timeout: 20_000,
+      expect: { timeout: 3_000 },
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: undefined,
+        storageState: undefined,
+        actionTimeout: 5_000,
+      },
+    },
   ],
 });
