@@ -2,19 +2,21 @@ import { test, expect, type Page, type TestInfo } from '@playwright/test';
 import { contrastRatio, distDir } from './helpers';
 
 // WCAG AA for normal text is 4.5:1. Checks the token values the built CSS actually ships, then the
-// rendered text of any flow walkthrough on the page. Runs in both projects: the production build
-// checks the home page, the drafts build checks series part 1, which has the walkthrough.
+// rendered text of every flow walkthrough on the page. Runs in both projects: the production build
+// checks the home page, the drafts build checks series parts 1 and 2, which have the walkthroughs.
 const AA = 4.5;
 const FOREGROUNDS = ['--text', '--text-muted', '--text-faint', '--primary'];
 const BACKGROUNDS = ['--bg', '--surface-lowest', '--surface-low', '--surface'];
 const THEMES = ['dark', 'light'] as const;
 
-function route(testInfo: TestInfo): string {
-  return distDir(testInfo) === 'dist-drafts' ? 'articles/why-config-driven/' : '';
+function routes(testInfo: TestInfo): string[] {
+  return distDir(testInfo) === 'dist-drafts'
+    ? ['articles/why-config-driven/', 'articles/dynamicpage-and-actions/']
+    : [''];
 }
 
 test('text tokens meet WCAG AA in both themes', async ({ page }, testInfo) => {
-  await page.goto(route(testInfo));
+  await page.goto(routes(testInfo)[0]);
   const rows: string[] = [];
   const failures: string[] = [];
   for (const theme of THEMES) {
@@ -53,7 +55,12 @@ interface TextSample {
  * Code blocks are left out: their colors are the Shiki tokens. Disabled buttons are exempt in WCAG.
  */
 async function walkthroughText(page: Page): Promise<TextSample[]> {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
+    // Read the settled colors, not a frame in the middle of a theme or step transition. With two
+    // walkthroughs on a page, one can still be animating while the other is being stepped.
+    const transitions = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
+    // A transition that is cancelled by the next change rejects; that is settled too.
+    await Promise.all(transitions.map((transition) => transition.finished.catch(() => undefined)));
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;
     const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
@@ -112,24 +119,31 @@ async function walkthroughText(page: Page): Promise<TextSample[]> {
 }
 
 test('flow walkthrough text meets WCAG AA in both themes', async ({ page }, testInfo) => {
-  await page.goto(route(testInfo));
-  const roots = await page.getByTestId('flow-walkthrough').count();
+  test.setTimeout(90_000);
   const rows: string[] = [];
   const failures: string[] = [];
-  for (const theme of THEMES) {
-    await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
-    for (const id of ['ui', 'api', 'auth']) {
-      if (!roots) break;
-      await page.locator(`[data-test="flow-tab"][data-flow-tab="${id}"]`).click();
-      const panel = page.locator(`[data-test="flow-panel"][data-flow-panel="${id}"]`);
-      // First step (current node) and last step (success node).
-      for (const state of ['first', 'last'] as const) {
-        await panel.getByTestId('flow-step-dot')[state]().click();
-        for (const s of await walkthroughText(page)) {
-          const ratio = contrastRatio(s.fg, s.bg);
-          const line = `${theme.padEnd(5)} ${id.padEnd(4)} ${state.padEnd(5)} ${s.fg} on ${s.bg} ${ratio.toFixed(2)}:1  ${s.label}`;
-          rows.push(line);
-          if (ratio < AA) failures.push(line);
+  let roots = 0;
+  for (const path of routes(testInfo)) {
+    await page.goto(path);
+    const walkthroughs = await page.getByTestId('flow-walkthrough').all();
+    roots += walkthroughs.length;
+    for (const theme of THEMES) {
+      await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
+      for (const root of walkthroughs) {
+        for (const tab of await root.getByTestId('flow-tab').all()) {
+          const id = String(await tab.getAttribute('data-flow-tab'));
+          await tab.click();
+          const panel = root.locator(`[data-test="flow-panel"][data-flow-panel="${id}"]`);
+          // First step (current node) and last step (success or failure node).
+          for (const state of ['first', 'last'] as const) {
+            await panel.getByTestId('flow-step-dot')[state]().click();
+            for (const s of await walkthroughText(page)) {
+              const ratio = contrastRatio(s.fg, s.bg);
+              const line = `${theme.padEnd(5)} ${id.padEnd(12)} ${state.padEnd(5)} ${s.fg} on ${s.bg} ${ratio.toFixed(2)}:1  ${s.label}`;
+              rows.push(line);
+              if (ratio < AA) failures.push(line);
+            }
+          }
         }
       }
     }
@@ -147,7 +161,7 @@ test('flow walkthrough text meets WCAG AA in both themes', async ({ page }, test
 const GRADIENT_BUTTONS = ['cta-read-series', 'project-deep-dive', 'flow-play'];
 
 test('gradient buttons meet WCAG AA at every color stop in both themes', async ({ page }, testInfo) => {
-  await page.goto(route(testInfo));
+  await page.goto(routes(testInfo)[0]);
   const rows: string[] = [];
   const failures: string[] = [];
   for (const theme of THEMES) {

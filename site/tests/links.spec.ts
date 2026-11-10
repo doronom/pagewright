@@ -1,5 +1,5 @@
 import { test, expect, type APIRequestContext } from '@playwright/test';
-import { sitemapPaths, toRelative } from './helpers';
+import { requiredRoutes, sitemapPaths, toRelative } from './helpers';
 
 test('no broken internal links', async ({ page, request, baseURL }, testInfo) => {
   test.setTimeout(120_000);
@@ -39,4 +39,5 @@ test('no broken internal links', async ({ page, request, baseURL }, testInfo) =>
 
   expect(broken, broken.join('\n')).toEqual([]);
   expect(visited.size).toBeGreaterThan(5);
+  expect([...visited]).toEqual(expect.arrayContaining(requiredRoutes(testInfo)));
 });

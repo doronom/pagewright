@@ -1,0 +1,122 @@
+{
+  "id": "autocomplete-flows",
+  "title": "The autocomplete bug, step by step",
+  "intro": "The same rejected selection, with the old action and with the fixed one. Watch where each one decides that it succeeded.",
+  "flows": [
+    {
+      "id": "before",
+      "label": "Before the fix",
+      "summary": "The action checks the text it typed, and reports a success that never happened.",
+      "height": 240,
+      "nodes": [
+        { "id": "action", "label": "muiAutocomplete", "sub": "the action", "x": 90, "y": 40 },
+        { "id": "input", "label": "input text", "sub": "what was typed", "x": 260, "y": 40 },
+        { "id": "list", "label": "listbox", "sub": "options", "x": 430, "y": 40 },
+        { "id": "check", "label": "assertion", "sub": "what the action checks", "x": 260, "y": 120 },
+        { "id": "state", "label": "selected value", "sub": "what MUI saved", "x": 430, "y": 120 },
+        { "id": "form", "label": "form submit", "sub": "what the server gets", "x": 260, "y": 200 }
+      ],
+      "edges": [
+        ["action", "input"],
+        ["input", "list"],
+        ["list", "state"],
+        ["input", "check"],
+        ["state", "check"],
+        ["check", "form"]
+      ],
+      "steps": [
+        {
+          "node": "action",
+          "title": "The action types the value",
+          "where": "core/actions/packs/mui.ts",
+          "text": "To find the option, the action types its label into the input. This part is the same before and after the fix.",
+          "code": "await input.fill(option);"
+        },
+        {
+          "node": "input",
+          "title": "The input now says USD",
+          "text": "The input contains the typed text. In an autocomplete, that text is only a filter. It is not the field's value."
+        },
+        {
+          "node": "list",
+          "title": "The selection doesn't commit",
+          "text": "The option is clicked, but nothing is saved: in production the list hadn't finished loading; in Pagewright's test the component rejects the change. Either way, MUI holds no value."
+        },
+        {
+          "node": "check",
+          "title": "The check reads the typed text",
+          "text": "The old action asserted toHaveValue(value) right away. The input still holds the text the action typed two lines earlier, so the assertion passes, and the action reports success."
+        },
+        {
+          "node": "state",
+          "title": "MUI never saved anything",
+          "text": "The real state, the selected value, was never part of the check. Nothing in the test knows it is empty."
+        },
+        {
+          "node": "form",
+          "title": "The test fails far from the cause",
+          "text": "When the field loses focus, MUI clears the unselected text. The form is submitted with an empty field, and the test fails three steps later with a validation error that points nowhere near the autocomplete.",
+          "status": "failure"
+        }
+      ]
+    },
+    {
+      "id": "after",
+      "label": "After the fix",
+      "summary": "The action checks what MUI saved, so a rejected selection fails at the autocomplete itself.",
+      "height": 240,
+      "nodes": [
+        { "id": "action", "label": "muiAutocomplete", "sub": "the action", "x": 90, "y": 40 },
+        { "id": "input", "label": "input text", "sub": "what was typed", "x": 260, "y": 40 },
+        { "id": "list", "label": "listbox", "sub": "options", "x": 430, "y": 40 },
+        { "id": "check", "label": "assertion", "sub": "after blur", "x": 260, "y": 120 },
+        { "id": "state", "label": "selected value", "sub": "what MUI saved", "x": 430, "y": 120 },
+        { "id": "form", "label": "form submit", "sub": "never reached", "x": 260, "y": 200 }
+      ],
+      "edges": [
+        ["action", "input"],
+        ["input", "list"],
+        ["list", "state"],
+        ["input", "check"],
+        ["state", "check"],
+        ["check", "form"]
+      ],
+      "steps": [
+        {
+          "node": "action",
+          "title": "The action types the value",
+          "where": "core/actions/packs/mui.ts",
+          "text": "Same as before: type the label to filter the list.",
+          "code": "await input.fill(option);"
+        },
+        {
+          "node": "list",
+          "title": "The option is clicked",
+          "where": "core/actions/packs/mui.ts",
+          "text": "The option is clicked by its accessible name. With the rejecting component, the click happens but nothing is saved, exactly as before.",
+          "code": "await input.page().getByRole('option', { name: option, exact: true }).click();"
+        },
+        {
+          "node": "input",
+          "title": "The action leaves the field",
+          "where": "core/actions/packs/mui.ts",
+          "text": "The new step: blur. In MUI's default mode, text that wasn't selected is cleared when the field loses focus.",
+          "code": "await locator.blur();"
+        },
+        {
+          "node": "state",
+          "title": "Only a saved value survives",
+          "text": "After blur, the input shows the selected value's label, or nothing. The typed text can no longer pretend to be a selection."
+        },
+        {
+          "node": "check",
+          "title": "The check now means something",
+          "where": "core/actions/packs/mui.ts",
+          "text": "The same toHaveValue, after blur, can only pass if MUI really saved the option. With a rejected selection the input is empty, and the action fails right here, at the autocomplete, with a clear message.",
+          "code": "await expect(locator).toHaveValue(String(value));",
+          "status": "failure"
+        }
+      ]
+    }
+  ]
+}

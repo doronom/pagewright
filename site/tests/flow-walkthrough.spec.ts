@@ -129,3 +129,78 @@ test.describe('flow walkthrough without JavaScript', () => {
     for (const controls of await page.getByTestId('flow-controls').all()) await expect(controls).toBeHidden();
   });
 });
+
+// Series part 2 has two walkthroughs on one page. Each keeps its own tab and step, and the
+// "goto: missing value" tab ends in a failure at step 3.
+test.describe('two flow walkthroughs on one page', () => {
+  const PART_2 = 'articles/dynamicpage-and-actions/';
+
+  function walkthrough(page: Page, id: 'dynamicpage-flows' | 'autocomplete-flows') {
+    return page.locator(`[data-test="flow-walkthrough"][data-test-id="${id}"]`);
+  }
+
+  function panelIn(root: ReturnType<typeof walkthrough>, id: string) {
+    return root.locator(`[data-test="flow-panel"][data-flow-panel="${id}"]`);
+  }
+
+  function tabIn(root: ReturnType<typeof walkthrough>, id: string) {
+    return root.locator(`[data-test="flow-tab"][data-flow-tab="${id}"]`);
+  }
+
+  test('both render, each with its own tabs', async ({ page }) => {
+    await page.goto(PART_2);
+    await expect(page.getByTestId('flow-walkthrough')).toHaveCount(2);
+    await expect(walkthrough(page, 'dynamicpage-flows').getByTestId('flow-tab')).toHaveText([
+      'goto',
+      'goto: missing value',
+      'executeSection',
+    ]);
+    await expect(walkthrough(page, 'autocomplete-flows').getByTestId('flow-tab')).toHaveText([
+      'Before the fix',
+      'After the fix',
+    ]);
+  });
+
+  test('stepping one walkthrough leaves the other where it was', async ({ page }) => {
+    await page.goto(PART_2);
+    const first = walkthrough(page, 'dynamicpage-flows');
+    const second = walkthrough(page, 'autocomplete-flows');
+    const goto = panelIn(first, 'goto');
+    const before = panelIn(second, 'before');
+
+    await goto.getByTestId('flow-next').click();
+    await goto.getByTestId('flow-next').click();
+    await expect(goto.getByTestId('flow-step').nth(2)).toBeVisible();
+    await expect(before.getByTestId('flow-step').nth(0)).toBeVisible();
+    await expect(before.getByTestId('flow-prev')).toBeDisabled();
+
+    await before.getByTestId('flow-next').click();
+    await expect(before.getByTestId('flow-step').nth(1)).toBeVisible();
+    await expect(goto.getByTestId('flow-step').nth(2)).toBeVisible();
+
+    await tabIn(second, 'after').click();
+    await expect(panelIn(second, 'after')).toBeVisible();
+    await expect(before).toBeHidden();
+    await expect(tabIn(first, 'goto')).toHaveAttribute('aria-selected', 'true');
+    await expect(goto).toBeVisible();
+  });
+
+  test('the "goto: missing value" tab ends in a failure at step 3', async ({ page }) => {
+    await page.goto(PART_2);
+    const first = walkthrough(page, 'dynamicpage-flows');
+    await tabIn(first, 'goto-missing').click();
+    const missing = panelIn(first, 'goto-missing');
+    await expect(missing).toBeVisible();
+    await expect(missing.getByTestId('flow-step')).toHaveCount(3);
+
+    await missing.getByTestId('flow-step-dot').nth(2).click();
+    const step3 = missing.getByTestId('flow-step').nth(2);
+    await expect(step3).toBeVisible();
+    await expect(step3).toHaveAttribute('data-status', 'failure');
+    await expect(missing.locator('[data-test="flow-node"][data-node="shared"]')).toHaveClass(/\bis-failure\b/);
+    await expect(missing.getByTestId('flow-next')).toBeDisabled();
+    // The other walkthrough is untouched.
+    const before = panelIn(walkthrough(page, 'autocomplete-flows'), 'before');
+    await expect(before.getByTestId('flow-step').nth(0)).toBeVisible();
+  });
+});

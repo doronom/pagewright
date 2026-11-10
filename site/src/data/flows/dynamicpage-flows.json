@@ -1,0 +1,234 @@
+{
+  "id": "dynamicpage-flows",
+  "title": "Inside DynamicPage, one step at a time",
+  "intro": "The dot is the call moving between components. Press Play, or step through manually (arrow keys work too).",
+  "flows": [
+    {
+      "id": "goto",
+      "label": "goto",
+      "summary": "From a page name in a test to a navigation in the browser.",
+      "height": 320,
+      "nodes": [
+        { "id": "spec", "label": "cart.spec.ts", "sub": "the test", "x": 90, "y": 40 },
+        { "id": "goto", "label": "DynamicPage.goto", "sub": "one config at a time", "x": 260, "y": 40 },
+        { "id": "pages", "label": "client.pages", "sub": "page registry", "x": 430, "y": 40 },
+        { "id": "init", "label": "onPageInit", "sub": "first goto only", "x": 260, "y": 120 },
+        { "id": "config", "label": "page config", "sub": "fresh locators", "x": 430, "y": 120 },
+        { "id": "shared", "label": "SharedData", "sub": "placeholder values", "x": 90, "y": 200 },
+        { "id": "url", "label": "URL", "sub": "path + baseUrl", "x": 260, "y": 200 },
+        { "id": "browser", "label": "page.goto", "sub": "retry, domcontentloaded", "x": 260, "y": 280 }
+      ],
+      "edges": [
+        ["spec", "goto"],
+        ["goto", "pages"],
+        ["pages", "config"],
+        ["config", "init"],
+        ["goto", "init"],
+        ["init", "url"],
+        ["url", "shared"],
+        ["url", "browser"]
+      ],
+      "steps": [
+        {
+          "node": "spec",
+          "title": "The test names a page",
+          "where": "clients/toolshop/tests/ui/cart.spec.ts",
+          "text": "Before this line, the test found an in-stock product through the API and stored its id in sharedData. Now it only names the page it wants.",
+          "code": "await dynamicPage.goto('productDetail');"
+        },
+        {
+          "node": "goto",
+          "title": "goto looks the name up",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The page name is a key in the client's registry. An unknown name fails here, with the client's name in the message, before anything else happens.",
+          "code": "const configFactory = this.client.pages[pageName];"
+        },
+        {
+          "node": "pages",
+          "title": "The client registered the page",
+          "where": "clients/toolshop/client.ts",
+          "text": "client.pages maps each name to a config factory: a function that takes a Page and returns the page's sections and fields.",
+          "code": "productDetail: productDetailPage,"
+        },
+        {
+          "node": "config",
+          "title": "The config is built for this test",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The factory runs on every goto, against this test's page. Locators are fresh, and nothing is cached or shared between tests running in parallel.",
+          "code": "this.currentConfig = configFactory(this.page);"
+        },
+        {
+          "node": "init",
+          "title": "onPageInit runs once per test",
+          "where": "core/page/DynamicPage.ts",
+          "text": "On the first goto only, the client gets a hook for one-time browser setup. With skipNavigation, goto would stop right after this: the config is switched and the browser doesn't move.",
+          "code": "await this.client.onPageInit?.(this.page);"
+        },
+        {
+          "node": "shared",
+          "title": "SharedData fills the placeholder",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The config's url is /product/${productId}. Each placeholder is replaced from the test's SharedData. A missing value throws here, before navigating (see the next tab).",
+          "code": "return String(this.sharedData.get(key));"
+        },
+        {
+          "node": "url",
+          "title": "The path meets the environment",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The path is resolved against the client's base URL for the current TEST_ENV, so the same test runs against dev or staging without changes.",
+          "code": "this.client.baseUrl(testEnv),"
+        },
+        {
+          "node": "browser",
+          "title": "The browser navigates, with retry",
+          "where": "core/page/DynamicPage.ts",
+          "text": "Navigation waits for domcontentloaded, not networkidle, and is retried up to 3 times. Readiness is checked later, through the elements the test actually uses.",
+          "code": "() => this.page.goto(url, { waitUntil: 'domcontentloaded' }),",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "goto-missing",
+      "label": "goto: missing value",
+      "summary": "The same call when the test forgot to store the product id.",
+      "height": 320,
+      "nodes": [
+        { "id": "spec", "label": "cart.spec.ts", "sub": "the test", "x": 90, "y": 40 },
+        { "id": "goto", "label": "DynamicPage.goto", "sub": "one config at a time", "x": 260, "y": 40 },
+        { "id": "pages", "label": "client.pages", "sub": "page registry", "x": 430, "y": 40 },
+        { "id": "init", "label": "onPageInit", "sub": "first goto only", "x": 260, "y": 120 },
+        { "id": "config", "label": "page config", "sub": "fresh locators", "x": 430, "y": 120 },
+        { "id": "shared", "label": "SharedData", "sub": "no productId", "x": 90, "y": 200 },
+        { "id": "url", "label": "URL", "sub": "path + baseUrl", "x": 260, "y": 200 },
+        { "id": "browser", "label": "page.goto", "sub": "never called", "x": 260, "y": 280 }
+      ],
+      "edges": [
+        ["spec", "goto"],
+        ["goto", "pages"],
+        ["pages", "config"],
+        ["config", "init"],
+        ["goto", "init"],
+        ["init", "url"],
+        ["url", "shared"],
+        ["url", "browser"]
+      ],
+      "steps": [
+        {
+          "node": "spec",
+          "title": "The test skipped a step",
+          "where": "clients/toolshop/tests/ui/cart.spec.ts",
+          "text": "Imagine the API step was removed, so nothing ever called sharedData.set('productId', ...). The goto call itself looks exactly the same.",
+          "code": "await dynamicPage.goto('productDetail');"
+        },
+        {
+          "node": "config",
+          "title": "Lookup and config work as usual",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The page exists, so its config is built. Nothing is wrong yet.",
+          "code": "this.currentConfig = configFactory(this.page);"
+        },
+        {
+          "node": "shared",
+          "title": "The placeholder has no value",
+          "where": "core/page/DynamicPage.ts",
+          "text": "replacePlaceholders asks SharedData for productId and finds nothing. Instead of building /product/undefined, it throws, with the placeholder's name in the message. The browser never navigates.",
+          "code": "throw new Error(`No shared data value for URL placeholder \"${match}\"`);",
+          "status": "failure"
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "label": "executeSection",
+      "summary": "How two entries of test data become a fill and a click.",
+      "height": 320,
+      "nodes": [
+        { "id": "spec", "label": "cart.spec.ts", "sub": "the test", "x": 90, "y": 40 },
+        { "id": "exec", "label": "executeSection", "sub": "walks the data keys", "x": 260, "y": 40 },
+        { "id": "field", "label": "page config", "sub": "locator + actions", "x": 430, "y": 40 },
+        { "id": "map", "label": "action map", "sub": "name to function", "x": 260, "y": 120 },
+        { "id": "client", "label": "client.actions", "sub": "overrides by name", "x": 430, "y": 120 },
+        { "id": "input", "label": "InputActions", "sub": "fill + check", "x": 90, "y": 200 },
+        { "id": "element", "label": "ElementActions", "sub": "click + log", "x": 430, "y": 200 },
+        { "id": "browser", "label": "Playwright", "sub": "auto-waiting", "x": 260, "y": 280 }
+      ],
+      "edges": [
+        ["spec", "exec"],
+        ["exec", "field"],
+        ["exec", "map"],
+        ["map", "client"],
+        ["map", "input"],
+        ["map", "element"],
+        ["input", "browser"],
+        ["element", "browser"]
+      ],
+      "steps": [
+        {
+          "node": "spec",
+          "title": "The test passes data, not locators",
+          "where": "clients/toolshop/tests/ui/cart.spec.ts",
+          "text": "Two fields of the purchase section: a quantity to fill and a button to click. The order of the keys is the order they run in.",
+          "code": "await dynamicPage.executeSection('purchase', { quantity: '2', addToCart: true });"
+        },
+        {
+          "node": "exec",
+          "title": "The engine walks the data",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The loop goes over the keys of the test's data. Fields the test leaves out simply don't run.",
+          "code": "for (const [fieldName, value] of Object.entries(data)) {"
+        },
+        {
+          "node": "field",
+          "title": "Each key is looked up in the config",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The field gives a locator and an ordered list of actions. A key the config doesn't have fails with the section and field names.",
+          "code": "const field = this.getField(sectionName, fieldName);"
+        },
+        {
+          "node": "map",
+          "title": "Each action is found by name",
+          "where": "core/page/DynamicPage.ts",
+          "text": "quantity's action is 'fill'. The name is looked up in one map; an unknown name fails with the section and field in the message.",
+          "code": "const action = this.actions.get(actionConfig.action);"
+        },
+        {
+          "node": "client",
+          "title": "The map includes the client's actions",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The map was built once, from the built-in actions and then the client's. A client action with a built-in name replaces it.",
+          "code": "this.actions = new Map(Object.entries({ ...builtIn, ...client.actions }));"
+        },
+        {
+          "node": "input",
+          "title": "fill goes to InputActions",
+          "where": "core/page/DynamicPage.ts",
+          "text": "The built-in fill turns the value into a string and calls InputActions.",
+          "code": "fill: (locator, value) => this.inputActions.fillText(locator, String(value)),"
+        },
+        {
+          "node": "browser",
+          "title": "The value is typed, then checked",
+          "where": "core/actions/InputActions.ts",
+          "text": "Playwright waits for the field and fills it. Then the wrapper confirms the value stayed, because masked fields sometimes change what was typed.",
+          "code": "await expect(locator).toHaveValue(text);"
+        },
+        {
+          "node": "element",
+          "title": "addToCart goes to ElementActions",
+          "where": "core/actions/ElementActions.ts",
+          "text": "The next key, addToCart, maps to click. The wrapper only logs; Playwright's click already waits until the button is visible, stable and enabled.",
+          "code": "await locator.click();"
+        },
+        {
+          "node": "browser",
+          "title": "Two entries, two actions",
+          "where": "core/page/DynamicPage.ts",
+          "text": "Every action runs through the same call, with the config's fixed value if it has one, or the test's value otherwise.",
+          "code": "await action(field.locator, actionConfig.value ?? value);",
+          "status": "success"
+        }
+      ]
+    }
+  ]
+}

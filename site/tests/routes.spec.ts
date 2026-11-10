@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { sitemapPaths } from './helpers';
+import { requiredRoutes, sitemapPaths } from './helpers';
 
 // Runs in both projects: every page in that build's sitemap (production or drafts-included).
 test('every route returns 200 and renders its main heading', async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   const routes = sitemapPaths(String(testInfo.project.metadata.distDir));
   expect(routes.length).toBeGreaterThan(5);
+  expect(routes).toEqual(expect.arrayContaining(requiredRoutes(testInfo)));
   for (const route of routes) {
     await test.step(`/${route}`, async () => {
       const response = await page.goto(route);

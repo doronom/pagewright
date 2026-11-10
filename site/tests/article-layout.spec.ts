@@ -12,7 +12,7 @@ test.describe('article layout', () => {
 
   test('header shows series badge, meta and tags', async ({ page }) => {
     await expect(page.getByTestId('page-title')).toHaveText('Placeholder article');
-    await expect(page.getByTestId('series-badge')).toHaveText(/Part 2 of 6/);
+    await expect(page.getByTestId('series-badge')).toHaveText(/Part 3 of 6/);
     await expect(page.getByTestId('article-date')).toBeVisible();
     await expect(page.getByTestId('reading-time')).toHaveText(/^\d+ min read$/);
     await expect(page.getByTestId('article-tags').getByTestId('tag-chip')).toHaveCount(2);

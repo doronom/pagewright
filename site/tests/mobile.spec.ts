@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { sitemapPaths } from './helpers';
+import { requiredRoutes, sitemapPaths } from './helpers';
 
 test.use({ viewport: { width: 360, height: 780 } });
 
 test('no page scrolls horizontally at 360px', async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   const routes = [...sitemapPaths(String(testInfo.project.metadata.distDir)), 'does-not-exist/'];
+  expect(routes).toEqual(expect.arrayContaining(requiredRoutes(testInfo)));
   const overflowing: string[] = [];
   await page.goto('');
   for (const theme of ['dark', 'light'] as const) {

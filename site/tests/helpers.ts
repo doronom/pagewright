@@ -44,3 +44,11 @@ export function contrastRatio(foreground: string, background: string): number {
   const [l1, l2] = [relativeLuminance(foreground), relativeLuminance(background)].sort((a, b) => b - a);
   return (l1 + 0.05) / (l2 + 0.05);
 }
+
+/**
+ * Routes a build must contain, on top of whatever its sitemap lists. The drafts-included build has to
+ * carry the articles still being written, so route, link and mobile checks can't silently skip them.
+ */
+export function requiredRoutes(testInfo: TestInfo): string[] {
+  return distDir(testInfo) === 'dist-drafts' ? ['articles/dynamicpage-and-actions/'] : [];
+}
