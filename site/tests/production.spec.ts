@@ -6,6 +6,7 @@ test('production build contains no draft pages', async ({ request }) => {
   const articleRoutes = sitemapPaths('dist').filter((r) => r.startsWith('articles/'));
   expect(articleRoutes.filter((r) => !r.startsWith('articles/page/'))).toEqual([
     'articles/',
+    'articles/dynamicpage-and-actions/',
     'articles/why-config-driven/',
   ]);
   expect((await request.get('articles/placeholder-article/')).status()).toBe(404);
@@ -22,4 +23,19 @@ test('test numbers render only together (badge, telemetry, footer line)', async 
   if (counts[0]) {
     await expect(page.getByTestId('telemetry-passed')).toHaveText(/^\s*\d+ passed\s*$/);
   }
+});
+
+test('series parts 1 and 2 are published and linked in order', async ({ page }) => {
+  await page.goto('series/config-driven-framework/');
+  for (const part of ['1', '2']) {
+    await expect(page.locator(`[data-test="series-part-row"][data-test-part="${part}"]`)).toHaveAttribute(
+      'data-test-status',
+      'published',
+    );
+  }
+  await page.goto('articles/why-config-driven/');
+  await page.getByTestId('series-nav-next').click();
+  await expect(page).toHaveURL(/\/articles\/dynamicpage-and-actions\/$/);
+  await expect(page.getByTestId('page-title')).toHaveText('DynamicPage and the actions layer');
+  await expect(page.getByTestId('series-nav-prev')).toHaveAttribute('href', /\/articles\/why-config-driven\/$/);
 });
