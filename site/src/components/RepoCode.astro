@@ -1,6 +1,6 @@
 ---
 import CodeBlock from './CodeBlock.astro';
-import { assertSnippetContains, readRepoLines, validateHighlight } from '../lib/repo';
+import { assertMatchLine, assertSnippetContains, readRepoLines, validateHighlight } from '../lib/repo';
 
 interface Props {
   /** Path relative to the repository root, e.g. "core/page/DynamicPage.ts". */
@@ -12,11 +12,17 @@ interface Props {
   lang?: string;
   /** Exact text the quoted range must contain. Fails the build when the range has drifted. */
   match?: string;
+  /**
+   * File line number (as shown in the gutter) that must contain `match`. Fails the build on any
+   * shift, with the line where the text is now. Without it, `match` may be anywhere in the range.
+   */
+  matchLine?: string | number;
 }
 
-const { file, lines, highlight, lang, match } = Astro.props;
+const { file, lines, highlight, lang, match, matchLine } = Astro.props;
 const snippet = readRepoLines(file, lines);
 assertSnippetContains(snippet, match);
+assertMatchLine(snippet, match, matchLine);
 const highlightLines = validateHighlight(highlight, snippet);
 const label = lines ? `${snippet.file}:${snippet.startLine}-${snippet.endLine}` : snippet.file;
 ---

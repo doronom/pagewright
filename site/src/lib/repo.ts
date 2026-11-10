@@ -9,6 +9,8 @@ export interface RepoSnippet {
   startLine: number;
   endLine: number;
   totalLines: number;
+  /** Every line of the file, for checks that need the lines around the range. */
+  fileLines: string[];
   lang: string;
   url: string;
 }
@@ -69,6 +71,7 @@ export function readRepoLines(file: string, lines?: string): RepoSnippet {
     startLine,
     endLine,
     totalLines: all.length,
+    fileLines: all,
     lang: LANGS[ext] ?? 'text',
     url: githubUrl(relative, lines ? { startLine, endLine } : undefined),
   };
@@ -88,6 +91,33 @@ export function assertSnippetContains(snippet: RepoSnippet, match: string | unde
       ? `${snippet.file} line ${snippet.startLine} does`
       : `${snippet.file} lines ${snippet.startLine}-${snippet.endLine} do`;
   throw new Error(`RepoCode: ${subject} not contain "${match}"`);
+}
+
+/**
+ * Throws, and so fails the build, unless file line `matchLine` (inside the range) contains `match`.
+ * A range check alone passes while a shifted range still contains the text somewhere; anchoring the
+ * match to a line catches any shift, even of one line. The error says where the text actually is.
+ */
+export function assertMatchLine(
+  snippet: RepoSnippet,
+  match: string | undefined,
+  matchLine: string | number | undefined,
+): void {
+  if (matchLine === undefined) return;
+  const range = `${snippet.file} lines ${snippet.startLine}-${snippet.endLine}`;
+  if (match === undefined) {
+    throw new Error(`RepoCode ${range}: matchLine="${matchLine}" needs a match`);
+  }
+  const line = Number(matchLine);
+  if (!Number.isInteger(line) || line < snippet.startLine || line > snippet.endLine) {
+    throw new Error(`RepoCode ${range}: matchLine="${matchLine}" is not a line inside the range`);
+  }
+  if (snippet.fileLines[line - 1].includes(match)) return;
+  const found = snippet.fileLines.flatMap((text, i) => (text.includes(match) ? [i + 1] : []));
+  const where = found.length
+    ? `found on line ${found.join(', ')}`
+    : 'not found anywhere in the file';
+  throw new Error(`RepoCode ${range}: "${match}" expected on line ${line}, ${where}`);
 }
 
 export function validateHighlight(spec: string | undefined, snippet: RepoSnippet): number[] {

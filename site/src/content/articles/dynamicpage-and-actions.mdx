@@ -28,7 +28,7 @@ As before, all the code comes from Pagewright, the open template, and every exam
 
 ### goto: from a page name to a URL
 
-<RepoCode file="core/page/DynamicPage.ts" lines="60-89" match="async goto(pageName: string" />
+<RepoCode file="core/page/DynamicPage.ts" lines="60-89" match="async goto(pageName: string" matchLine="60" />
 
 Step through it below. The second tab follows the same call when a placeholder has no value: a config error fails before the browser moves. Once `page.goto` starts, it can still fail on the network, and that's what the retry is for. The third tab follows `executeSection` from the first article, field by field.
 
@@ -46,7 +46,7 @@ A few small decisions are worth noticing:
 
 A page URL can contain `${productId}`, and the value comes from the test's `SharedData`:
 
-<RepoCode file="core/page/DynamicPage.ts" lines="132-139" match="private replacePlaceholders" />
+<RepoCode file="core/page/DynamicPage.ts" lines="132-139" match="private replacePlaceholders" matchLine="132" />
 
 The important line is the `throw`. Without it, a missing value would become `/product/undefined`, the browser would show an error page, and the test would fail three steps later on an element it couldn't find. This way it fails where the problem is, with the placeholder's name in the message.
 
@@ -60,13 +60,13 @@ In Toolshop, the cart test uses this to combine API and UI: it finds a product t
 
 Every action in the system is a function with the same signature: a locator and an optional value.
 
-<RepoCode file="core/page/types.ts" lines="6" match="export type ActionFunction" />
+<RepoCode file="core/page/types.ts" lines="6" match="export type ActionFunction" matchLine="6" />
 
 That single signature is what lets the engine run any action the same way, without knowing what it does. The trade-off is that the value is typed as `unknown`, so each action has to interpret it itself, and that's where it can quietly go wrong. Test data often arrives as strings, and `Boolean('false')` is `true`. So `check` and `toggle` accept only a real `true` or `false` and fail on anything else, including a missing value.
 
 The `DynamicPage` constructor builds the map from two sources:
 
-<RepoCode file="core/page/DynamicPage.ts" lines="34-53" match="const builtIn: Record<string, ActionFunction>" />
+<RepoCode file="core/page/DynamicPage.ts" lines="34-53" match="const builtIn: Record<string, ActionFunction>" matchLine="34" />
 
 The built-in actions, and what each does with its value:
 
@@ -105,7 +105,7 @@ Why a pack? Because the core shouldn't assume which UI library an application us
 
 Behind the map are four classes: `ElementActions`, `InputActions`, `WaitAndAssertActions` and `FileUploadActions`. They do very little, and that's on purpose:
 
-<RepoCode file="core/actions/ElementActions.ts" lines="7-10" match="async click(locator: Locator)" />
+<RepoCode file="core/actions/ElementActions.ts" lines="7-10" match="async click(locator: Locator)" matchLine="7" />
 
 There's no `waitFor`, no visibility check and no retry. Playwright's `locator.click()` already waits for the element to be visible, stable, enabled and able to receive events. A wrapper that adds its own `waitFor` only doubles the wait, and a wrapper with retry hides real bugs. The rule for this layer: add only what Playwright doesn't give you.
 
@@ -166,7 +166,7 @@ The `toHaveValue` looks like verification, but it always passes: two lines earli
 
 The fix checks what the application saved:
 
-<RepoCode file="core/actions/packs/mui.ts" lines="10-26" match="await locator.blur();" />
+<RepoCode file="core/actions/packs/mui.ts" lines="10-26" match="await locator.blur();" matchLine="15" />
 
 The `blur` is the key. In MUI's default mode, unselected text is cleared when the field loses focus, so afterwards the value survives only if an option was really selected. In `freeSolo` fields, which accept free text, blur clears nothing, so this check can't tell a selection from typing. The pack isn't meant for them: there the typed text really is the value, and a plain `fill` is enough. Pagewright's tests for the pack run against real MUI components, including one that rejects the selection, to prove the action now fails when it should.
 

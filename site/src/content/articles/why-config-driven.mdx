@@ -48,23 +48,23 @@ The rest of this article walks down those layers, starting with how a page is de
 
 Instead of a class per screen, each screen is described by a configuration object with four levels: a page has sections, a section has fields, and each field has a locator and an ordered list of actions. This is the whole contract:
 
-<RepoCode file="core/page/types.ts" lines="8-25" match="export interface ActionConfig" />
+<RepoCode file="core/page/types.ts" lines="8-25" match="export interface ActionConfig" matchLine="8" />
 
 Two small details do a lot of work here. The type `ActionType | (string & {})` keeps autocomplete for the built-in actions while still allowing clients to register custom actions. And `url` is optional, because not every state of the UI is reachable by direct navigation.
 
 This is Toolshop's login page:
 
-<RepoCode file="clients/toolshop/pages/LoginPage.config.ts" lines="4-16" match="export const loginPage" />
+<RepoCode file="clients/toolshop/pages/LoginPage.config.ts" lines="4-16" match="export const loginPage" matchLine="4" />
 
 The config is a function that takes a `Page`, not a static object. Locators are created against the current test's page, so nothing is shared between tests running in parallel. A field with `actions: []`, like `error`, exists only so its locator can be used in an assertion.
 
 The test never sees a locator. It passes a section name and an object of data:
 
-<RepoCode file="clients/toolshop/tests/ui/login.spec.ts" lines="9-14" match="executeSection('form'" />
+<RepoCode file="clients/toolshop/tests/ui/login.spec.ts" lines="9-14" match="executeSection('form'" matchLine="10" />
 
 All the work happens in `executeSection`, which is shorter than you might expect:
 
-<RepoCode file="core/page/DynamicPage.ts" lines="91-103" match="async executeSection" />
+<RepoCode file="core/page/DynamicPage.ts" lines="91-103" match="async executeSection" matchLine="91" />
 
 Three things in this implementation are worth noticing:
 
@@ -86,31 +86,31 @@ The repository is split into two folders with one clear rule: `core/` is a gener
   <CoreClientDiagram />
 </Diagram>
 
-<RepoCode file="core/client/ClientDefinition.ts" lines="7-17" match="export interface ClientDefinition" />
+<RepoCode file="core/client/ClientDefinition.ts" lines="7-17" match="export interface ClientDefinition" matchLine="7" />
 
 This interface is the engine's list of extension points. Only three fields are required: `name`, `baseUrl` and `pages`. Everything else is optional: without `auth`, the setup project skips the login step and UI tests run without a saved session; without `createApiClient`, the client can't run API tests. URLs are functions of the environment: the core reads `TEST_ENV` (default `dev`) and calls `baseUrl(testEnv)`, so the same client runs against every environment without code changes.
 
 Toolshop fills in the interface in its `client.ts`:
 
-<RepoCode file="clients/toolshop/client.ts" lines="10-26" match="auth: new ToolshopAuth(() => client)" />
+<RepoCode file="clients/toolshop/client.ts" lines="10-26" match="auth: new ToolshopAuth(() => client)" matchLine="22" />
 
 Notice `() => client`. The auth strategy receives a getter, not the object itself, because while it's being constructed the object doesn't exist yet. It's the same closure pattern `createApiClient` uses, and it means login always runs with the client it belongs to, not with whatever an environment variable points at.
 
 The core finds this file by environment variable. `loadClient` is the entire plugin mechanism:
 
-<RepoCode file="core/client/loadClient.ts" lines="6-12" match="export function loadClient" />
+<RepoCode file="core/client/loadClient.ts" lines="6-12" match="export function loadClient" matchLine="6" />
 
 `clientName` comes from `process.env.CLIENT`, defaulting to `toolshop`. This dynamic `require` is the only place in the project where the ESLint rule against `require` is turned off, and that's deliberate: there is exactly one dynamic link, and it's marked.
 
 What connects the client to the tests is the core's fixtures. Each test receives the loaded client, and every other tool is built from it:
 
-<RepoCode file="core/fixtures.ts" lines="17-29" match="export const test = base.extend" />
+<RepoCode file="core/fixtures.ts" lines="17-29" match="export const test = base.extend" matchLine="17" />
 
 Each fixture declares its dependencies in its signature, and Playwright builds them only when a test asks for them. An API test that never asks for `dynamicPage` never opens a browser, and every test gets a `Logger` named after it and a fresh `SharedData` of its own.
 
 On the client side, `fixtures.ts` extends the core's test instead of replacing it. It doesn't build its own API client either: it takes the `apiClient` the core already built from `createApiClient` and narrows it to Toolshop's type with `instanceof`. There is one place that decides how the client is built, and if `CLIENT` points at a different application, the test fails with a clear message instead of a silent cast:
 
-<RepoCode file="clients/toolshop/fixtures.ts" lines="4-11" match="instanceof ToolshopApiClient" />
+<RepoCode file="clients/toolshop/fixtures.ts" lines="4-11" match="instanceof ToolshopApiClient" matchLine="6" />
 
 Specs import only from this file. That way they get everything the core provides, plus whatever the specific application adds.
 
@@ -149,7 +149,7 @@ From there, the work stays inside the new folder: update the URLs in `client.ts`
 
 The separation between config and test breaks easily: one test with a `page.locator(...)` in the middle is enough. So the template enforces it with ESLint, not just with good intentions. These rules apply to every file under `tests/`:
 
-<RepoCode file="eslint.config.mjs" lines="31-55" match="files: ['**/tests/**/*.ts']" />
+<RepoCode file="eslint.config.mjs" lines="31-55" match="files: ['**/tests/**/*.ts']" matchLine="32" />
 
 The first two rules protect the architecture: locators live only in page configs. The other two protect stability: no fixed waits and no `networkidle`. Both fail in lint, before code review, with a message that says what to do instead.
 
