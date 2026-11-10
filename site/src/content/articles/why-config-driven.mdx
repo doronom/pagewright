@@ -19,17 +19,19 @@ import { site } from '../../config/site';
 
 ## The problem: page objects that grow faster than the product
 
-When a test suite grows to cover several applications and dozens of screens, a page object class for every screen gets expensive. Every class repeats the same code: a locator, a wait, a fill, a click, a log line.
+When a test suite grows to cover several applications and dozens of screens, a page object class for every screen gets expensive. Playwright already removes most of the old boilerplate: auto-waiting and lazy locators handle what Selenium-era page objects were full of. What's left in each class is mostly locators, plus app-specific behavior that has to be shared somehow: a fill that confirms the value stayed, an autocomplete that checks the selection was really saved.
 
-This series describes a different approach. Pages are defined as data, and a generic engine handles the common execution work: waits, retries and logging. Adding a new application means adding data and a little app-specific code, without touching the engine.
+This series describes a different approach. Pages are defined as data, and a generic engine runs them: it looks up each action by name, logs every step, and fails with the page, section and field in the message. Adding a new application means adding data and a little app-specific code, without touching the engine.
 
 The problem isn't page objects themselves. It's what they mix together. Every page class holds three things that change at different speeds:
 
 - **Where** an element is (the locator): changes with every UI change.
 - **What** you do with it (fill, click, select): almost never changes.
-- **How** to do it reliably (waits, retries, logging): the same across the whole project.
+- **How** to do it reliably in this application (a fill that's verified, an autocomplete that's really selected): defined once, shared by every page.
 
 The framework separates the three. The *where* and the *what* are written as data in a page config. The common *how* is written once, in a generic engine; only genuinely app-specific behavior still needs code. The approach grew out of a large production automation project that covered several applications, and was later extracted into an open template, <a href={site.repoUrl}>Pagewright</a>.
+
+Component objects injected through fixtures are the usual Playwright answer to shared behavior, and for a single application they work well. What pushed this framework toward data was running several applications on one engine, and tests that pass data instead of calling methods. That choice has costs too: another layer to debug through, and weaker types than a page class. The series comes back to both.
 
 All examples run against [Toolshop](https://practicesoftwaretesting.com), a public practice application with a UI and an API behind it. The original framework tested internal systems that can't be shown. Toolshop has the same shape: a web UI, an API with token-based login, and flows that combine the two. The architecture and the lessons come from the production framework.
 
@@ -39,7 +41,7 @@ At the highest level, the framework has four layers, and each one only talks to 
 
 1. **Tests** describe the scenario and its data. They contain no locators.
 2. **The client** describes one application: its pages, locators, actions, login and API endpoints.
-3. **The core** is the generic engine: fixtures, page execution, logging and retries.
+3. **The core** is the generic engine: fixtures, page execution, logging, and retry for navigation and API calls.
 4. **The application under test**, through its browser UI and its API.
 
 The rest of this article walks down those layers, starting with how a page is described.
@@ -160,7 +162,7 @@ The approach pays off when there are many screens built from the same basic acti
 | What you gain | What you pay |
 | --- | --- |
 | A UI change is fixed in one place: the page's config file | Fields are referenced by strings (`'header', 'cartQuantity'`), and TypeScript won't catch a typo at compile time |
-| Waits, retries and logging are written once, in the core | A genuinely complex interaction still needs code, as a custom action or a helper |
+| Action behavior, logging and error messages are written once, and shared by every page | A genuinely complex interaction still needs code, as a custom action or a helper |
 | Short tests that read like a script | Debugging goes through one more layer, which is why the logs in `executeSection` matter |
 | A new application plugs in without touching the engine | A new developer has to learn a new convention instead of the familiar POM |
 
